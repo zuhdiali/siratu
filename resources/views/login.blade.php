@@ -38,7 +38,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary ">Login</button>
                         </form>
-                        <a href="{{ route('index') }}" class="btn btn-secondary  mt-3">Masuk tanpa login</a>
+                        {{-- <a href="{{ route('index') }}" class="btn btn-secondary  mt-3">Masuk tanpa login</a> --}}
                     </div>
                 </div>
             </div>

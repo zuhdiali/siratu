@@ -110,9 +110,13 @@ class SuratController extends Controller
             if ($kegiatan->honor_pengawasan == null || $kegiatan->honor_pencacahan == null) {
                 return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki honor pengawasan atau pencacahan.');
             } else {
-                foreach ($kegiatan->mitra as $mitra) {
-                    if ($mitra->pivot->estimasi_honor == null) {
-                        return redirect()->back()->with('error', 'Ada mitra yang belum memiliki estimasi honor dari kegiatan yang dipilih.');
+                if ($kegiatan->mitra->count() == 0) {
+                    return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki mitra.');
+                } else {
+                    foreach ($kegiatan->mitra as $mitra) {
+                        if ($mitra->pivot->estimasi_honor == null) {
+                            return redirect()->back()->with('error', 'Ada mitra yang belum memiliki estimasi honor dari kegiatan yang dipilih.');
+                        }
                     }
                 }
             }

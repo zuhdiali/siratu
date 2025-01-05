@@ -147,7 +147,7 @@ class KegiatanController extends Controller
             ];
         }
         $kegiatan->pjk = Pegawai::find($kegiatan->id_pjk);
-        dd($mitraEstimasiHonors);
+        // dd($mitraEstimasiHonors);
         return view('kegiatan.show', ['kegiatan' => $kegiatan]);
     }
 

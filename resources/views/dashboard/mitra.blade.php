@@ -52,7 +52,7 @@
           <div class="card-body">
             <div class="form-group">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mt-2">
                   <label for="filter-bulanan">Pilih tahun:</label>
                   <select name="filter-tahun" id="filter-tahun" class="form-select">
                     <option value="">-- Pilih Tahun ---</option>

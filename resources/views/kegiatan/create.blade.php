@@ -115,7 +115,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pengawasan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            Satuan honor bisa dikosongkan
+                                            {{-- Satuan honor bisa dikosongkan --}}
                                         </small>
                                         @endif
                                     </div>
@@ -134,7 +134,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('honor_pengawasan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            (isian honor dapat dikosongkan jika satuan honor belum dipilih)
+                                            {{-- (isian honor dapat dikosongkan jika satuan honor belum dipilih) --}}
                                         </small>
                                         @endif
                                     </div> 
@@ -158,7 +158,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pencacahan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            Satuan honor bisa dikosongkan
+                                            {{-- Satuan honor bisa dikosongkan --}}
                                         </small>
                                         @endif
                                     </div>
@@ -177,7 +177,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('honor_pencacahan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            (isian honor dapat dikosongkan jika satuan honor belum dipilih)
+                                            {{-- (isian honor dapat dikosongkan jika satuan honor belum dipilih) --}}
                                         </small>
                                         @endif
                                     </div> 

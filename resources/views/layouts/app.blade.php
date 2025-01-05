@@ -54,10 +54,10 @@
           <div class="logo-header" data-background-color="dark">
             <a href="{{route('index')}}" class="logo">
               <img
-                src="{{asset('img/logo_only.svg')}}"
+                src="{{asset('img/siratu.svg')}}"
                 alt="navbar brand"
                 class="navbar-brand"
-                height="45"
+                height="30"
               />
             </a>
             <div class="nav-toggle">
@@ -78,12 +78,12 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
 
-                <li class="nav-item {{ Request::path() ==  '/' ? 'active' : ''  }}">
+                {{-- <li class="nav-item {{ Request::path() ==  '/' ? 'active' : ''  }}">
                     <a href="{{route('index')}}">
                         <i class="fas fa-home"></i>
                         <p>Beranda</p>
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="nav-item {{ str_contains(Request::path(), 'dashboard') ? 'active' : ''  }}">
                   <a href="{{route('dashboard')}}">
@@ -98,12 +98,15 @@
                         <p>Kegiatan</p>
                     </a>
                 </li>
+
+                @if(Auth::user()->role == 'Admin')
                 <li class="nav-item {{ str_contains(Request::path(), 'pembayaran') ? 'active' : ''  }}">
                     <a href="{{route('pembayaran.index')}}">
                         <i class="fas fa-money-bill-wave"></i>
                         <p>Pembayaran</p>
                     </a>
                 </li>
+                @endif
 
                 <li class="nav-item">
                   <a data-bs-toggle="collapse" href="#submenu">
@@ -142,6 +145,7 @@
                         </a>
                       </li>
 
+                      @if(Auth::user()->role == 'Admin')
                       <li class="{{ str_contains(Request::path(), 'sk') ? 'active' : ''  }}">
                         <a href="{{route('surat.sk')}}">
                           <span class="sub-item">SK</span>
@@ -153,6 +157,7 @@
                           <span class="sub-item">SPK</span>
                         </a>
                       </li>
+                      @endif
                     </ul>
                   </div>
                 </li>
@@ -191,7 +196,7 @@
                   {{-- @endif --}}
                   
 
-                  {{-- @if (Auth::user()->role == 'Admin') --}}
+                  @if (Auth::user()->role == 'Admin')
                   
                   <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -220,7 +225,7 @@
                           <p>Manajemen Akun</p>
                       </a>
                   </li> --}}
-                  {{-- @endif --}}
+                  @endif
                 {{-- @endif --}}
 
             </ul>
@@ -236,7 +241,7 @@
             <div class="logo-header" data-background-color="dark">
               <a href="index.html" class="logo">
                 <img
-                  src="{{asset('img/logo_only.svg')}}"
+                  src="{{asset('img/siratu.svg')}}"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -317,11 +322,11 @@
                       <li>
 
                         <div class="dropdown-divider"></div>
-                        {{-- @if (Auth::check())
+                        @if (Auth::check())
                         <a class="dropdown-item" href="{{route('logout')}}">Logout</a>
                         @else
                         <a class="dropdown-item" href="{{route('login')}}">Login</a>
-                        @endif --}}
+                        @endif
                       </li>
                     </div>
                   </ul>
