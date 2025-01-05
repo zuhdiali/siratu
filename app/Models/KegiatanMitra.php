@@ -15,6 +15,7 @@ class KegiatanMitra extends Model
         'mitra_id',
         'kegiatan_id',
         'honor',
+        'estimasi_honor',
         'bukti_pembayaran_id',
     ];
 }

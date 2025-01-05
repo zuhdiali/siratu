@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <form action="{{url('pembayaran/store')}}" method="POST" enctype="multipart/form-data">
+                    <form action="{{url('pembayaran/store/'. $jenis)}}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
                             <div class="card-title">Tambah Pembayaran</div>
@@ -156,19 +156,20 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     type: "GET",
-                    url: "{{ url('kegiatan') }}"  + '/' + ({{$jenis}} == 'mitra' ? 'mitra-belum-dibayar' : 'pegawai-belum-dibayar') + '/' + kegiatan,
+                    url: "{{ url('kegiatan') }}"  + '/' + ('{{$jenis}}' == 'mitra' ? 'mitra-belum-dibayar' : 'pegawai-belum-dibayar') + '/' + kegiatan,
 
 
                     success: function(msg){
+                        console.log(msg);
                         $('#basic-datatables').DataTable().clear().destroy();
                         if(msg.length > 0){
-                            if({{$jenis}} == 'mitra'){
+                            if('{{$jenis}}' == 'mitra'){
                                 msg.forEach(function(p){
                                     $('table tbody').append('<tr><td>'+p.mitra.nama+'<input type="hidden" name="id_mitra['+p.mitra.id+']" value="'+p.mitra.id+'" /> </td><td><input type="number" name="honor['+p.mitra.id+']" class="form-control" /></td></tr> ');
                                 });
                             }else{
                                 msg.forEach(function(p){
-                                    $('table tbody').append('<tr><td>'+p.pegawai.nama+'<input type="hidden" name="id_pegawai['+p.pegawai.id+']" value="'+p.pegawai.id+'" /> </td><td><input type="number" name="honor['+p.pegawai.id+']" class="form-control" /></td></tr> ');
+                                    $('table tbody').append('<tr><td>'+p.pegawai.nama+'<input type="hidden" name="id_pegawai['+p.pegawai.id+']" value="'+p.pegawai.id+'" /> </td><td><input type="number" name="translok['+p.pegawai.id+']" class="form-control" /></td></tr> ');
                                 });
                             }
                         }

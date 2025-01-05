@@ -11,7 +11,7 @@
       </div>
       <div class="ms-md-auto py-2 py-md-0">
 				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round">Edit Kegiatan</a>
-        <a href="{{url('kegiatan/edit-terlibat', $kegiatan->id)}}" class="btn btn-primary btn-round">Edit Pegawai & Mitra</a>
+        <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round">Perbarui Estimasi Honor</a>
       </div>
     </div>
 
@@ -58,26 +58,10 @@
 							</tr>
 							<tr>
 								<td>
-									<p>Satuan Honor <strong>Pengawasan</strong></p>
-								</td>
-								<td>
-									<p>: {{$kegiatan->satuan_honor_pengawasan}} </p>
-								</td>
-							</tr>
-							<tr>
-								<td>
 									<p>Honor <strong>Pengawasan</strong></p>
 								</td>
 								<td>
-									<p>: Rp {{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}} </p>
-								</td>
-							</tr>
-              <tr>
-								<td>
-									<p>Satuan Honor <strong>Pencacahan</strong></p>
-								</td>
-								<td>
-									<p>: {{$kegiatan->satuan_honor_pencacahan}} </p>
+									<p>: Rp {{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}} per {{$kegiatan->satuan_honor_pengawasan}}</p>
 								</td>
 							</tr>
 							<tr>
@@ -85,7 +69,7 @@
 									<p>Honor <strong>Pencacahan</strong></p>
 								</td>
 								<td>
-									<p>: Rp {{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} </p>
+									<p>: Rp {{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} per  {{$kegiatan->satuan_honor_pencacahan}}</p>
 								</td>
 							</tr>
 						</tbody>
@@ -137,6 +121,8 @@
                 <thead>
                   <tr>
                       <th>Nama Mitra</th>
+                      <th>Estimasi Honor Dari Kegiatan Ini</th>
+                      <th>Estimasi Total Honor Yang Didapat Setelah Kegiatan Ini</th>
                     <th style="width: 10%">Aksi</th>
                   </tr>
                 </thead>
@@ -165,6 +151,8 @@
                     </div>
                     <tr>
                         <th scope="row">{{$mitra->nama}}</th>
+                        <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
+                        <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         <td>
                             <div class="form-button-action">
                                 <button

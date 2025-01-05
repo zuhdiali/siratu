@@ -164,17 +164,16 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="form-group {{$errors->has('files[]') ? 'has-error has-feedback' : ''}}">
+                                    <div class="form-group {{$errors->has('file') ? 'has-error has-feedback' : ''}}">
                                         <label for="file">Foto Surat Masuk</label>
                                         <br>
                                         <input
                                             type="file"
                                             class="form-control"
                                             id="file"
-                                            name="files[]"
-                                            multiple
+                                            name="file"
                                         />
-                                        @if ($errors->has('files[]'))
+                                        @if ($errors->has('file'))
                                         <small class="form-text text-muted">{{ $errors->first('file') }}</small>
                                         @endif
                                     </div>

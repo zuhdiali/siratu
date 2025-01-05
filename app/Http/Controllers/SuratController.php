@@ -24,21 +24,21 @@ class SuratController extends Controller
 
     public function tugas()
     {
-        $surats = Surat::where('jenis_surat', 'tugas')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'tugas')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.tugas', ['surats' => $surats]);
     }
 
     public function permintaan()
     {
-        $surats = Surat::where('jenis_surat', 'permintaan')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'permintaan')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.permintaan', ['surats' => $surats]);
     }
 
     public function masuk()
     {
-        $surats = Surat::where('jenis_surat', 'masuk')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'masuk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         // $surats = $this->tambahInformasiSurat($surats);
         return view('surat.masuk', ['surats' => $surats]);
     }
@@ -46,20 +46,22 @@ class SuratController extends Controller
     public function rincianSuratMasuk($id)
     {
         $surat = Surat::find($id);
-        $surat->foto_surat_masuk = FotoSuratMasuk::where('id_surat', $id)->get();
-        return view('surat.rincian-surat-masuk', ['surat' => $surat]);
+        $file = './uploads/surat/' . $surat->file;
+        // $surat->foto_surat_masuk = FotoSuratMasuk::where('id_surat', $id)->get();
+        // return view('surat.rincian-surat-masuk', ['surat' => $surat]);
+        return response()->file($file);
     }
 
     public function keluar()
     {
-        $surats = Surat::where('jenis_surat', 'keluar')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'keluar')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.keluar', ['surats' => $surats]);
     }
 
     public function spd()
     {
-        $surats = Surat::where('jenis_surat', 'spd')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'spd')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         foreach ($surats as $surat) {
             $surat->pegawai = Pegawai::find($surat->pegawai_yang_bertugas);
@@ -69,14 +71,14 @@ class SuratController extends Controller
 
     public function sk()
     {
-        $surats = Surat::where('jenis_surat', 'sk')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'sk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.sk', ['surats' => $surats]);
     }
 
     public function spk()
     {
-        $surats = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'spk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.spk', ['surats' => $surats]);
     }
@@ -104,18 +106,28 @@ class SuratController extends Controller
                 'kode' => 'required',
                 'perihal' => 'required',
             ]);
+            $kegiatan = Kegiatan::find($request->id_kegiatan);
+            if ($kegiatan->honor_pengawasan == null || $kegiatan->honor_pencacahan == null) {
+                return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki honor pengawasan atau pencacahan.');
+            } else {
+                foreach ($kegiatan->mitra as $mitra) {
+                    if ($mitra->pivot->estimasi_honor == null) {
+                        return redirect()->back()->with('error', 'Ada mitra yang belum memiliki estimasi honor dari kegiatan yang dipilih.');
+                    }
+                }
+            }
         } else {
             $request->validate([
                 'dinas_surat_masuk' => 'required',
                 'no_surat_masuk' => 'required',
-
+                'file' => 'required|mimes:pdf',
             ]);
-            $totalFoto = count($request->file('files'));
-            for ($i = 0; $i < $totalFoto; $i++) {
-                $request->validate([
-                    'file.' . $i => 'mimes:png,jpg,jpeg,webp,svg',
-                ]);
-            }
+            // $totalFoto = count($request->file('files'));
+            // for ($i = 0; $i < $totalFoto; $i++) {
+            //     $request->validate([
+            //         'file.' . $i => 'mimes:png,jpg,jpeg,webp,svg',
+            //     ]);
+            // }
         }
         // dd($request->all());
         if ($jenis == 'spd') {
@@ -150,19 +162,28 @@ class SuratController extends Controller
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
             $surat->no_surat_masuk = $request->no_surat_masuk;
             $surat->save();
-            if ($request->has('files')) {
-                $i = 0;
-                foreach ($request->file('files') as $file) {
-                    $extension = $file->getClientOriginalExtension();
-                    $filename = date('Y-m-d') . '_' . time() . '_' . $i . '.' . $extension;
-                    $path = 'uploads/surat/';
-                    $file->move($path, $filename);
-                    $fotoSuratMasuk = new FotoSuratMasuk();
-                    $fotoSuratMasuk->id_surat = $surat->id;
-                    $fotoSuratMasuk->filename = $filename;
-                    $fotoSuratMasuk->save();
-                    $i++;
-                }
+            // if ($request->has('files')) {
+            //     $i = 0;
+            //     foreach ($request->file('files') as $file) {
+            //         $extension = $file->getClientOriginalExtension();
+            //         $filename = date('Y-m-d') . '_' . time() . '_' . $i . '.' . $extension;
+            //         $path = 'uploads/surat/';
+            //         $file->move($path, $filename);
+            //         $fotoSuratMasuk = new FotoSuratMasuk();
+            //         $fotoSuratMasuk->id_surat = $surat->id;
+            //         $fotoSuratMasuk->filename = $filename;
+            //         $fotoSuratMasuk->save();
+            //         $i++;
+            //     }
+            // }
+            if ($request->has('file')) {
+                $file = $request->file('file');
+                $extension = $file->getClientOriginalExtension();
+                $filename = date('Y-m-d') . '_' . time() . '.' . $extension;
+                $path = 'uploads/surat/';
+                $file->move($path, $filename);
+                $surat->file = $filename;
+                $surat->save();
             }
         }
 
@@ -265,7 +286,8 @@ class SuratController extends Controller
             return redirect()->back()->with('error', 'Silakan hubungi pegawai TU untuk menghapus nomor surat.');
         }
         $surat = Surat::find($id);
-        $surat->delete();
+        $surat->flag = 'Dihapus';
+        $surat->save();
         return redirect()->back()->with('success', 'Surat berhasil dihapus.');
     }
 

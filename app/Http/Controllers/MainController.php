@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\KegiatanMitra;
+use App\Models\KegiatanPegawai;
 use App\Models\Pembayaran;
 use App\Models\Mitra;
+use App\Models\Pegawai;
 use Illuminate\Support\Facades\Auth;
 
 class MainController extends Controller
@@ -50,13 +52,47 @@ class MainController extends Controller
     public function dashboard()
     {
         $mitraAktif = Mitra::where('flag', null)->count();
-        $mitras = Mitra::all();
+
+        // $mitras = Mitra::where('flag', null)->get();
+        // foreach ($mitras as $mitra) {
+        //     $kec_asal = $mitra->kec_asal;
+        //     $mitra->kec_asal = $this->konversiKodeKec($kec_asal);
+        //     $mitra->honor = $mitra->kegiatan()->sum('honor');
+        //     $mitra->estimasi_honor = $mitra->kegiatan()->sum('estimasi_honor');
+        // }
+
+        $bulan = 11;
+        $tahun = 2024;
+        $mitras = Mitra::with(['kegiatan' => function ($query) use ($bulan, $tahun) {
+            $query->whereMonth('tgl_selesai', $bulan)
+                ->whereYear('tgl_selesai', $tahun);
+        }])->where('flag', null)->get();
+        $test = [];
         foreach ($mitras as $mitra) {
-            $kec_asal = $mitra->kec_asal;
-            $mitra->kec_asal = $this->konversiKodeKec($kec_asal);
-            $mitra->honor = $mitra->kegiatan()->sum('honor');
+            $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
+            $mitra->jumlah_kegiatan = $mitra->kegiatan->count();
+            $mitra->estimasi_honor = $mitra->kegiatan->sum('estimasi_honor');
         }
         return view('dashboard.mitra', compact('mitraAktif', 'mitras'));
+    }
+
+    public function dashboardBulanan(Request $request)
+    {
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        $mitras = Mitra::with(['kegiatan' => function ($query) use ($bulan, $tahun) {
+            $query->whereMonth('tgl_selesai', $bulan)
+                ->whereYear('tgl_selesai', $tahun);
+        }])->where('flag', null)->get();
+        $test = [];
+        foreach ($mitras as $mitra) {
+            $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
+            $mitra->jumlah_kegiatan = $mitra->kegiatan->count();
+            $mitra->estimasi_honor = $mitra->kegiatan->sum('estimasi_honor');
+        }
+
+        return response()->json($mitras);
     }
 
     public function mitraKegiatanBelumDibayar($id_kegiatan)
@@ -70,11 +106,11 @@ class MainController extends Controller
 
     public function pegawaiKegiatanBelumDibayar($id_kegiatan)
     {
-        $mitra = KegiatanMitra::where('kegiatan_id', $id_kegiatan)->where('honor', '!=', null)->get();
-        foreach ($mitra as $m) {
-            $m->mitra = Mitra::find($m->mitra_id);
+        $pegawai = KegiatanPegawai::where('kegiatan_id', $id_kegiatan)->where('translok',  null)->get();
+        foreach ($pegawai as $m) {
+            $m->pegawai = Pegawai::find($m->pegawai_id);
         }
-        return response()->json($mitra);
+        return response()->json($pegawai);
     }
 
     private function konversiKodeKec($id)

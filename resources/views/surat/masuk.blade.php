@@ -122,9 +122,9 @@
                       <th scope="row">{{$surat->no_surat_masuk}}</th>
                       <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
                       <td>{{$surat->dinas_surat_masuk}}</td>
-                        <td>
-                          <a href="{{url('surat/detail/'.$surat->jenis_surat."/".$surat->id)}}" class="btn btn-link btn-primary">Lihat Surat</a>
-                        </td>
+                      <td>
+                        <a href="{{url('surat/detail/'.$surat->jenis_surat."/".$surat->id)}}" class="btn btn-link btn-primary" target="_blank">Lihat Surat</a>
+                      </td>
                       {{-- <td>
                         @if($surat->flag == null)
                         <span class="badge bg-success">Aktif</span>

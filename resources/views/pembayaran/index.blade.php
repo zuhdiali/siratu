@@ -89,7 +89,7 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batalkan</button>
-                            <form action="{{url('pembayaran/destroy/'.$pembayaran->id)}}">
+                            <form action="{{url('pembayaran/destroy/'.$pembayaran->bukti_pembayaran->tipe_pembayaran.'/'.$pembayaran->id)}}">
                             <button type="submit" class="btn btn-danger hapus-pembayaran" >Hapus Pembayaran</button>
                             </form>
                           </div>
@@ -125,20 +125,21 @@
                       </td>
                       <th scope="row">{{$pembayaran->kegiatan->nama}}</th>
                       <td>{{$pembayaran->bukti_pembayaran->tipe_pembayaran}}</td>
-                      <td>{{$pembayaran->mitra->nama}}</td>
-                      <td>Rp {{number_format($pembayaran->honor, 0, ",", ".")}}</td>
+                      @if ($pembayaran->mitra)
+                        <td>{{$pembayaran->mitra->nama}}</td>
+                        <td>Rp {{number_format($pembayaran->honor, 0, ",", ".")}}</td>
+                      @else
+                        <td>{{$pembayaran->pegawai->nama}}</td>
+                        <td>Rp {{number_format($pembayaran->translok, 0, ",", ".")}}</td>
+                      @endif
+                      
                       <td>
-                        <a href="{{asset('uploads/pembayaran/'.$pembayaran->bukti_pembayaran->bukti_pembayaran)}}" target="_blank">
-                          <img
-                            src="{{asset('uploads/pembayaran/'.$pembayaran->bukti_pembayaran->bukti_pembayaran)}}"
-                            alt="bukti_pembayaran"
-                            style="width: 50px"
-                          />
-                        </a>
+                          <a href="{{url('pembayaran/lihat-bukti/'.$pembayaran->bukti_pembayaran->id)}}" class="btn btn-link btn-primary" target="_blank">Lihat Bukti Bayar</a>
                       </td>
                       
                     </tr>
                   @endforeach
+                  
                 </tbody>
               </table>
             </div>

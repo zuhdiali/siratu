@@ -4,21 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Mitra;
 use App\Models\Kegiatan;
+use App\Models\Pegawai;
 use App\Models\Pembayaran;
 use App\Models\KegiatanMitra;
+use App\Models\KegiatanPegawai;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
 {
     public function index()
     {
-        $pembayarans = KegiatanMitra::where('honor', '!=', null)->get();
-        foreach ($pembayarans as $pembayaran) {
+        $pembayaran_mitras = KegiatanMitra::where('honor', '!=', null)->get();
+        $pembayaran_pegawais = KegiatanPegawai::where('translok', '!=', null)->get();
+        foreach ($pembayaran_mitras as $pembayaran) {
             $pembayaran->kegiatan = Kegiatan::find($pembayaran->kegiatan_id);
             $pembayaran->mitra = Mitra::find($pembayaran->mitra_id);
             $pembayaran->bukti_pembayaran = Pembayaran::find($pembayaran->bukti_pembayaran_id);
         }
-        // dd($pembayarans);
+        foreach ($pembayaran_pegawais as $pembayaran) {
+            $pembayaran->kegiatan = Kegiatan::find($pembayaran->kegiatan_id);
+            $pembayaran->pegawai = Pegawai::find($pembayaran->pegawai_id);
+            $pembayaran->bukti_pembayaran = Pembayaran::find($pembayaran->bukti_pembayaran_id);
+        }
+        $pembayarans = $pembayaran_mitras->merge($pembayaran_pegawais);
+        // dd($pembayaran_mitras);
         return view('pembayaran.index', compact('pembayarans'));
     }
 
@@ -28,12 +37,16 @@ class PembayaranController extends Controller
         return view('pembayaran.create', compact('kegiatans', 'jenis'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $jenis)
     {
+        if (!in_array($jenis, ['mitra', 'organik'])) {
+            return redirect()->route('pembayaran.index')
+                ->with('error', 'Jenis pembayaran tidak valid. Harus pilih antara Organik atau Mitra.');
+        }
         $request->validate([
             'id_kegiatan' => 'required',
             // 'nominal' => 'required|numeric',
-            'bukti_pembayaran' => 'required|mimes:jpeg,png,jpg,gif,svg',
+            'bukti_pembayaran' => 'required|mimes:pdf',
             // 'honor' => 'required|numeric',
         ]);
         // dd($request->all());
@@ -48,20 +61,39 @@ class PembayaranController extends Controller
         }
 
         $pembayaran->id_kegiatan = $request->id_kegiatan;
-        $pembayaran->save();
 
-        foreach ($request->honor as $key => $value) {
-            // dd($key, $value);
-            if ($value == null || $value == "") {
-                continue;
+        if ($jenis == 'mitra') {
+            $pembayaran->tipe_pembayaran = 'Mitra';
+            $pembayaran->save();
+            foreach ($request->honor as $key => $value) {
+                // dd($key, $value);
+                if ($value == null || $value == "") {
+                    continue;
+                }
+                $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
+                $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
+                // $kegiatan_mitra = new KegiatanMitra();
+                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
+                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
+                // $kegiatan_mitra->honor = $honor['nominal'];
+                $kegiatan->save();
             }
-            $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
-            $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
-            // $kegiatan_mitra = new KegiatanMitra();
-            // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
-            // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
-            // $kegiatan_mitra->honor = $honor['nominal'];
-            $kegiatan->save();
+        } else if ($jenis == 'organik') {
+            $pembayaran->tipe_pembayaran = 'Pegawai';
+            $pembayaran->save();
+            foreach ($request->translok as $key => $value) {
+                // dd($key, $value);
+                if ($value == null || $value == "") {
+                    continue;
+                }
+                $kegiatan->pegawai()->updateExistingPivot($key, ['translok' => $value]);
+                $kegiatan->pegawai()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
+                // $kegiatan_mitra = new KegiatanMitra();
+                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
+                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
+                // $kegiatan_mitra->honor = $honor['nominal'];
+                $kegiatan->save();
+            }
         }
 
         return redirect()->route('pembayaran.index')
@@ -71,9 +103,16 @@ class PembayaranController extends Controller
     public function edit($id)
     {
         $pembayaran = Pembayaran::find($id);
-        $pembayaran->mitra_dibayar = KegiatanMitra::where('bukti_pembayaran_id', $id)->get();
-        foreach ($pembayaran->mitra_dibayar as $m) {
-            $m->mitra = Mitra::find($m->mitra_id);
+        if ($pembayaran->tipe_pembayaran == 'Mitra') {
+            $pembayaran->mitra_dibayar = KegiatanMitra::where('bukti_pembayaran_id', $id)->get();
+            foreach ($pembayaran->mitra_dibayar as $m) {
+                $m->mitra = Mitra::find($m->mitra_id);
+            }
+        } else if ($pembayaran->tipe_pembayaran == 'Pegawai') {
+            $pembayaran->pegawai_dibayar = KegiatanPegawai::where('bukti_pembayaran_id', $id)->get();
+            foreach ($pembayaran->pegawai_dibayar as $m) {
+                $m->pegawai = Pegawai::find($m->pegawai_id);
+            }
         }
         $kegiatan = Kegiatan::find($pembayaran->id_kegiatan);
         // $pembayaran = KegiatanMitra::find($id);
@@ -96,7 +135,7 @@ class PembayaranController extends Controller
         $request->validate([
             // 'id_kegiatan' => 'required',
             // 'nominal' => 'required|numeric',
-            'bukti_pembayaran' => 'nullable|mimes:jpeg,png,jpg,gif,svg',
+            'bukti_pembayaran' => 'nullable|mimes:pdf',
             // 'id_mitra' => 'required',
             // 'id_mitra_sebelumnya' => 'required',
         ]);
@@ -113,15 +152,28 @@ class PembayaranController extends Controller
         }
         $pembayaran->save();
 
-        foreach ($request->honor as $key => $value) {
-            // dd($key, $value);
-            $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
-            $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $id]);
-            // $kegiatan_mitra = new KegiatanMitra();
-            // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
-            // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
-            // $kegiatan_mitra->honor = $honor['nominal'];
-            $kegiatan->save();
+        if ($pembayaran->tipe_pembayaran == 'Mitra') {
+            foreach ($request->honor as $key => $value) {
+                // dd($key, $value);
+                $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
+                $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $id]);
+                // $kegiatan_mitra = new KegiatanMitra();
+                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
+                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
+                // $kegiatan_mitra->honor = $honor['nominal'];
+                $kegiatan->save();
+            }
+        } else if ($pembayaran->tipe_pembayaran == 'Pegawai') {
+            foreach ($request->translok as $key => $value) {
+                // dd($key, $value);
+                $kegiatan->pegawai()->updateExistingPivot($key, ['translok' => $value]);
+                $kegiatan->pegawai()->updateExistingPivot($key, ['bukti_pembayaran_id' => $id]);
+                // $kegiatan_mitra = new KegiatanMitra();
+                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
+                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
+                // $kegiatan_mitra->honor = $honor['nominal'];
+                $kegiatan->save();
+            }
         }
 
         // $pembayaran_mitra_sebelumnya = KegiatanMitra::where('kegiatan_id', $pembayaran_mitra->kegiatan_id)->where('mitra_id', $pembayaran_mitra->mitra_id)->first();
@@ -165,14 +217,27 @@ class PembayaranController extends Controller
             ->with('success', 'Pembayaran berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy($jenis, $id)
     {
-        $pembayaran = KegiatanMitra::find($id);
-        $pembayaran->honor = null;
-        $pembayaran->bukti_pembayaran_id = null;
-        $pembayaran->save();
+        if ($jenis == 'Mitra') {
+            $pembayaran = KegiatanMitra::find($id);
+            $pembayaran->honor = null;
+            $pembayaran->bukti_pembayaran_id = null;
+            $pembayaran->save();
+        } else if ($jenis == 'Pegawai') {
+            $pembayaran = KegiatanPegawai::find($id);
+            $pembayaran->translok = null;
+            $pembayaran->bukti_pembayaran_id = null;
+            $pembayaran->save();
+        }
 
         return redirect()->route('pembayaran.index')
             ->with('success', 'Pembayaran berhasil dihapus.');
+    }
+
+    public function lihatBukti($id)
+    {
+        $pembayaran = Pembayaran::find($id);
+        return response()->file(('./uploads/pembayaran/' . $pembayaran->bukti_pembayaran));
     }
 }

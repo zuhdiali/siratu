@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Kegiatan;
 use App\Models\Pegawai;
 use App\Models\Mitra;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class KegiatanController extends Controller
@@ -116,7 +117,37 @@ class KegiatanController extends Controller
         if ($kegiatan->honor_pengawasan == null) {
             $kegiatan->honor_pengolahan = 0;
         }
+        // foreach ($kegiatan->mitra as $mitra) {
+        //     $mitra->pjk = Pegawai::find($mitra->id_pjk);
+        // }
+
+
+        $currentMonth = Carbon::parse($kegiatan->tgl_selesai)->month;
+        $currentYear = Carbon::parse($kegiatan->tgl_selesai)->year;
+
+        // Total estimasi honor dari kegiatan lain untuk setiap mitra, dengan filter bulan dan tahun ini
+        $mitraEstimasiHonors = [];
+        foreach ($kegiatan->mitra as $mitra) {
+            $estimasiDariLainnya = $mitra->kegiatan()
+                ->join('kegiatans as k2', 'k2.id', '=', 'kegiatan_mitras.kegiatan_id') // Alias tabel kegiatans ke 'k2'
+                ->where('kegiatan_mitras.kegiatan_id', '<>', $id) // Filter kegiatan lain
+                ->whereMonth('k2.tgl_selesai', $currentMonth) // Filter bulan sekarang (kolom 'tgl_selesai' dari alias 'k2')
+                ->whereYear('k2.tgl_selesai', $currentYear) // Filter tahun sekarang
+                ->selectRaw('SUM(CASE 
+                                WHEN kegiatan_mitras.honor IS NOT NULL THEN kegiatan_mitras.honor 
+                                ELSE kegiatan_mitras.estimasi_honor 
+                            END) as total_honor') // Pilih honor jika ada, estimasi_honor jika tidak ada
+                ->value('total_honor'); // Ambil nilai total honor
+
+            $mitraEstimasiHonors[] = [
+                'id' => $mitra->id,
+                'nama' => $mitra->nama,
+                'estimasi_honor_kegiatan_ini' => $mitra->pivot->honor ?? $mitra->pivot->estimasi_honor,
+                'estimasi_total_honor' => ($mitra->pivot->honor ?? $mitra->pivot->estimasi_honor) + $estimasiDariLainnya,
+            ];
+        }
         $kegiatan->pjk = Pegawai::find($kegiatan->id_pjk);
+        dd($mitraEstimasiHonors);
         return view('kegiatan.show', ['kegiatan' => $kegiatan]);
     }
 
@@ -150,5 +181,21 @@ class KegiatanController extends Controller
         $kegiatan->pegawai()->sync($request->pegawai);
         $kegiatan->mitra()->sync($request->mitra);
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan terlibat berhasil diubah.');
+    }
+
+    public function estimasiHonor($id)
+    {
+        $kegiatan = Kegiatan::find($id);
+        return view('kegiatan.estimasi-honor', ['kegiatan' => $kegiatan]);
+    }
+
+    public function estimasiHonorPost(Request $request, $id)
+    {
+        $kegiatan = Kegiatan::find($id);
+        foreach ($request->estimasi_honor as $key => $value) {
+            $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $value]);
+        }
+
+        return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Estimasi honor berhasil diperbarui.');
     }
 }

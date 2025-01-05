@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/', [MainController::class, 'index'])->name('index');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::post('/dashboard-bulanan', [MainController::class, 'dashboardBulanan'])->name('dashboard-bulanan');
 
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/', [PegawaiController::class, 'user'])->name('index');
@@ -58,10 +59,11 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
         Route::get('/', [PembayaranController::class, 'index'])->name('index');
         Route::get('/create/{jenis}', [PembayaranController::class, 'create'])->name('create');
-        Route::post('/store', [PembayaranController::class, 'store'])->name('store');
+        Route::post('/store/{jenis}', [PembayaranController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [PembayaranController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [PembayaranController::class, 'update'])->name('update');
-        Route::get('/destroy/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
+        Route::get('/destroy/{jenis}/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
+        Route::get('/lihat-bukti/{id}', [PembayaranController::class, 'lihatBukti'])->name('lihat-bukti');
     });
 
     Route::prefix('mitra')->name('mitra.')->group(function () {
@@ -83,6 +85,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit-terlibat/{id}', [KegiatanController::class, 'editTerlibat'])->name('edit.terlibat');
         Route::post('/update-terlibat/{id}', [KegiatanController::class, 'updateTerlibat'])->name('update.terlibat');
         Route::get('/destroy/{id}', [KegiatanController::class, 'destroy'])->name('destroy');
+
+        Route::get('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonor']);
+        Route::post('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonorPost']);
 
         Route::get('/mitra-belum-dibayar/{id}', [MainController::class, 'mitraKegiatanBelumDibayar']);
         Route::get('/pegawai-belum-dibayar/{id}', [MainController::class, 'pegawaiKegiatanBelumDibayar']);

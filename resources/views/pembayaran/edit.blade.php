@@ -108,7 +108,7 @@
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                        <h4 class="card-title">Mitra Yang Dibayarkan</h4>
+                                        <h4 class="card-title">@if($pembayaran->tipe_pembayaran == 'Mitra') Mitra @else Pegawai @endif Yang Dibayarkan</h4>
                                         </div>
                                         <div class="card-body">
                                         <div class="table-responsive">
@@ -118,21 +118,33 @@
                                             >
                                             <thead>
                                                 <tr>
-                                                <th>Nama Mitra</th>
+                                                <th>Nama @if($pembayaran->tipe_pembayaran == 'Mitra') Mitra @else Pegawai @endif</th>
                                                 <th>Honor</th>
                                                 </tr>
                                             </thead>
                                             
                                             <tbody>
-                                                @foreach($pembayaran->mitra_dibayar as $m)
-                                                <tr>
-                                                    <td>{{$m->mitra->nama}} <input type="hidden" name="id_mitra[{{$m->mitra->id}}]" value="{{$m->mitra->id}}" /> </td>
-                                                    <td>
-                                                        <input type="number" name="honor[{{$m->mitra->id}}]" class="form-control" value="{{$m->honor}}" />
-                                                        <small class="form-text text-muted">Honor sebelumnya: Rp. {{number_format($m->honor, 0, ',', '.')}}</small>
-                                                    </td>
-                                                </tr>
-                                                @endforeach
+                                                @if($pembayaran->tipe_pembayaran == 'Mitra')
+                                                    @foreach($pembayaran->mitra_dibayar as $m)
+                                                    <tr>
+                                                        <td>{{$m->mitra->nama}} <input type="hidden" name="id_mitra[{{$m->mitra->id}}]" value="{{$m->mitra->id}}" /> </td>
+                                                        <td>
+                                                            <input type="number" name="honor[{{$m->mitra->id}}]" class="form-control" value="{{$m->honor}}" />
+                                                            <small class="form-text text-muted">Honor sebelumnya: Rp. {{number_format($m->honor, 0, ',', '.')}}</small>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                @else
+                                                    @foreach($pembayaran->pegawai_dibayar as $p)
+                                                    <tr>
+                                                        <td>{{$p->pegawai->nama}} <input type="hidden" name="id_pegawai[{{$p->pegawai->id}}]" value="{{$p->pegawai->id}}" /> </td>
+                                                        <td>
+                                                            <input type="number" name="translok[{{$p->pegawai->id}}]" class="form-control" value="{{$p->translok}}" />
+                                                            <small class="form-text text-muted">Honor sebelumnya: Rp. {{number_format($p->translok, 0, ',', '.')}}</small>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                @endif
                                             </tbody>
                                             </table>
                                         </div>

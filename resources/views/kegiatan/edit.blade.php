@@ -8,13 +8,23 @@
 @section('content')
 <div class="container">
     <div class="page-inner">
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <form action="{{url('kegiatan/update', $kegiatan->id)}}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
-                            <div class="card-title">Edit Kegiatan</div>
+                            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
+                                <div>
+                                    <h3 class="fw-bold mb-3">Edit Kegiatan</h3>
+                                </div>
+                                <div class="ms-md-auto py-2 py-md-0">
+                                    <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round">Edit Estimasi Honor  
+                                        <i class="icon-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
