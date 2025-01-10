@@ -75,6 +75,7 @@
                 <tbody>
                   @foreach($surats as $surat)
                     <!-- Modal -->
+                    @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
                     <div class="modal fade" id="{{'exampleModal'.$surat->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$surat->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -94,8 +95,10 @@
                         </div>
                       </div>
                     </div>
+                    @endif
                     <tr>
                       <td>
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
                         <div class="form-button-action">
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
@@ -120,6 +123,7 @@
                             <i class="fa fa-times"></i>
                           </button>
                         </div>
+                        @endif
                       </td>
                       <th scope="row">{{$surat->nomor_surat}}</th>
                       <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>

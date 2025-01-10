@@ -23,16 +23,18 @@ class KegiatanController extends Controller
                 $kegiatan->honor_pengolahan = 0;
             }
             $kegiatan->pjk = Pegawai::find($kegiatan->id_pjk);
+            $kodeTim = $kegiatan->tim;
+            $kegiatan->tim = $this->konversiTim($kodeTim);
         }
         return view('kegiatan.index', ['kegiatans' => $kegiatans, 'kegiatanTahunIni' => $kegiatanTahunIni]);
     }
 
     public function create()
     {
+        $mitras = Mitra::where('flag', null)->orderBy('nama', 'asc')->get();
         $pegawais = Pegawai::where('flag', null)->orderBy('nama', 'asc')->get();
-        // $mitras = Mitra::orderBy('nama', 'asc')->get();
         // return view('kegiatan.create', ['kegiatans' => $kegiatans, 'mitras' => $mitras]);
-        return view('kegiatan.create', ['pegawais' => $pegawais]);
+        return view('kegiatan.create', ['pegawais' => $pegawais, 'mitras' => $mitras]);
     }
 
     public function store(Request $request)
@@ -58,6 +60,13 @@ class KegiatanController extends Controller
         $kegiatan->honor_pencacahan = $request->honor_pencacahan;
         $kegiatan->id_pjk = $request->id_pjk;
         $kegiatan->save();
+        if ($request->pegawai != null) {
+            $kegiatan->pegawai()->attach($request->pegawai);
+        }
+        if ($request->mitra != null) {
+            $kegiatan->mitra()->attach($request->mitra);
+        }
+
 
         if (!$kegiatan->wasRecentlyCreated) {
             return redirect()->route('kegiatan.create')->with('error', 'Gagal.');
@@ -69,7 +78,7 @@ class KegiatanController extends Controller
     public function edit($id)
     {
         $kegiatan = Kegiatan::find($id);
-        $mitras = Mitra::orderBy('nama', 'asc')->get();
+        $mitras = Mitra::where('flag', null)->orderBy('nama', 'asc')->get();
         $pegawais = Pegawai::where('flag', null)->orderBy('nama', 'asc')->get();
         return view('kegiatan.edit', ['kegiatan' => $kegiatan, 'pegawais' => $pegawais, 'mitras' => $mitras]);
     }
@@ -197,5 +206,34 @@ class KegiatanController extends Controller
         }
 
         return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Estimasi honor berhasil diperbarui.');
+    }
+
+    private function konversiTim($kodeTim)
+    {
+        $tim = "";
+        switch ($kodeTim) {
+            case '11011':
+                $tim = "Umum";
+                break;
+            case '11012':
+                $tim = "Sosial";
+                break;
+            case '11013':
+                $tim = "Produksi";
+                break;
+            case '11014':
+                $tim = "Distribusi";
+                break;
+            case '11015':
+                $tim = "Neraca";
+                break;
+            case '11016':
+                $tim = "IPDS";
+                break;
+            default:
+                # code...
+                break;
+        }
+        return $tim;
     }
 }

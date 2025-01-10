@@ -2,6 +2,8 @@
 
 @section('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{asset('select2/css/select2.min.css')}}" />
+    <link rel="stylesheet" href="{{asset('select2/css/select2-bootstrap-5-theme.min.css')}}" />
 @endsection
 
 @section('content')
@@ -81,7 +83,7 @@
                                         >
                                             <option value="">(Pilih salah satu)</option>
                                             @foreach ($pegawais as $item)
-                                                <option value="{{$item->id}}" {{ old('id_pjk') == $item->id ? 'selected' : ''}}>{{$item->nama}}</option>
+                                                <option value="{{$item->id}}" {{ old('id_pjk') ? (old('id_pjk') == $item->id ? 'selected' : '') : (Auth::user()->id == $item->id ? 'selected' : '')}}>{{$item->nama}}</option>
                                             @endforeach
                                           
                                         </select>
@@ -92,6 +94,29 @@
                                         </small>
                                         @endif
                                     </div>
+
+                                    <div class="form-group  {{$errors->has('tim') ? 'has-error has-feedback' : ''}}">
+                                        <label for="tim"
+                                          >Tim</label
+                                        >
+                                        <select
+                                          class="form-select"
+                                          id="tim"
+                                          name="tim"
+                                        >
+                                          <option value="">(Pilih salah satu)</option>
+                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : (Auth::user()->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : (Auth::user()->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : (Auth::user()->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : (Auth::user()->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : (Auth::user()->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : (Auth::user()->tim == "11016" ? 'selected' : '')}}>IPDS</option>
+                                        </select>
+                                        @if ($errors->has('tim'))
+                                        <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
+                                        @endif
+                                    </div>
+
                                 </div>
 
                                 <div class="col-md-6">
@@ -184,14 +209,76 @@
                                 </div>
 
                             </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <hr />
+                                    <div class="{{$errors->has('pegawai[]') ? 'has-error has-feedback' : ''}}">
+                                        <label for="pegawai[]" >Pegawai Terlibat</label>
+                                        <select class="form-select" id="pegawai" name="pegawai[]" multiple="multiple">
+                                            @foreach ($pegawais as $item)
+                                            <option value="{{$item->id}}">
+                                                {{$item->nama}}</option>
+                                                {{-- <option value="{{$item->id}}">{{$item->nama}}</option> --}}
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('pegawai[]'))
+                                        <small class="form-text text-muted">{{ $errors->first('pegawai[]') }}</small>
+                                        @else
+                                        <small class="form-text text-muted">
+                                        </small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <hr />
+                                    <div class="{{$errors->has('mitra[]') ? 'has-error has-feedback' : ''}}">
+                                        <label for="mitra[]">Mitra Terlibat</label>
+                                        <select class=" form-select" id="mitra" name="mitra[]" multiple="multiple">
+                                            @foreach ($mitras as $item)
+                                            <option value="{{$item->id}}" >
+                                                {{$item->nama}}</option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('mitra[]'))
+                                        <small class="form-text text-muted">{{ $errors->first('mitra[]') }}</small>
+                                        @else
+                                        <small class="form-text text-muted">
+                                        </small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-action">
                             <button type="submit" class="btn btn-success">Tambah Kegiatan</button>
                         </div>
                     </form>
                 </div>
+
             </div>
         </div>
+
+        
     </div>
 </div>
+@endsection
+
+@section('script')
+<script src="{{asset('select2/js/select2.full.min.js')}}"></script>
+<script>
+    $( '#pegawai' ).select2({
+        theme: "bootstrap-5",
+        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        placeholder: $( this ).data( 'placeholder' ),
+        closeOnSelect: false,
+    }  );
+
+    $( '#mitra' ).select2( {
+        theme: "bootstrap-5",
+        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        placeholder: $( this ).data( 'placeholder' ),
+        closeOnSelect: false,
+    } );
+</script>
 @endsection

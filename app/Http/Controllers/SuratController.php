@@ -86,7 +86,7 @@ class SuratController extends Controller
     public function create($jenis)
     {
         // BARIS KODE DI BAWAH INI HARUS DIGANTI
-        $kegiatans = Kegiatan::all();
+        $kegiatans = Kegiatan::where('tim', Auth::user()->tim)->orWhere('id_pjk', Auth::user()->id)->get();
         // BARIS KODE DI ATAS INI HARUS DIGANTI
         // dd($kegiatans);
         $noTerakhir = $this->getNoSuratTerakhir($jenis);
@@ -152,15 +152,17 @@ class SuratController extends Controller
             $surat->pegawai_yang_bertugas = $request->pegawai_yang_bertugas;
         }
 
+        // YANG DI BAWAH INI HARUS DIGANTI
+        $surat->id_pembuat_surat = Auth::user()->id;
+        // $surat->id_pembuat_surat = 16; // ganti dengan id user yang login
+        // YANG DI ATAS INI HARUS DIGANTI
+
         if ($jenis != 'masuk') {
             $noTerakhir = $this->getNoSuratTerakhir($jenis);
             $surat->nomor_surat = $this->generateNomorSurat($request->tim, $request->kode, $jenis, $noTerakhir);
             $surat->no_terakhir = $noTerakhir + 1;
             $surat->id_kegiatan = $request->id_kegiatan;
-            // YANG DI BAWAH INI HARUS DIGANTI
-            $surat->id_pembuat_surat = Auth::user()->id;
-            // $surat->id_pembuat_surat = 16; // ganti dengan id user yang login
-            // YANG DI ATAS INI HARUS DIGANTI
+
             $surat->save();
         } else {
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
@@ -207,8 +209,9 @@ class SuratController extends Controller
     public function edit($jenis, $id)
     {
         // BARIS KODE DI BAWAH INI HARUS DIGANTI
-        $kegiatans = Kegiatan::all();
+        $kegiatans = Kegiatan::where('tim', Auth::user()->tim)->orWhere('id_pjk', Auth::user()->id)->get();
         // BARIS KODE DI ATAS INI HARUS DIGANTI
+        // dd($kegiatans);
 
         $surat = Surat::find($id);
         $kamusSuratUmum = KamusSurat::where('tim', '11011')->get();
@@ -217,6 +220,17 @@ class SuratController extends Controller
         $pecahanSurat = explode("/", $surat->nomor_surat);
         $surat->tim = $pecahanSurat[1];
         $surat->kode_surat = $pecahanSurat[2];
+        if ($jenis == 'spd') {
+            $id = $surat->pegawai_yang_bertugas;
+            $surat->pegawai_yang_bertugas = Pegawai::find($id);
+        }
+        if ($jenis != 'keluar') {
+            $surat->bulan = $pecahanSurat[3];
+            $surat->tahun = $pecahanSurat[4];
+        } else {
+            $surat->tahun = $pecahanSurat[3];
+        }
+
         $opsiSuratAwal = KamusSurat::where('tim', $surat->tim)->get();
         $kamusSuratTeknis = KamusSurat::where('tim', '11012')->orderBy('kode_surat_gabungan', 'desc')->get();
         $noTerakhir = $surat->no_terakhir;
@@ -237,8 +251,6 @@ class SuratController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'id_kegiatan' => 'required',
-            'tim' => 'required',
             'kode' => 'required',
             'perihal' => 'required',
         ]);
@@ -249,7 +261,7 @@ class SuratController extends Controller
             $request->validate([
                 'dinas_surat_masuk' => 'required',
                 'no_surat_masuk' => 'required',
-                'file' => 'nullable|mimes:png,jpg,jpeg,webp,svg',
+                'file' => 'nullable|mimes:pdf',
             ]);
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
             $surat->no_surat_masuk = $request->no_surat_masuk;
@@ -275,8 +287,7 @@ class SuratController extends Controller
             $surat->pegawai_yang_bertugas = $request->pegawai_yang_bertugas;
         }
         $noTerakhir = $surat->no_terakhir;
-        $surat->nomor_surat = $this->generateNomorSurat($request->tim, $request->kode, $jenis, $noTerakhir - 1);
-        $surat->id_kegiatan = $request->id_kegiatan;
+        $surat->nomor_surat = $this->generateNomorSurat($surat->tim, $request->kode, $jenis, $noTerakhir - 1);
         $surat->perihal = $request->perihal;
         $surat->save();
 
@@ -285,11 +296,13 @@ class SuratController extends Controller
 
     public function destroy($id)
     {
-        // tambahkan validasi jik yang login bukan admin maka tidak bisa menghapus
-        if (Auth::user()->role != 'Admin') {
-            return redirect()->back()->with('error', 'Silakan hubungi pegawai TU untuk menghapus nomor surat.');
-        }
         $surat = Surat::find($id);
+        // tambahkan validasi jik yang login bukan admin maka tidak bisa menghapus
+        if ((now()->diffInDays($surat->created_at) > 7)) {
+            if ((Auth::user()->role != 'Admin')) {
+                return redirect()->back()->with('error', 'Silakan hubungi pegawai TU untuk menghapus nomor surat.');
+            }
+        }
         $surat->flag = 'Dihapus';
         $surat->save();
         return redirect()->back()->with('success', 'Surat berhasil dihapus.');
@@ -322,6 +335,8 @@ class SuratController extends Controller
         $noSurat = "";
         if ($jenis == "spd") {
             $noSurat =  str_pad($noTerakhir + 1, 4, "0", STR_PAD_LEFT) . "/" . $tim . "/" . $kode . "/" . date("m") . "/" . date("Y");
+        } else if ($jenis == "keluar") {
+            $noSurat = "B-" . str_pad($noTerakhir + 1, 4, "0", STR_PAD_LEFT) . "/" . $tim . "/" . $kode . "/" . date("Y");
         } else {
             $noSurat = "B-" . str_pad($noTerakhir + 1, 4, "0", STR_PAD_LEFT) . "/" . $tim . "/" . $kode . "/" . date("m") . "/" . date("Y");
         }

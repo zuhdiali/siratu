@@ -103,6 +103,28 @@
                                         </small>
                                         @endif
                                     </div>
+
+                                    <div class="form-group  {{$errors->has('tim') ? 'has-error has-feedback' : ''}}">
+                                        <label for="tim"
+                                          >Tim</label
+                                        >
+                                        <select
+                                          class="form-select"
+                                          id="tim"
+                                          name="tim"
+                                        >
+                                          <option value="">(Pilih salah satu)</option>
+                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : ($kegiantan->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : ($kegiantan->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : ($kegiantan->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : ($kegiantan->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : ($kegiantan->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : ($kegiantan->tim == "11016" ? 'selected' : '')}}>IPDS</option>
+                                        </select>
+                                        @if ($errors->has('tim'))
+                                        <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
+                                        @endif
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -126,7 +148,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pengawasan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            Satuan honor bisa dikosongkan
+                                            {{-- Satuan honor bisa dikosongkan --}}
                                         </small>
                                         @endif
                                     </div>
@@ -145,7 +167,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('honor_pengawasan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            (isian honor dapat dikosongkan jika satuan honor belum dipilih)
+                                            {{-- (isian honor dapat dikosongkan jika satuan honor belum dipilih) --}}
                                         </small>
                                         @endif
                                     </div> 
@@ -169,7 +191,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pencacahan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            Satuan honor bisa dikosongkan
+                                            {{-- Satuan honor bisa dikosongkan --}}
                                         </small>
                                         @endif
                                     </div>
@@ -188,7 +210,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('honor_pencacahan') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
-                                            (isian honor dapat dikosongkan jika satuan honor belum dipilih)
+                                            {{-- (isian honor dapat dikosongkan jika satuan honor belum dipilih) --}}
                                         </small>
                                         @endif
                                     </div> 

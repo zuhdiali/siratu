@@ -19,7 +19,8 @@ class Kegiatan extends Model
         'satuan_honor_pencacahan',
         'honor_pencacahan',
         'flag_pembayaran',
-        'id_pjk'
+        'id_pjk',
+        'tim',
     ];
 
     public function mitra(): BelongsToMany

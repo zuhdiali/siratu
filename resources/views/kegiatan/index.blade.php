@@ -56,14 +56,13 @@
                   <tr>
                     <th style="width: 10%">Aksi</th>
                     <th>Nama Kegiatan</th>
+                    <th>Tim</th>
                     <th>PJK</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Selesai</th>
                     <th>Jumlah Mitra</th>
-                    <th>Satuan Honor (Pengawasan)</th>
-                    <th>Honor / Satuan (Pengawasan)</th>
-                    <th>Satuan Honor (Pencacahan)</th>
-                    <th>Honor / Satuan (Pencacahan)</th>
+                    <th>Honor (Pengawasan)</th>
+                    <th>Honor (Pencacahan)</th>
                     <th>Detil Kegiatan</th>
                   </tr>
                 </thead>
@@ -71,14 +70,13 @@
                   <tr>
                     <th>Aksi</th>
                     <th>Nama Kegiatan</th>
+                    <th>Tim</th>
                     <th>PJK</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Selesai</th>
                     <th>Jumlah Mitra</th>
-                    <th>Satuan Honor (Pengawasan)</th>
-                    <th>Honor / Satuan (Pengawasan)</th>
-                    <th>Satuan Honor (Pencacahan)</th>
-                    <th>Honor / Satuan (Pencacahan)</th>
+                    <th>Honor (Pengawasan)</th>
+                    <th>Honor (Pencacahan)</th>
                     <th>Detil Kegiatan</th>
                   </tr>
                 </tfoot>
@@ -132,14 +130,13 @@
                         </div>
                       </td>
                       <th scope="row">{{$kegiatan->nama}}</th>
+                      <td>{{$kegiatan->tim}}</td>
                       <td>{{$kegiatan->pjk->nama}}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d M Y') }}</td>
                       <td>{{$kegiatan->mitra->count()}}</td>
-                      <td>{{$kegiatan->satuan_honor_pengawasan}}</td>
-                      <td>{{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}}</td>
-                      <td>{{$kegiatan->satuan_honor_pencacahan}}</td>
-                      <td>{{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}}</td>
+                      <td>{{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pengawasan}}</td>
+                      <td>{{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pencacahan}}</td>
                       <td>
                         <a href="{{url('kegiatan/show', $kegiatan->id)}}" class="btn btn-primary btn-border btn-round">Detil Kegiatan</a>
                       </td>
