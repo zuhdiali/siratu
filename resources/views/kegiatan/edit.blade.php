@@ -114,12 +114,12 @@
                                           name="tim"
                                         >
                                           <option value="">(Pilih salah satu)</option>
-                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : ($kegiantan->tim == "11011" ? 'selected' : '')}}>Umum</option>
-                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : ($kegiantan->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
-                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : ($kegiantan->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
-                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : ($kegiantan->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
-                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : ($kegiantan->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : ($kegiantan->tim == "11016" ? 'selected' : '')}}>IPDS</option>
+                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : ($kegiatan->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : ($kegiatan->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : ($kegiatan->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : ($kegiatan->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : ($kegiatan->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : ($kegiatan->tim == "11016" ? 'selected' : '')}}>IPDS</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>

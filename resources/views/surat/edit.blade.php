@@ -88,10 +88,10 @@
                                           data-placeholder="Pilih salah satu"
                                           disabled
                                         >
-                                          <option value="">(Pilih salah satu)</option>
-                                         @foreach($kegiatans as $k)
-                                            <option value="{{$k->id}}" {{$surat->id_kegiatan == $k->id ? 'selected' : ''}}>{{$k->nama}}</option>
-                                        @endforeach
+                                        <option value="">(Pilih salah satu)</option>
+                                            {{-- @foreach($kegiatans as $k) --}}
+                                                <option value="{{$kegiatan->id}}" {{$surat->id_kegiatan == $kegiatan->id ? 'selected' : ''}}>{{$kegiatan->nama}}</option>
+                                            {{-- @endforeach --}}
                                         </select>
                                         @if ($errors->has('id_kegiatan'))
                                         <small class="form-text text-muted">{{ $errors->first('id_kegiatan') }}</small>

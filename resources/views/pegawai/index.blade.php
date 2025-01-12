@@ -79,6 +79,7 @@
                 <tbody>
                   @foreach($pegawais as $pegawai)
                     <!-- Modal -->
+                    @if(Auth::user()->id == $pegawai->id || Auth::user()->role == 'Admin')
                     <div class="modal fade" id="{{'exampleModal'.$pegawai->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$pegawai->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -98,8 +99,10 @@
                         </div>
                       </div>
                     </div>
+                    @endif
                     <tr>
                       <td>
+                        @if(Auth::user()->id == $pegawai->id || Auth::user()->role == 'Admin')
                         <div class="form-button-action">
                           <form action="{{url('pegawai/edit', $pegawai->id)}}">
                             <button
@@ -124,6 +127,7 @@
                             <i class="fa fa-times"></i>
                           </button>
                         </div>
+                        @endif
                       </td>
                       <th scope="row">{{$pegawai->nama}}</th>
                       <td>{{$pegawai->username}}</td>

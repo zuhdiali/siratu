@@ -41,12 +41,13 @@ class KegiatanController extends Controller
     {
         // Validate the request...
         $request->validate([
-            'nama' => 'required|max:100',
+            'nama' => 'required|max:254',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
             'honor_pengawasan' => 'nullable|numeric',
             'honor_pencacahan' => 'nullable|numeric',
             'id_pjk' => 'required',
+            'tim' => 'required',
         ]);
 
 
@@ -59,6 +60,7 @@ class KegiatanController extends Controller
         $kegiatan->satuan_honor_pencacahan = $request->satuan_honor_pencacahan;
         $kegiatan->honor_pencacahan = $request->honor_pencacahan;
         $kegiatan->id_pjk = $request->id_pjk;
+        $kegiatan->tim = $request->tim;
         $kegiatan->save();
         if ($request->pegawai != null) {
             $kegiatan->pegawai()->attach($request->pegawai);
@@ -88,13 +90,14 @@ class KegiatanController extends Controller
         // dd($request->all());
         // Validate the request...
         $request->validate([
-            'nama' => 'required|max:100',
+            'nama' => 'required|max:254',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date',
             // 'satuan_honor' => 'required',
             'honor_pengawasan' => 'nullable|numeric',
             'honor_pencacahan' => 'nullable|numeric',
             'id_pjk' => 'required',
+            'tim' => 'required',
         ]);
 
         try {
@@ -107,6 +110,7 @@ class KegiatanController extends Controller
             $kegiatan->satuan_honor_pencacahan = $request->satuan_honor_pencacahan;
             $kegiatan->honor_pencacahan = $request->honor_pencacahan;
             $kegiatan->id_pjk = $request->id_pjk;
+            $kegiatan->tim = $request->tim;
             $kegiatan->pegawai()->sync($request->pegawai);
             $kegiatan->mitra()->sync($request->mitra);
             $kegiatan->save();

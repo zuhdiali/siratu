@@ -196,7 +196,7 @@
                   {{-- @endif --}}
                   
 
-                  @if (Auth::user()->role == 'Admin')
+                  
                   
                   <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -211,7 +211,8 @@
                         <p>Manajemen Pegawai</p>
                     </a>
                   </li>
-
+                  
+                  @if (Auth::user()->role == 'Admin')
                   <li class="nav-item {{ str_contains(Request::path(), 'mitra') ? 'active' : ''  }}">
                     <a href="{{route('mitra.index')}}">
                       <i class="fas fa-users"></i>

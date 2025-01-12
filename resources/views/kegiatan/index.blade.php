@@ -83,6 +83,7 @@
                 <tbody>
                   @foreach($kegiatans as $kegiatan)
                     <!-- Modal -->
+                    @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk == Auth::user()->id))
                     <div class="modal fade" id="{{'exampleModal'.$kegiatan->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$kegiatan->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -102,8 +103,10 @@
                         </div>
                       </div>
                     </div>
+                    @endif
                     <tr>
                       <td>
+                        @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk  == Auth::user()->id))
                         <div class="form-button-action">
                           <form action="{{url('kegiatan/edit', $kegiatan->id)}}">
                             <button
@@ -128,8 +131,9 @@
                             <i class="fa fa-times"></i>
                           </button>
                         </div>
+                        @endif
                       </td>
-                      <th scope="row">{{$kegiatan->nama}}</th>
+                      <th scope="row">{{(strlen($kegiatan->nama)>90 ? substr($kegiatan->nama, 0, 90) . '...' : $kegiatan->nama)}}</th>
                       <td>{{$kegiatan->tim}}</td>
                       <td>{{$kegiatan->pjk->nama}}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}</td>

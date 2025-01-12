@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Kegiatan;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FotoSuratMasuk;
+use App\Models\KegiatanPegawai;
 
 class SuratController extends Controller
 {
@@ -24,21 +25,21 @@ class SuratController extends Controller
 
     public function tugas()
     {
-        $surats = Surat::where('jenis_surat', 'tugas')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'tugas')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.tugas', ['surats' => $surats]);
     }
 
     public function permintaan()
     {
-        $surats = Surat::where('jenis_surat', 'permintaan')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'permintaan')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.permintaan', ['surats' => $surats]);
     }
 
     public function masuk()
     {
-        $surats = Surat::where('jenis_surat', 'masuk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'masuk')->where('flag', null)->orderBy('created_at', 'desc')->get();
         // $surats = $this->tambahInformasiSurat($surats);
         return view('surat.masuk', ['surats' => $surats]);
     }
@@ -54,14 +55,14 @@ class SuratController extends Controller
 
     public function keluar()
     {
-        $surats = Surat::where('jenis_surat', 'keluar')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'keluar')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.keluar', ['surats' => $surats]);
     }
 
     public function spd()
     {
-        $surats = Surat::where('jenis_surat', 'spd')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'spd')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         foreach ($surats as $surat) {
             $surat->pegawai = Pegawai::find($surat->pegawai_yang_bertugas);
@@ -71,14 +72,14 @@ class SuratController extends Controller
 
     public function sk()
     {
-        $surats = Surat::where('jenis_surat', 'sk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'sk')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.sk', ['surats' => $surats]);
     }
 
     public function spk()
     {
-        $surats = Surat::where('jenis_surat', 'spk')->where('flag', null)->orderBy('no_terakhir', 'desc')->get();
+        $surats = Surat::where('jenis_surat', 'spk')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
         return view('surat.spk', ['surats' => $surats]);
     }
@@ -87,6 +88,16 @@ class SuratController extends Controller
     {
         // BARIS KODE DI BAWAH INI HARUS DIGANTI
         $kegiatans = Kegiatan::where('tim', Auth::user()->tim)->orWhere('id_pjk', Auth::user()->id)->get();
+        $kegiatan_pegawais = KegiatanPegawai::where('pegawai_id', Auth::user()->id)->get();
+        foreach ($kegiatan_pegawais as $kegiatan_pegawai) {
+            $kegiatan = Kegiatan::find($kegiatan_pegawai->kegiatan_id);
+            if ($kegiatans->contains($kegiatan)) {
+                continue;
+            } else {
+                $kegiatans->push($kegiatan);
+            }
+        }
+
         // BARIS KODE DI ATAS INI HARUS DIGANTI
         // dd($kegiatans);
         $noTerakhir = $this->getNoSuratTerakhir($jenis);
@@ -208,12 +219,13 @@ class SuratController extends Controller
 
     public function edit($jenis, $id)
     {
+        $surat = Surat::find($id);
+
         // BARIS KODE DI BAWAH INI HARUS DIGANTI
-        $kegiatans = Kegiatan::where('tim', Auth::user()->tim)->orWhere('id_pjk', Auth::user()->id)->get();
+        $kegiatan = Kegiatan::where('id', $surat->id_kegiatan)->first();
         // BARIS KODE DI ATAS INI HARUS DIGANTI
         // dd($kegiatans);
 
-        $surat = Surat::find($id);
         $kamusSuratUmum = KamusSurat::where('tim', '11011')->get();
         $pegawais = Pegawai::where('flag', null)->get();
 
@@ -242,7 +254,7 @@ class SuratController extends Controller
             'pecahanSurat' => $pecahanSurat,
             'noTerakhir' => $noTerakhir,
             'opsiSuratAwal' => $opsiSuratAwal,
-            'kegiatans' => $kegiatans,
+            'kegiatan' => $kegiatan,
             'pegawais' => $pegawais,
         ]);
     }
@@ -287,7 +299,8 @@ class SuratController extends Controller
             $surat->pegawai_yang_bertugas = $request->pegawai_yang_bertugas;
         }
         $noTerakhir = $surat->no_terakhir;
-        $surat->nomor_surat = $this->generateNomorSurat($surat->tim, $request->kode, $jenis, $noTerakhir - 1);
+        $kegiatan = Kegiatan::find($surat->id_kegiatan);
+        $surat->nomor_surat = $this->generateNomorSurat($kegiatan->tim, $request->kode, $jenis, $noTerakhir - 1);
         $surat->perihal = $request->perihal;
         $surat->save();
 

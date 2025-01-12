@@ -31,12 +31,12 @@
                                           name="tim"
                                         >
                                           <option value="">(Pilih salah satu)</option>
-                                          <option value="11011" >Umum</option>
-                                          <option value="11012" >Statistik Sosial</option>
-                                          <option value="11013" >Statistik Ekonomi Produksi</option>
-                                          <option value="11015" >Neraca dan Analisis Statistik</option>
-                                          <option value="11014" >Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" >IPDS</option>
+                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : (Auth::user()->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : (Auth::user()->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : (Auth::user()->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : (Auth::user()->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : (Auth::user()->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : (Auth::user()->tim == "11016" ? 'selected' : '')}}>IPDS</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
@@ -72,6 +72,10 @@
                                         </select>
                                         @if ($errors->has('kode'))
                                         <small class="form-text text-muted">{{ $errors->first('kode') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                            Jika pilihan kode surat tidak muncul, pilih tim terlebih dahulu.
+                                        </small>
                                         @endif
                                     </div>
                                 </div>
@@ -254,7 +258,7 @@
                                         Kemungkinan nomor surat: 
                                         <span class="kemungkinan_no_surat">
                                         @If(!str_contains(Request::path(), 'spd'))B-@endif
-                                        <span id="no-surat">{{str_pad($noTerakhir+1,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{old('tim')}}</span>/<span id="kode-surat">{{old('kode')}}</span>/@if($jenis != 'keluar') <span>{{date('m')}}</span>/ @endif<span>{{date('Y')}}</span>
+                                        <span id="no-surat">{{str_pad($noTerakhir+1,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{old('tim')}}</span>/<span id="kode-surat">{{old('kode')}}</span>/@if($jenis != 'keluar')<span>{{date('m')}}</span>/ @endif<span>{{date('Y')}}</span>
                                         </span>
                                     </h5>
                                     {{-- <input type="hidden" name="nomor_surat" id="nomor_surat" > --}}
@@ -357,21 +361,25 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
     <script>
+        function gantiTim(){
+            var tim = $('#tim').val();
+            $('#kode-tim').text(tim);
+            $('#nomor_surat').val($('.kemungkinan_no_surat').text());
+            $("#kode").empty();
+            if (tim == '11011') {
+                $("#kode").append(opsiUmum);
+            } else if (tim == '11016') {
+                $("#kode").append(opsiIPDS);
+            }
+            else {
+                $("#kode").append(opsiTeknis);
+            }
+        }
         $(document).ready(function() {            
-
+            gantiTim();
             $('#tim').change(function() {
                 var tim = $(this).val();
-                $('#kode-tim').text(tim);
-                $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-                $("#kode").empty();
-                if (tim == '11011') {
-                    $("#kode").append(opsiUmum);
-                } else if (tim == '11016') {
-                    $("#kode").append(opsiIPDS);
-                }
-                else {
-                    $("#kode").append(opsiTeknis);
-                }
+                gantiTim();
 
                 // $.ajax({
                 //     headers: {

@@ -6,7 +6,7 @@
   <div class="page-inner">
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
       <div>
-        <h3 class="fw-bold mb-3">{{$kegiatan->nama}}</h3>
+        <h3 class="fw-bold mb-3">{{(strlen($kegiatan->nama)>50 ? substr($kegiatan->nama, 0, 50) . '...' : $kegiatan->nama)}}</h3>
         {{-- <h6 class="op-7 mb-2">Rincian kegiatan </h6> --}}
       </div>
       <div class="ms-md-auto py-2 py-md-0">
@@ -130,7 +130,7 @@
                 <tbody>
                   @foreach($kegiatan->mitra as $mitra)
                     <!-- Modal -->
-                    <div class="modal fade" id="{{'exampleModal'.$mitra->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$mitra->id}}" aria-hidden="true">
+                    {{-- <div class="modal fade" id="{{'exampleModal'.$mitra->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$mitra->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -148,13 +148,13 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> --}}
                     <tr>
                         <th scope="row">{{$mitra->nama}}</th>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         <td>
-                            <div class="form-button-action">
+                            {{-- <div class="form-button-action">
                                 <button
                                     type="button"
                                     title="Hapus"
@@ -165,7 +165,7 @@
                                 >
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </div>
+                            </div> --}}
                         </td>
                     </tr>
                   @endforeach
@@ -202,7 +202,7 @@
                 <tbody>
                   @foreach($kegiatan->pegawai as $pegawai)
                     <!-- Modal -->
-                    <div class="modal fade" id="{{'exampleModal'.$pegawai->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$pegawai->id}}" aria-hidden="true">
+                    {{-- <div class="modal fade" id="{{'exampleModal'.$pegawai->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$pegawai->id}}" aria-hidden="true"> 
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -220,11 +220,11 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div>--}}
                     <tr>
 											<th scope="row">{{$pegawai->nama}}</th>
                       <td>
-                        <div class="form-button-action">
+                        {{-- <div class="form-button-action">
 
                           <button
                             type="button"
@@ -236,7 +236,7 @@
                           >
                             <i class="fa fa-times"></i>
                           </button>
-                        </div>
+                        </div> --}}
                       </td>
                       
                     </tr>
