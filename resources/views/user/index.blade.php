@@ -130,7 +130,7 @@
                 </tfoot>
                 <tbody>
                   @foreach($users as $user)
-                    <!-- Modal -->
+                    <!-- Modal  -->
                     <div class="modal fade" id="{{'exampleModal'.$user->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$user->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -169,7 +169,7 @@
                             type="button"
                             title="Hapus"
                             class="btn btn-link btn-danger"
-                            data-bs-toggle="modal" 
+                            data-bs-toggle="tooltip" 
                             data-bs-target="{{'#exampleModal'.$user->id}}"
                             data-original-title="Hapus"
                           >

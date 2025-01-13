@@ -212,6 +212,17 @@ class KegiatanController extends Controller
         return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Estimasi honor berhasil diperbarui.');
     }
 
+    public function duplicate($id)
+    {
+        $kegiatan = Kegiatan::find($id);
+        $kegiatanBaru = $kegiatan->replicate();
+        $kegiatanBaru->nama = $kegiatan->nama . ' (Duplikat)';
+        $kegiatanBaru->save();
+        $kegiatanBaru->pegawai()->attach($kegiatan->pegawai);
+        $kegiatanBaru->mitra()->attach($kegiatan->mitra);
+        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diduplikasi.');
+    }
+
     private function konversiTim($kodeTim)
     {
         $tim = "";

@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonor']);
         Route::post('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonorPost']);
+        Route::get('/duplicate/{id}', [KegiatanController::class, 'duplicate'])->name('duplicate');
 
         Route::get('/mitra-belum-dibayar/{id}', [MainController::class, 'mitraKegiatanBelumDibayar']);
         Route::get('/pegawai-belum-dibayar/{id}', [MainController::class, 'pegawaiKegiatanBelumDibayar']);

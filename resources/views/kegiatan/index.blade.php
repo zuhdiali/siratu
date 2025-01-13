@@ -103,6 +103,26 @@
                         </div>
                       </div>
                     </div>
+
+                    <div class="modal fade" id="{{'modalDuplicate'.$kegiatan->id}}" tabindex="-1" aria-labelledby="{{'modalDuplicateLabel'.$kegiatan->id}}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="{{'modalDuplicateLabel'.$kegiatan->id}}">Hapus Pengguna</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Apakah Anda yakin ingin menduplikasi <strong>{{$kegiatan->nama}}</strong> ?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batalkan</button>
+                            <form action="{{url('kegiatan/duplicate/'.$kegiatan->id)}}">
+                              <button type="submit" class="btn btn-primary">Duplikasi</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     @endif
                     <tr>
                       <td>
@@ -112,18 +132,30 @@
                             <button
                               type="submit"
                               data-bs-toggle="tooltip"
-                              title=""
-                              class="btn btn-link btn-primary btn-lg"
+                              title="Edit"
+                              class="btn btn-link btn-primary px-2"
                               data-original-title="Edit Kegiatan"
                             >
                             <i class="fa fa-edit"></i>
-                          </form>
                           </button>
+                          </form>
+                          
+                            <button
+                              type="button"
+                              title="Duplikasi"
+                              class="btn btn-link btn-primary px-2"
+                              data-bs-toggle="modal"
+                              data-bs-target="{{'#modalDuplicate'.$kegiatan->id}}"
+                              data-original-title="Duplikasi"
+                            >
+                            <i class="far fa-copy"></i>
+                          </button>
+                          
 
                           <button
                             type="button"
                             title="Hapus"
-                            class="btn btn-link btn-danger"
+                            class="btn btn-link btn-danger px-2"
                             data-bs-toggle="modal" 
                             data-bs-target="{{'#exampleModal'.$kegiatan->id}}"
                             data-original-title="Hapus"

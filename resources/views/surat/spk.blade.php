@@ -96,23 +96,24 @@
                     </div>
                     <tr>
                       <td>
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
                         <div class="form-button-action">
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
                               type="submit"
                               data-bs-toggle="tooltip"
-                              title=""
-                              class="btn btn-link btn-primary btn-lg"
+                              title="Edit"
+                              class="btn btn-link btn-primary px-2"
                               data-original-title="Edit Surat"
                             >
                             <i class="fa fa-edit"></i>
-                          </form>
                           </button>
+                        </form>
 
                           <button
                             type="button"
                             title="Hapus"
-                            class="btn btn-link btn-danger"
+                            class="btn btn-link btn-danger px-2"
                             data-bs-toggle="modal" 
                             data-bs-target="{{'#exampleModal'.$surat->id}}"
                             data-original-title="Hapus"
@@ -120,6 +121,7 @@
                             <i class="fa fa-times"></i>
                           </button>
                         </div>
+                        @endif
                       </td>
                       <th scope="row">{{$surat->nomor_surat}}</th>
                       <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>

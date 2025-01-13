@@ -102,18 +102,18 @@
                             <button
                               type="submit"
                               data-bs-toggle="tooltip"
-                              title=""
-                              class="btn btn-link btn-primary btn-lg"
+                              title="Edit"
+                              class="btn btn-link btn-primary px-2"
                               data-original-title="Edit Surat"
                             >
                             <i class="fa fa-edit"></i>
-                          </form>
                           </button>
+                        </form>
 
                           <button
                             type="button"
                             title="Hapus"
-                            class="btn btn-link btn-danger"
+                            class="btn btn-link btn-danger px-2"
                             data-bs-toggle="modal" 
                             data-bs-target="{{'#exampleModal'.$surat->id}}"
                             data-original-title="Hapus"
