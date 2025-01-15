@@ -121,9 +121,10 @@
                 <thead>
                   <tr>
                       <th>Nama Mitra</th>
+                      <th>Jumlah Pendataan/Pengolahan</th>
                       <th>Estimasi Honor Dari Kegiatan Ini</th>
                       <th>Estimasi Total Honor Yang Didapat Setelah Kegiatan Ini</th>
-                    <th style="width: 10%">Aksi</th>
+                    {{-- <th style="width: 10%">Aksi</th> --}}
                   </tr>
                 </thead>
 
@@ -151,10 +152,11 @@
                     </div> --}}
                     <tr>
                         <th scope="row">{{$mitra->nama}}</th>
+                        <td>{{$mitra->pivot->jumlah}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
-                        <td>
-                            {{-- <div class="form-button-action">
+                        {{--<td>
+                             <div class="form-button-action">
                                 <button
                                     type="button"
                                     title="Hapus"
@@ -165,8 +167,8 @@
                                 >
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </div> --}}
-                        </td>
+                            </div> 
+                        </td>--}}
                     </tr>
                   @endforeach
                 </tbody>
@@ -190,13 +192,13 @@
                 <thead>
                   <tr>
                     <th>Nama Pegawai</th>
-                    <th style="width: 10%">Aksi</th>
+                    {{-- <th style="width: 10%">Aksi</th> --}}
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
                     <th>Nama Pegawai</th>
-                    <th>Aksi</th>
+                    {{-- <th>Aksi</th> --}}
                   </tr>
                 </tfoot>
                 <tbody>
@@ -223,8 +225,8 @@
                     </div>--}}
                     <tr>
 											<th scope="row">{{$pegawai->nama}}</th>
-                      <td>
-                        {{-- <div class="form-button-action">
+                      {{--<td>
+                         <div class="form-button-action">
 
                           <button
                             type="button"
@@ -236,8 +238,8 @@
                           >
                             <i class="fa fa-times"></i>
                           </button>
-                        </div> --}}
-                      </td>
+                        </div> 
+                      </td>--}}
                       
                     </tr>
                   @endforeach

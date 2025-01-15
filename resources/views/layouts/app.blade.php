@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SiRatu</title>
+    <title>SiRaGi (Sistem Penyuratan dan Kegiatan)</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -54,7 +54,7 @@
           <div class="logo-header" data-background-color="dark">
             <a href="{{route('index')}}" class="logo">
               <img
-                src="{{asset('img/siratu.svg')}}"
+                src="{{asset('img/siragi.svg')}}"
                 alt="navbar brand"
                 class="navbar-brand"
                 height="30"
@@ -116,14 +116,21 @@
                   </a>
                   <div class="collapse {{ str_contains(Request::path(), 'surat') ? 'show' : ''  }}" id="submenu">
                     <ul class="nav nav-collapse">
+                      <li class="{{ str_contains(Request::path(), 'permintaan') ? 'active' : ''  }}">
+                        <a href="{{route('surat.permintaan')}}">
+                          <span class="sub-item">Surat Form Permintaan</span>
+                        </a>
+                      </li>
+
                       <li class="{{ str_contains(Request::path(), 'tugas') ? 'active' : ''  }}">
                         <a href="{{route('surat.tugas')}}">
                           <span class="sub-item">Surat Tugas</span>
                         </a>
                       </li>
-                      <li class="{{ str_contains(Request::path(), 'permintaan') ? 'active' : ''  }}">
-                        <a href="{{route('surat.permintaan')}}">
-                          <span class="sub-item">Surat Form Permintaan</span>
+                      
+                      <li class="{{ str_contains(Request::path(), 'spd') ? 'active' : ''  }}">
+                        <a href="{{route('surat.spd')}}">
+                          <span class="sub-item">SPPD / Translok</span>
                         </a>
                       </li>
 
@@ -139,11 +146,7 @@
                         </a>
                       </li>
 
-                      <li class="{{ str_contains(Request::path(), 'spd') ? 'active' : ''  }}">
-                        <a href="{{route('surat.spd')}}">
-                          <span class="sub-item">SPD</span>
-                        </a>
-                      </li>
+                      
 
                       @if(Auth::user()->role == 'Admin')
                       <li class="{{ str_contains(Request::path(), 'sk') ? 'active' : ''  }}">
@@ -242,7 +245,7 @@
             <div class="logo-header" data-background-color="dark">
               <a href="index.html" class="logo">
                 <img
-                  src="{{asset('img/siratu.svg')}}"
+                  src="{{asset('img/siragi.svg')}}"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"

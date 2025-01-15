@@ -14,6 +14,7 @@ class Surat extends Model
     protected $fillable = [
         'nomor_surat',
         'jenis_surat',
+        'tim',
         'no_terakhir',
         'tgl_awal_kegiatan',
         'tgl_akhir_kegiatan',

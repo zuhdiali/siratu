@@ -81,7 +81,7 @@
                                 </div>
 
                                 <div class="col-md-6">
-
+                                    @if($jenis != 'keluar')
                                     <div class="form-group  {{$errors->has('id_kegiatan') ? 'has-error has-feedback' : ''}}">
                                         <label for="id_kegiatan"
                                           >Kegiatan</label
@@ -101,6 +101,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('id_kegiatan') }}</small>
                                         @endif
                                     </div>
+                                    @endif
 
                                     <div class="form-group {{$errors->has('perihal') ? 'has-error has-feedback' : ''}}">
                                         <label for="perihal">Perihal</label>
@@ -258,7 +259,7 @@
                                         Kemungkinan nomor surat: 
                                         <span class="kemungkinan_no_surat">
                                         @If(!str_contains(Request::path(), 'spd'))B-@endif
-                                        <span id="no-surat">{{str_pad($noTerakhir+1,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{old('tim')}}</span>/<span id="kode-surat">{{old('kode')}}</span>/@if($jenis != 'keluar')<span>{{date('m')}}</span>/ @endif<span>{{date('Y')}}</span>
+                                        <span id="no-surat">{{str_pad($noTerakhir+1,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{old('tim')}}</span>/<span id="kode-surat">{{old('kode')}}</span>/<span>{{date('Y')}}</span>
                                         </span>
                                     </h5>
                                     {{-- <input type="hidden" name="nomor_surat" id="nomor_surat" > --}}
@@ -361,7 +362,7 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
     <script>
-        function gantiTim(){
+        function gantiTimDanKegiatan(){
             var tim = $('#tim').val();
             $('#kode-tim').text(tim);
             $('#nomor_surat').val($('.kemungkinan_no_surat').text());
@@ -374,50 +375,47 @@
             else {
                 $("#kode").append(opsiTeknis);
             }
+
+            $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: "POST",
+                    url: "{{ route('kegiatan.get-kegiatan-api') }}",
+                    data: {
+                        tim: tim,
+                        id_pegawai: {{Auth::user()->id}}
+                    },
+
+                    success: function(msg){
+                        console.log(msg);
+                        $('#single-select-field').empty();
+                        $.each(msg, function(key, value) {
+                            $('#single-select-field').append('<option value="'+value.id+'">'+value.nama+'</option>');
+                        });
+
+                    },
+                    error: function(msg){
+                        console.log(msg);
+                    }
+
+                });
         }
+
         $(document).ready(function() {            
-            gantiTim();
+            gantiTimDanKegiatan();
             $('#tim').change(function() {
                 var tim = $(this).val();
-                gantiTim();
+                gantiTimDanKegiatan();
 
-                // $.ajax({
-                //     headers: {
-                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     },
-                //     type: "POST",
-                //     url: "{{ url('surat/get-kode-surat') }}" + '/' + tim,
-
-                //     success: function(msg){
-                //         $("#kode").empty();
-                //         $("#kode").append('<option value="">(Pilih salah satu)</option>');
-                //         if(msg.length > 0){
-                //             msg.forEach(function(p){
-                //                 var klasifikasi = p.klasifikasi;
-                //                 var option = p.kode_surat_gabungan;
-                //                 if (p.kode_surat_gabungan.includes('VS')) {
-                //                     option += ' - Survei';
-                //                 }
-                //                 else if (p.kode_surat_gabungan.includes('SS')) {
-                //                     option += ' - Sensus';
-                //                 }
-                //                 $("#kode").append('<option value="'+p.kode_surat_gabungan+'">'+option+' - '+klasifikasi+'</option>');
-                //             });
-                //         }
-
-                //     },
-                //     error: function(msg){
-                //         console.log(msg);
-                //     }
-
-                // });
+                
             });
 
-            $('#tipe').change(function() {
+            // $('#tipe').change(function() {
                 // var tipe = $(this).val();
                 // $('#tipe-surat').text(tipe);
                 // $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-            });
+            // });
 
             $('#kode').change(function() {
                 var kode = $(this).val();

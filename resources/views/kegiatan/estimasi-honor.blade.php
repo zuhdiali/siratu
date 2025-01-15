@@ -49,13 +49,14 @@
                                         <div class="card-body">
                                         <div class="table-responsive">
                                             <table
-                                            id="basic-datatables"
+                                            id="basic-datatables-x"
                                             class="display table table-striped table-hover"
                                             >
                                             <thead>
                                                 <tr>
                                                 <th>Nama Mitra</th>
-                                                <th>Estimasi Honor Yang Didapat Dari Kegiatan Ini</th>
+                                                <th>Jumlah Pendataan/Pengolahan</th>
+                                                <th>Estimasi Honor</th>
                                                 </tr>
                                             </thead>
                                             
@@ -63,7 +64,8 @@
                                                 @foreach($kegiatan->mitra as $mitra)
                                                 <tr>
                                                     <td>{{$mitra->nama}}<input type="hidden" name="id_mitra[{{$mitra->id}}]" value="{{$mitra->id}}" /> </td>
-                                                    <td><input type="number" name="estimasi_honor[{{$mitra->id}}]" class="form-control" value="{{$mitra->pivot->estimasi_honor}}"/></td>
+                                                    <td><input type="number" name="jumlah[{{$mitra->id}}]" class="form-control" value="{{$mitra->pivot->jumlah}}"/></td>
+                                                    <td id="estimasi_honor"> @if($mitra->pivot->jumlah)  Rp {{number_format($mitra->pivot->jumlah * $kegiatan->honor_pencacahan,0,",",".")}} @else Rp 0 @endif</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -87,5 +89,25 @@
 
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
+<script>
+    $(document).ready(function() {
+        $('input[name^="jumlah"]').on('input', function() {
+            var jumlah = $(this).val();
+            var honor = {{$kegiatan->honor_pencacahan}};
+            var estimasi = jumlah * honor;
+            $(this).closest('tr').find('#estimasi_honor').text('Rp ' + estimasi.toLocaleString('id-ID'));
+        });
 
+        var pageLength;
+        if ({{ count($kegiatan->mitra) }} > 10 && {{ count($kegiatan->mitra) }} <= 25) {
+            pageLength = 25;
+        } else if ({{ count($kegiatan->mitra) }} > 25 && {{ count($kegiatan->mitra) }} <= 50) {
+            pageLength = 50;
+        } else {
+            pageLength = 100;
+        }
+        
+        $('#basic-datatables-x').DataTable({ pageLength: pageLength });
+    });
+</script>
 @endsection

@@ -63,7 +63,6 @@
                     <th>Jumlah Mitra</th>
                     <th>Honor (Pengawasan)</th>
                     <th>Honor (Pencacahan)</th>
-                    <th>Detil Kegiatan</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -77,13 +76,12 @@
                     <th>Jumlah Mitra</th>
                     <th>Honor (Pengawasan)</th>
                     <th>Honor (Pencacahan)</th>
-                    <th>Detil Kegiatan</th>
                   </tr>
                 </tfoot>
                 <tbody>
                   @foreach($kegiatans as $kegiatan)
                     <!-- Modal -->
-                    @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk == Auth::user()->id))
+                    @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $kegiatan->tim == Auth::user()->tim))
                     <div class="modal fade" id="{{'exampleModal'.$kegiatan->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$kegiatan->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -108,7 +106,7 @@
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="{{'modalDuplicateLabel'.$kegiatan->id}}">Hapus Pengguna</h1>
+                            <h1 class="modal-title fs-5" id="{{'modalDuplicateLabel'.$kegiatan->id}}">Duplikasi Kegiatan</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
@@ -128,6 +126,17 @@
                       <td>
                         @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk  == Auth::user()->id))
                         <div class="form-button-action">
+                          <form action="{{url('kegiatan/show', $kegiatan->id)}}">
+                            <button
+                              type="submit"
+                              data-bs-toggle="tooltip"
+                              title="Detil Kegiatan"
+                              class="btn btn-link btn-primary px-2"
+                              data-original-title="Detil Kegiatan"
+                            >
+                            <i class="fa fa-eye"></i>
+                          </form>
+
                           <form action="{{url('kegiatan/edit', $kegiatan->id)}}">
                             <button
                               type="submit"
@@ -173,9 +182,6 @@
                       <td>{{$kegiatan->mitra->count()}}</td>
                       <td>{{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pengawasan}}</td>
                       <td>{{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pencacahan}}</td>
-                      <td>
-                        <a href="{{url('kegiatan/show', $kegiatan->id)}}" class="btn btn-primary btn-border btn-round">Detil Kegiatan</a>
-                      </td>
                       {{-- <td>
                         @if($kegiatan->flag == null)
                         <span class="badge bg-success">Aktif</span>

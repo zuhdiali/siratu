@@ -70,7 +70,9 @@
                                           <option value="11013" {{$pegawai->tim == '11013' ? 'selected' : ''}}>Statistik Ekonomi Produksi</option>
                                           <option value="11015" {{$pegawai->tim == '11015' ? 'selected' : ''}}>Neraca dan Analisis Statistik</option>
                                           <option value="11014" {{$pegawai->tim == '11014' ? 'selected' : ''}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{$pegawai->tim == '11016' ? 'selected' : ''}}>IPDS</option>
+                                          <option value="11016" {{$pegawai->tim == '11016' ? 'selected' : ''}}>TI dan Pengolahan</option>
+                                          <option value="11017" {{$pegawai->tim == '11017' ? 'selected' : ''}}>Diseminasi, Publisitas, dan Humas</option>
+                                          <option value="11018" {{$pegawai->tim == '11018' ? 'selected' : ''}}>Pembinaan Statistik Sektoral</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
@@ -160,14 +162,14 @@
                                     <div class="form-group {{$errors->has('username') ? 'has-error has-feedback' : ''}}">
                                         <label for="username">Username</label>
                                         <input
-                                          type="text"
-                                          class="form-control"
-                                          id="username"
-                                          name="username"
-                                          placeholder="Masukkan username"
-                                          value="@if(old('username')) {{ old('username') }} @else{{$pegawai->username}}@endif"
-                                          {{-- Kepala BPS & Admin tidak bisa diubah usernamenya --}}
-                                          @if(($pegawai->id == 0) || $pegawai->id == 1) disabled @endif
+                                            type="text"
+                                            class="form-control"
+                                            id="username"
+                                            name="username"
+                                            placeholder="Masukkan username"
+                                            value="@if(old('username')) {{ old('username') }} @else{{$pegawai->username}}@endif"
+                                            {{-- Kepala BPS & Admin tidak bisa diubah usernamenya --}}
+                                            @if(($pegawai->id == 0) || $pegawai->id == 1) disabled @endif
                                         />
                                         @if ($errors->has('username'))
                                         <small class="form-text text-muted">{{$errors->first('username')}}</small>
@@ -175,7 +177,7 @@
                                         <small  class="form-text text-muted">
                                         </small>
                                         @endif
-                                      </div>
+                                    </div>
 
                                     <div class="form-group  {{$errors->has('role') ? 'has-error has-feedback' : ''}}">
                                         <label for="role">Role</label>
@@ -188,6 +190,7 @@
                                         >
                                             <option value="">(Pilih salah satu)</option>
                                             <option value="Admin" {{ $pegawai->role == 'Admin' ? 'selected' : ''}}>Admin</option>
+                                            <option value="Ketua Tim" {{ $pegawai->role == 'Ketua Tim' ? 'selected' : ''}}>Ketua Tim</option>
                                             <option value="Pegawai" {{ $pegawai->role == 'Pegawai' ? 'selected' : ''}}>Pegawai</option>
                                         </select>
                                         @if ($errors->has('role'))

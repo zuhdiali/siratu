@@ -92,6 +92,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/mitra-belum-dibayar/{id}', [MainController::class, 'mitraKegiatanBelumDibayar']);
         Route::get('/pegawai-belum-dibayar/{id}', [MainController::class, 'pegawaiKegiatanBelumDibayar']);
+
+        Route::post('/get-kegiatan-api', [SuratController::class, 'getKegiatanApi'])->name('get-kegiatan-api');
     });
 
     Route::prefix('surat')->name('surat.')->group(function () {

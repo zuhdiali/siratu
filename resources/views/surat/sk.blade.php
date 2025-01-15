@@ -96,7 +96,7 @@
                     </div>
                     <tr>
                       <td>
-                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                         <div class="form-button-action">
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button

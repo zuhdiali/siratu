@@ -205,8 +205,9 @@ class KegiatanController extends Controller
     public function estimasiHonorPost(Request $request, $id)
     {
         $kegiatan = Kegiatan::find($id);
-        foreach ($request->estimasi_honor as $key => $value) {
-            $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $value]);
+        foreach ($request->jumlah as $key => $value) {
+            $kegiatan->mitra()->updateExistingPivot($key, ['jumlah' => $value]);
+            $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $value * $kegiatan->honor_pencacahan]);
         }
 
         return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Estimasi honor berhasil diperbarui.');
@@ -216,12 +217,13 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::find($id);
         $kegiatanBaru = $kegiatan->replicate();
-        $kegiatanBaru->nama = $kegiatan->nama . ' (Duplikat)';
+        $kegiatanBaru->nama = '(Duplikat) ' . $kegiatan->nama;
         $kegiatanBaru->save();
         $kegiatanBaru->pegawai()->attach($kegiatan->pegawai);
         $kegiatanBaru->mitra()->attach($kegiatan->mitra);
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diduplikasi.');
     }
+
 
     private function konversiTim($kodeTim)
     {
@@ -243,7 +245,13 @@ class KegiatanController extends Controller
                 $tim = "Neraca";
                 break;
             case '11016':
-                $tim = "IPDS";
+                $tim = "TI dan Pengolahan";
+                break;
+            case '11017':
+                $tim = 'Diseminasi';
+                break;
+            case '11018':
+                $tim = 'PSS';
                 break;
             default:
                 # code...

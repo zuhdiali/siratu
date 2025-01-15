@@ -194,7 +194,13 @@ class PegawaiController extends Controller
                 $tim = "Neraca dan Analisis Statistik";
                 break;
             case '11016':
-                $tim = "IPDS";
+                $tim = "TI dan Pengolahan";
+                break;
+            case '11017':
+                $tim = 'Diseminasi';
+                break;
+            case '11018':
+                $tim = 'PSS';
                 break;
             default:
                 # code...

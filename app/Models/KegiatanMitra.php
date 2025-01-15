@@ -14,6 +14,7 @@ class KegiatanMitra extends Model
     protected $fillable = [
         'mitra_id',
         'kegiatan_id',
+        'jumlah',
         'honor',
         'estimasi_honor',
         'bukti_pembayaran_id',

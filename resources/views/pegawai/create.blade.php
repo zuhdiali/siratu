@@ -70,7 +70,9 @@
                                           <option value="11013" {{old('tim') == '11013' ? 'selected' : ''}}>Statistik Ekonomi Produksi</option>
                                           <option value="11015" {{old('tim') == '11015' ? 'selected' : ''}}>Neraca dan Analisis Statistik</option>
                                           <option value="11014" {{old('tim') == '11014' ? 'selected' : ''}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{old('tim') == '11016' ? 'selected' : ''}}>IPDS</option>
+                                          <option value="11016" {{old('tim') == '11016' ? 'selected' : ''}}>TI dan Pengolahan</option>
+                                          <option value="11017" {{old('tim') == '11017' ? 'selected' : ''}}>Diseminasi, Publisitas, dan Humas</option>
+                                          <option value="11018" {{old('tim') == '11018' ? 'selected' : ''}}>Pembinaan Statistik Sektoral</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>

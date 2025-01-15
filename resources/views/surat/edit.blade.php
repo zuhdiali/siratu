@@ -78,7 +78,7 @@
                                 </div>
 
                                 <div class="col-md-6">
-
+                                    @if($jenis != 'keluar')
                                     <div class="form-group  {{$errors->has('id_kegiatan') ? 'has-error has-feedback' : ''}}">
                                         <label for="id_kegiatan">Kegiatan</label>
                                         <select
@@ -97,6 +97,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('id_kegiatan') }}</small>
                                         @endif
                                     </div>
+                                    @endif
 
                                     <div class="form-group {{$errors->has('perihal') ? 'has-error has-feedback' : ''}}">
                                         <label for="perihal">Perihal</label>
@@ -131,7 +132,7 @@
                                           id="dinas_surat_masuk"
                                           name="dinas_surat_masuk"
                                           placeholder="Masukkan Dinas/Kementerian/Lembaga Yang Memberi Surat"
-                                          value="{{ old('dinas_surat_masuk') }}"
+                                          value="{{ old('dinas_surat_masuk') ? old('dinas_surat_masuk') : $surat->dinas_surat_masuk }}"
                                         />
                                         @if ($errors->has('dinas_surat_masuk'))
                                         <small class="form-text text-muted">{{ $errors->first('dinas_surat_masuk') }}</small>
@@ -152,7 +153,7 @@
                                           id="no_surat_masuk"
                                           name="no_surat_masuk"
                                           placeholder="Nomor Surat Masuk Yang Diterima"
-                                          value="{{ old('no_surat_masuk') }}"
+                                          value="{{ old('no_surat_masuk') ? old('no_surat_masuk') : $surat->no_surat_masuk }}"
                                         />
                                         @if ($errors->has('no_surat_masuk'))
                                         <small class="form-text text-muted">{{ $errors->first('no_surat_masuk') }}</small>
@@ -254,7 +255,7 @@
                                         Kemungkinan nomor surat: 
                                         <span class="kemungkinan_no_surat">
                                         @If(!str_contains(Request::path(), 'spd'))B-@endif
-                                        <span id="no-surat">{{str_pad($noTerakhir+1,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{$surat->tim}}</span>/<span id="kode-surat">{{$surat->kode_surat}}</span>/@if($jenis != 'keluar') <span>{{$surat->bulan}}</span>/ @endif<span>{{$surat->tahun}}</span>
+                                        <span id="no-surat">{{str_pad($noTerakhir,4,"0",STR_PAD_LEFT);}}</span>/<span id="kode-tim">{{$jenis != "keluar" ? $surat->tim : "11010"}}</span>/<span id="kode-surat">{{$surat->kode_surat}}</span>/<span>{{$surat->tahun}}</span>
                                         </span>
                                     </h5>
                                     {{-- <input type="hidden" name="nomor_surat" id="nomor_surat" > --}}
@@ -358,7 +359,8 @@
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
     <script>
         $(document).ready(function() {            
-            
+            var jenis = '{{$jenis}}';
+
             @if($surat->tim == '11011')
                 $('#kode').append(opsiUmum);
             @elseif($surat->tim == '11016')
@@ -369,8 +371,10 @@
 
             $('kode').append(opsiTeknis);
             $('#tim').change(function() {
-                var tim = $(this).val();
-                $('#kode-tim').text(tim);
+                if (jenis != 'keluar') {
+                    var tim = $(this).val();
+                    $('#kode-tim').text(tim);
+                }
                 $('#nomor_surat').val($('.kemungkinan_no_surat').text());
                 $("#kode").empty();
                 if (tim == '11011') {

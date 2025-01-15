@@ -134,6 +134,8 @@
                                             <option value="SLS" {{old('satuan_honor_pengawasan') == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{old('satuan_honor_pengawasan') == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{old('satuan_honor_pengawasan') == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
+                                            <option value="OB" {{old('satuan_honor_pengawasan') == 'OB' ? 'selected' : ''}}>Orang Badan (OB)</option>
+                                            <option value="Segmen" {{old('satuan_honor_pengawasan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                           
                                         </select>
                                         @if ($errors->has('satuan_honor_pengawasan'))
@@ -165,7 +167,7 @@
                                     </div> 
 
                                     <div class="form-group  {{$errors->has('satuan_honor_pencacahan') ? 'has-error has-feedback' : ''}}">
-                                        <label for="satuan_honor_pencacahan">Satuan Honor <strong>Pencacahan</strong></label
+                                        <label for="satuan_honor_pencacahan">Satuan Honor <strong>Pencacahan / Pengolahan</strong></label
                                         >
                                         <select
                                             class="form-select"
@@ -177,6 +179,8 @@
                                             <option value="SLS" {{old('satuan_honor_pencacahan') == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{old('satuan_honor_pencacahan') == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{old('satuan_honor_pencacahan') == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
+                                            <option value="OB" {{old('satuan_honor_pencacahan') == 'OB' ? 'selected' : ''}}>Orang Badan (OB)</option>
+                                            <option value="Segmen" {{old('satuan_honor_pencacahan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                           
                                         </select>
                                         @if ($errors->has('satuan_honor_pencacahan'))
@@ -189,7 +193,7 @@
                                     </div>
 
                                     <div class="form-group {{$errors->has('honor_pencacahan') ? 'has-error has-feedback' : ''}}">
-                                        <label for="honor_pencacahan">Honor <strong>Pencacahan</strong></label>
+                                        <label for="honor_pencacahan">Honor <strong>Pencacahan / Pengolahan</strong></label>
                                         <input
                                           type="number"
                                           class="form-control"

@@ -58,7 +58,7 @@
                     <th>Nomor Surat Keluar</th>
                     <th>Tanggal Dibuat</th>
                     <th>Pembuat Surat</th>
-                    <th>Kegiatan</th>
+                    {{-- <th>Kegiatan</th> --}}
                     <th>Perihal</th>
                   </tr>
                 </thead>
@@ -68,14 +68,14 @@
                     <th>Nomor Surat Keluar</th>
                     <th>Tanggal Dibuat</th>
                     <th>Pembuat Surat</th>
-                    <th>Kegiatan</th>
+                    {{-- <th>Kegiatan</th> --}}
                     <th>Perihal</th>
                   </tr>
                 </tfoot>
                 <tbody>
                   @foreach($surats as $surat)
                     <!-- Modal -->
-                    @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
+                    @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                     <div class="modal fade" id="{{'exampleModal'.$surat->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$surat->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -98,7 +98,7 @@
                     @endif
                     <tr>
                       <td>
-                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                         <div class="form-button-action">
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
@@ -128,7 +128,7 @@
                       <th scope="row">{{$surat->nomor_surat}}</th>
                       <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
                       <td>{{$surat->pembuat_surat->nama}}</td>
-                      <td>{{$surat->kegiatan->nama}}</td>
+                      {{-- <td>{{$surat->kegiatan->nama}}</td> --}}
                       <td>{{$surat->perihal}}</td>
                       {{-- <td>
                         @if($surat->flag == null)
