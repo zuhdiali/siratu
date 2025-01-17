@@ -120,8 +120,8 @@
                       <th scope="row">{{$mitra->nama}}</th>
                       <td>{{$mitra->kec_asal}}</td>
                       <td>{{$mitra->total_kegiatan}}</td>
-                      <td>{{number_format($mitra->total_honor, 0, ",", ".")}}</td>
-                      <td>{{number_format($mitra->total_estimasi_honor, 0, ",", ".")}}</td>
+                        <td data-order="{{$mitra->total_honor}}">Rp {{number_format($mitra->total_honor, 0, ",", ".")}}</td>
+                        <td data-order="{{$mitra->total_estimasi_honor}}">Rp {{number_format($mitra->total_estimasi_honor, 0, ",", ".")}}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -179,8 +179,8 @@
                 <th scope="row">${item.nama}</th>
                 <td>${item.kec_asal}</td>
                 <td>${item.total_kegiatan}</td>
-                <td>Rp ${item.total_honor}</td>
-                <td>Rp ${item.total_estimasi_honor}</td>
+                <td data-order="${item.total_honor}">Rp ${new Intl.NumberFormat('id-ID').format(item.total_honor)}</td>
+                <td data-order="${item.total_estimasi_honor}">Rp ${new Intl.NumberFormat('id-ID').format(item.total_estimasi_honor)}</td>
               </tr>
             `);
           });
