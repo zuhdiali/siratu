@@ -9,6 +9,7 @@ use App\Models\Pembayaran;
 use App\Models\KegiatanMitra;
 use App\Models\KegiatanPegawai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PembayaranController extends Controller
 {
@@ -43,21 +44,21 @@ class PembayaranController extends Controller
             return redirect()->route('pembayaran.index')
                 ->with('error', 'Jenis pembayaran tidak valid. Harus pilih antara Organik atau Mitra.');
         }
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_kegiatan' => 'required',
-            // 'nominal' => 'required|numeric',
-            'bukti_pembayaran' => 'required|mimes:pdf',
-            // 'honor' => 'required|numeric',
+            'bukti_pembayaran' => 'required|file',
         ]);
-        // dd($request->all());
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
         $kegiatan = Kegiatan::find($request->id_kegiatan);
         $pembayaran = new Pembayaran();
         if ($request->has('bukti_pembayaran')) {
             $file = $request->file('bukti_pembayaran');
-            $filename = str_replace(' ', '_', $kegiatan->nama) .  '_' . date('Y_m_d') . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = date('Y_m_d') . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move('uploads/pembayaran/', $filename);
             $pembayaran->bukti_pembayaran = $filename;
-            // $kegiatan->mitra()->updateExistingPivot($request->id_mitra, ['bukti_pembayaran' => $filename]);
         }
 
         $pembayaran->id_kegiatan = $request->id_kegiatan;
@@ -65,34 +66,28 @@ class PembayaranController extends Controller
         if ($jenis == 'mitra') {
             $pembayaran->tipe_pembayaran = 'Mitra';
             $pembayaran->save();
-            foreach ($request->honor as $key => $value) {
-                // dd($key, $value);
-                if ($value == null || $value == "") {
-                    continue;
+            if ($request->has('honor')) {
+                foreach ($request->honor as $key => $value) {
+                    if ($value == null || $value == "") {
+                        continue;
+                    }
+                    $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
+                    $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
+                    $kegiatan->save();
                 }
-                $kegiatan->mitra()->updateExistingPivot($key, ['honor' => $value]);
-                $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
-                // $kegiatan_mitra = new KegiatanMitra();
-                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
-                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
-                // $kegiatan_mitra->honor = $honor['nominal'];
-                $kegiatan->save();
             }
         } else if ($jenis == 'organik') {
             $pembayaran->tipe_pembayaran = 'Pegawai';
             $pembayaran->save();
-            foreach ($request->translok as $key => $value) {
-                // dd($key, $value);
-                if ($value == null || $value == "") {
-                    continue;
+            if ($request->has('translok')) {
+                foreach ($request->translok as $key => $value) {
+                    if ($value == null || $value == "") {
+                        continue;
+                    }
+                    $kegiatan->pegawai()->updateExistingPivot($key, ['translok' => $value]);
+                    $kegiatan->pegawai()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
+                    $kegiatan->save();
                 }
-                $kegiatan->pegawai()->updateExistingPivot($key, ['translok' => $value]);
-                $kegiatan->pegawai()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
-                // $kegiatan_mitra = new KegiatanMitra();
-                // $kegiatan_mitra->kegiatan_id = $request->id_kegiatan;
-                // $kegiatan_mitra->mitra_id = $honor['id_mitra'];
-                // $kegiatan_mitra->honor = $honor['nominal'];
-                $kegiatan->save();
             }
         }
 
@@ -238,6 +233,9 @@ class PembayaranController extends Controller
     public function lihatBukti($id)
     {
         $pembayaran = Pembayaran::find($id);
-        return response()->file(('./uploads/pembayaran/' . $pembayaran->bukti_pembayaran));
+        return response()->file('./uploads/pembayaran/' . $pembayaran->bukti_pembayaran, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $pembayaran->bukti_pembayaran . '"'
+        ]);
     }
 }
