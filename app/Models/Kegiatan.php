@@ -25,11 +25,16 @@ class Kegiatan extends Model
 
     public function mitra(): BelongsToMany
     {
-        return $this->belongsToMany(Mitra::class, 'kegiatan_mitras', 'kegiatan_id', 'mitra_id')->withPivot('jumlah', 'honor', 'estimasi_honor');
+        return $this->belongsToMany(Mitra::class, 'kegiatan_mitras')->withPivot('jumlah', 'honor', 'estimasi_honor');
     }
 
     public function pegawai(): BelongsToMany
     {
-        return $this->belongsToMany(Pegawai::class, 'kegiatan_pegawais', 'kegiatan_id', 'pegawai_id')->withPivot('translok');
+        return $this->belongsToMany(Pegawai::class, 'kegiatan_pegawais')->withPivot('translok');
+    }
+
+    public function kegiatanMitra()
+    {
+        return $this->hasMany(KegiatanMitra::class, 'kegiatan_id');
     }
 }

@@ -364,7 +364,7 @@
               </ul> --}}
             </nav>
             <div class="copyright">
-              2024, dikembangkan oleh
+              2025, dikembangkan oleh
               <a href="https://wa.me/6282328839199">Zuhdi Ali Hisyam</a>
             </div>
             <div>

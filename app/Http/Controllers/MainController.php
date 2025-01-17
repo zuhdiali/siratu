@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 
 use App\Models\KegiatanMitra;
@@ -10,6 +11,7 @@ use App\Models\Pembayaran;
 use App\Models\Mitra;
 use App\Models\Pegawai;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
@@ -51,48 +53,90 @@ class MainController extends Controller
 
     public function dashboard()
     {
-        $mitraAktif = Mitra::where('flag', null)->count();
+        // $bulan = $request->bulan ?? date('m');
+        $tahun = date('Y');
 
-        // $mitras = Mitra::where('flag', null)->get();
-        // foreach ($mitras as $mitra) {
-        //     $kec_asal = $mitra->kec_asal;
-        //     $mitra->kec_asal = $this->konversiKodeKec($kec_asal);
-        //     $mitra->honor = $mitra->kegiatan()->sum('honor');
-        //     $mitra->estimasi_honor = $mitra->kegiatan()->sum('estimasi_honor');
-        // }
+        $mitraAdaHonor = DB::table('mitras')
+            ->select('mitras.id as mitra_id', 'mitras.nama as nama', 'mitras.kec_asal as kec_asal', DB::raw("COUNT('kegiatan_mitras.kegiatan_id') as total_kegiatan"), DB::raw("SUM(estimasi_honor) as total_estimasi_honor"), DB::raw("SUM(honor) as total_honor"))
+            ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
+            ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
+            ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
+            ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
+            ->orderBy('mitras.nama', 'asc')
+            ->get();
 
-        $bulan = 11;
-        $tahun = 2024;
-        $mitras = Mitra::with(['kegiatan' => function ($query) use ($bulan, $tahun) {
-            $query->whereMonth('tgl_selesai', $bulan)
-                ->whereYear('tgl_selesai', $tahun);
-        }])->where('flag', null)->get();
-        $test = [];
-        foreach ($mitras as $mitra) {
-            $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
-            $mitra->jumlah_kegiatan = $mitra->kegiatan->count();
-            $mitra->estimasi_honor = $mitra->kegiatan->sum('estimasi_honor');
+        $mitras = Mitra::where('flag', null)->get();
+        $mitraAktif = $mitras->count();
+        $mitraAktif--; // mengurangi 1 karena ada mitra bayangan
+
+
+        foreach ($mitraAdaHonor as $m) {
+            $m->kec_asal = $this->konversiKodeKec($m->kec_asal);
+            if (str_contains($m->nama, 'bayangan')) {
+                $mitraAdaHonor = $mitraAdaHonor->reject(function ($item) use ($m) {
+                    return $item->mitra_id == $m->mitra_id;
+                });
+            }
         }
-        return view('dashboard.mitra', compact('mitraAktif', 'mitras'));
+        foreach ($mitras as $mitra) {
+            if (!in_array($mitra->nama, array_column($mitraAdaHonor->toArray(), 'nama')) && !str_contains($mitra->nama, 'bayangan')) {
+                $mitra->total_kegiatan = 0;
+                $mitra->total_estimasi_honor = 0;
+                $mitra->total_honor = 0;
+                $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
+                $mitraAdaHonor->push($mitra);
+            }
+        }
+        return view('dashboard.mitra', compact('mitraAktif', 'mitraAdaHonor'));
     }
 
     public function dashboardBulanan(Request $request)
     {
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        $bulan = $request->bulan ?? date('m');
+        $tahun = $request->tahun ?? date('Y');
 
-        $mitras = Mitra::with(['kegiatan' => function ($query) use ($bulan, $tahun) {
-            $query->whereMonth('tgl_selesai', $bulan)
-                ->whereYear('tgl_selesai', $tahun);
-        }])->where('flag', null)->get();
-        $test = [];
-        foreach ($mitras as $mitra) {
-            $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
-            $mitra->jumlah_kegiatan = $mitra->kegiatan->count();
-            $mitra->estimasi_honor = $mitra->kegiatan->sum('estimasi_honor');
+        $mitraAdaHonor = DB::table('mitras')
+            ->select('mitras.id as mitra_id', 'mitras.nama as nama', 'mitras.kec_asal as kec_asal', DB::raw("COUNT('kegiatan_mitras.kegiatan_id') as total_kegiatan"), DB::raw("SUM(estimasi_honor) as total_estimasi_honor"), DB::raw("SUM(honor) as total_honor"))
+            ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
+            ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
+            ->whereRaw('MONTH(kegiatans.tgl_selesai) = ' . $bulan)
+            ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
+            ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
+            ->orderBy('mitras.nama', 'asc')
+            ->get();
+
+        foreach ($mitraAdaHonor as $m) {
+            $m->kec_asal = $this->konversiKodeKec($m->kec_asal);
+            $m->total_honor = $m->total_honor ?? 0;
+            $m->total_estimasi_honor = $m->total_estimasi_honor ?? 0;
+            $m->total_kegiatan = $m->total_kegiatan ?? 0;
+            if (str_contains($m->nama, 'bayangan')) {
+                $mitraAdaHonor = $mitraAdaHonor->reject(function ($item) use ($m) {
+                    return $item->mitra_id == $m->mitra_id;
+                });
+            }
         }
 
-        return response()->json($mitras);
+        $mitras = Mitra::where('flag', null)->get();
+        foreach ($mitras as $mitra) {
+            if (!in_array($mitra->nama, array_column($mitraAdaHonor->toArray(), 'nama')) && !str_contains($mitra->nama, 'bayangan')) {
+                $mitra->total_kegiatan = 0;
+                $mitra->total_estimasi_honor = 0;
+                $mitra->total_honor = 0;
+                $mitra->kec_asal = $this->konversiKodeKec($mitra->kec_asal);
+                $mitraAdaHonor->push($mitra);
+            }
+        }
+
+        if (is_object($mitras)) {
+            $dummy = $mitraAdaHonor;
+            $mitraAdaHonor = [];
+            foreach ($dummy as $d) {
+                array_push($mitraAdaHonor, $d);
+            }
+        }
+
+        return response()->json($mitraAdaHonor);
     }
 
     public function mitraKegiatanBelumDibayar($id_kegiatan)

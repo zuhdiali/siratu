@@ -56,7 +56,7 @@
                   <label for="filter-bulanan">Pilih tahun:</label>
                   <select name="filter-tahun" id="filter-tahun" class="form-select">
                     <option value="">-- Pilih Tahun ---</option>
-                    @for($i = 2024; $i <= date('Y'); $i++)
+                    @for($i = date('Y'); $i >= 2024; $i--)
                       <option value="{{$i}}">{{$i}}</option>
                     @endfor
                   </select>
@@ -98,7 +98,6 @@
               >
                 <thead>
                   <tr>
-                    {{-- <th style="width: 10%">Aksi</th> --}}
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
@@ -108,7 +107,6 @@
                 </thead>
                 <tfoot>
                   <tr>
-                    {{-- <th>Aksi</th> --}}
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
@@ -117,13 +115,13 @@
                   </tr>
                 </tfoot>
                 <tbody>
-                  @foreach($mitras as $mitra)
+                  @foreach($mitraAdaHonor as $mitra)
                     <tr>
                       <th scope="row">{{$mitra->nama}}</th>
                       <td>{{$mitra->kec_asal}}</td>
-                      <td>{{$mitra->kegiatan->count()}}</td>
-                      <td>Rp {{number_format($mitra->honor, 0, ",", ".")}}</td>
-                      <td>Rp {{number_format($mitra->estimasi_honor, 0, ",", ".")}}</td>
+                      <td>{{$mitra->total_kegiatan}}</td>
+                      <td>{{number_format($mitra->total_honor, 0, ",", ".")}}</td>
+                      <td>{{number_format($mitra->total_estimasi_honor, 0, ",", ".")}}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -160,30 +158,29 @@
   });
 
   function ajax(bulan, tahun) {
+    // console.log(bulan, tahun);
     $.ajax({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: "{{route('dashboard-bulanan' )}}",
+      url: "{{route('dashboard-bulanan')}}",
       type: "POST",
       data: {
         bulan: bulan,
         tahun: tahun
       },
       success: function(data) {
-        // console.log(data);
-        $('#basic-datatables').DataTable().destroy();
+        var table = $('#basic-datatables').DataTable().destroy();
         $('#basic-datatables tbody').empty();
         if (data.length > 0) {
           data.forEach(function(item) {
-            console.log(item);
             $('#basic-datatables tbody').append(`
               <tr>
                 <th scope="row">${item.nama}</th>
                 <td>${item.kec_asal}</td>
-                <td>${item.jumlah_kegiatan}</td>
-                <td>Rp ${item.honor}</td>
-                <td>Rp ${item.estimasi_honor}</td>
+                <td>${item.total_kegiatan}</td>
+                <td>Rp ${item.total_honor}</td>
+                <td>Rp ${item.total_estimasi_honor}</td>
               </tr>
             `);
           });
@@ -198,7 +195,7 @@
         $("#basic-datatables").DataTable({});
       },
       error: function(err) {
-        console.log(err);
+        console.error(err);
       }
     });
   }

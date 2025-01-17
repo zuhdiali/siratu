@@ -362,9 +362,16 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
     <script>
+        const jenis = '{{$jenis}}';
+
         function gantiTimDanKegiatan(){
             var tim = $('#tim').val();
-            $('#kode-tim').text(tim);
+            if (jenis != "keluar"){
+                $('#kode-tim').text(tim);
+            }
+            else {
+                $('#kode-tim').text('11010');
+            }
             $('#nomor_surat').val($('.kemungkinan_no_surat').text());
             $("#kode").empty();
             if (tim == '11011') {

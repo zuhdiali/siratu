@@ -19,4 +19,14 @@ class KegiatanMitra extends Model
         'estimasi_honor',
         'bukti_pembayaran_id',
     ];
+
+    public function mitra()
+    {
+        return $this->belongsTo(Mitra::class, 'mitra_id');
+    }
+
+    public function kegiatan()
+    {
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id');
+    }
 }
