@@ -120,7 +120,7 @@
                                 </div>
 
                             </div>
-                            @else
+                            @else  {{-- jenis == 'masuk' --}}
                             <div class="row">
                                 <div class="col-md-6">
                                      
@@ -178,6 +178,27 @@
                                         <small class="form-text text-muted">{{ $errors->first('file') }}</small>
                                         @endif
                                     </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group {{$errors->has('perihal') ? 'has-error has-feedback' : ''}}">
+                                        <label for="perihal">Perihal</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="perihal"
+                                            name="perihal"
+                                            placeholder="Perihal surat wajib diisi"
+                                            value="{{ $surat->perihal }}"
+                                        />
+                                        @if ($errors->has('perihal'))
+                                        <small class="form-text text-muted">{{ $errors->first('perihal') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                            Misal: Pengawasan SERUTI Triwulan I 2024, Pelatihan Instruktur SAKERNAS, dll.
+                                        </small>
+                                        @endif
+                                    </div> 
                                 </div>
 
                             </div>

@@ -88,7 +88,6 @@ class SuratController extends Controller
 
     public function create($jenis)
     {
-        // BARIS KODE DI BAWAH INI HARUS DIGANTI
         $kegiatans = Kegiatan::where('tim', Auth::user()->tim)->orWhere('id_pjk', Auth::user()->id)->get();
         $kegiatan_pegawais = KegiatanPegawai::where('pegawai_id', Auth::user()->id)->get();
         foreach ($kegiatan_pegawais as $kegiatan_pegawai) {
@@ -99,9 +98,6 @@ class SuratController extends Controller
                 $kegiatans->push($kegiatan);
             }
         }
-
-        // BARIS KODE DI ATAS INI HARUS DIGANTI
-        // dd($kegiatans);
         $noTerakhir = $this->getNoSuratTerakhir($jenis);
         $pegawais = Pegawai::where('flag', null)->get();
         $opsiSuratAwal = KamusSurat::where('tim', '11012')->get();
@@ -137,11 +133,12 @@ class SuratController extends Controller
                     }
                 }
             }
-        } else {
+        } else {  //jika jenis surat masuk
             $request->validate([
                 'dinas_surat_masuk' => 'required',
                 'no_surat_masuk' => 'required',
                 'file' => 'required|mimes:pdf',
+                'perihal' => 'required',
             ]);
             // $totalFoto = count($request->file('files'));
             // for ($i = 0; $i < $totalFoto; $i++) {
@@ -183,7 +180,7 @@ class SuratController extends Controller
             }
             $surat->tim = $request->tim;
             $surat->save();
-        } else {
+        } else { //jika jenis surat masuk
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
             $surat->no_surat_masuk = $request->no_surat_masuk;
             $surat->save();
@@ -211,16 +208,6 @@ class SuratController extends Controller
                 $surat->save();
             }
         }
-
-
-
-
-        // YANG DI BAWAH INI HARUS DIGANTI
-        // $surat->id_pembuat_surat = Auth::user()->id;
-        // $surat->id_pembuat_surat = 16; // ganti dengan id user yang login
-        // YANG DI ATAS INI HARUS DIGANTI
-
-
 
         return redirect()->route('surat.' . $jenis)->with('success', 'Surat berhasil dibuat.');
     }
@@ -283,6 +270,7 @@ class SuratController extends Controller
                 'dinas_surat_masuk' => 'required',
                 'no_surat_masuk' => 'required',
                 'file' => 'nullable|mimes:pdf',
+                'perihal' => 'required',
             ]);
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
             $surat->no_surat_masuk = $request->no_surat_masuk;
@@ -297,7 +285,7 @@ class SuratController extends Controller
                 $file->move($path, $filename);
                 $surat->file = $filename;
             }
-        } else {
+        } else {  //jika jenis surat selain masuk
             $request->validate([
                 'kode' => 'required',
                 'perihal' => 'required',
@@ -323,8 +311,8 @@ class SuratController extends Controller
             } else {
                 $surat->nomor_surat = $this->generateNomorSurat("11010", $request->kode, $jenis, $noTerakhir - 1);
             }
-            $surat->perihal = $request->perihal;
         }
+        $surat->perihal = $request->perihal;
         $surat->save();
 
         return redirect()->route('surat.' . $jenis)->with('success', 'Surat berhasil diubah.');
