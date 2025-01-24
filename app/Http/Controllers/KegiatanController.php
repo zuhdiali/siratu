@@ -24,8 +24,7 @@ class KegiatanController extends Controller
                 $kegiatan->honor_pengolahan = 0;
             }
             $kegiatan->pjk = Pegawai::find($kegiatan->id_pjk);
-            $kodeTim = $kegiatan->tim;
-            $kegiatan->tim = $this->konversiTim($kodeTim);
+            $kegiatan->namaTim = $this->konversiTim($kegiatan->tim);
         }
         return view('kegiatan.index', ['kegiatans' => $kegiatans, 'kegiatanTahunIni' => $kegiatanTahunIni]);
     }
@@ -52,10 +51,9 @@ class KegiatanController extends Controller
         ]);
 
         //untuk menandai apakah ada mitra yang melebihi batas honor
-        // dd($request->all());
-        $flag = $this->validasiHonorMitra($request->mitra, $request->tgl_selesai);
-        if (!$flag) {
-            return redirect()->route('kegiatan.create')->with('error', 'Ada mitra yang melebihi batas honor.')->withInput();
+        $mitraMelebihiHonor = $this->validasiHonorMitra($request->mitra, $request->tgl_selesai);
+        if (count($mitraMelebihiHonor) > 0) {
+            return redirect()->route('kegiatan.create')->with('error', 'Mitra ' . implode(",", $mitraMelebihiHonor) . ' yang melebihi batas honor.')->withInput();
         }
         $kegiatan = new Kegiatan;
         $kegiatan->nama = $request->nama;
@@ -218,15 +216,37 @@ class KegiatanController extends Controller
         if (!$request->has('is_pml')) {
             $request->merge(['is_pml' => []]);
         }
+        $estimasi_honor = 0;
         foreach ($request->jumlah as $key => $value) {
-            $kegiatan->mitra()->updateExistingPivot($key, ['jumlah' => $value]);
-            if (in_array($key, array_keys($request->is_pml))) {
-                $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $value * $kegiatan->honor_pengawasan]);
-                $kegiatan->mitra()->updateExistingPivot($key, ['is_pml' => 1]);
-            } else {
-                $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $value * $kegiatan->honor_pencacahan]);
-                $kegiatan->mitra()->updateExistingPivot($key, ['is_pml' => 0]);
+            // cek apakah PML
+            in_array($key, array_keys($request->is_pml)) ? $is_pml = 1 : $is_pml = 0;
+
+            // Hitung estimasi honor
+            $is_pml == 1 ? $estimasi_honor = $value * $kegiatan->honor_pengawasan : $estimasi_honor = $value * $kegiatan->honor_pencacahan;
+
+            // cek apakah melebihi batas honor
+            if ($estimasi_honor > 3600000) {
+                return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Ada mitra yang melebihi batas honor.');
             }
+
+            // hitung honor mitra bulan ini
+            $honorMitraBulanIni = self::jumlahHonorMitra($key, Carbon::parse($kegiatan->tgl_selesai)->month, Carbon::parse($kegiatan->tgl_selesai)->year, $id);
+
+            // cek apakah melebihi batas honor
+            if ($honorMitraBulanIni != null) {
+                if ($honorMitraBulanIni->total_estimasi_honor + $estimasi_honor > 3600000) {
+                    return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $value . '.');
+                }
+            }
+
+            // update jumlah
+            $kegiatan->mitra()->updateExistingPivot($key, ['jumlah' => $value]);
+
+            // update estimasi honor
+            $kegiatan->mitra()->updateExistingPivot($key, ['estimasi_honor' => $estimasi_honor]);
+
+            // update is_pml
+            $kegiatan->mitra()->updateExistingPivot($key, ['is_pml' => $is_pml]);
         }
         return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Estimasi honor berhasil diperbarui.');
     }
@@ -235,9 +255,9 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::find($id);
         $kegiatanBaru = $kegiatan->replicate();
-        $flag = $this->validasiHonorMitra($kegiatanBaru->mitra, $kegiatanBaru->tgl_selesai);
-        if (!$flag) {
-            return redirect()->route('kegiatan.index')->with('error', 'Ada mitra yang melebihi batas honor.');
+        $mitraMelebihiHonor = $this->validasiHonorMitra($kegiatan->mitra, $kegiatanBaru->tgl_selesai);
+        if (count($mitraMelebihiHonor) > 0) {
+            return redirect()->route('kegiatan.index')->with('error', 'Mitra (' . implode(",", $mitraMelebihiHonor) . ')  melebihi batas honor.')->withInput();
         }
         $kegiatanBaru->nama = '(Duplikat) ' . $kegiatan->nama;
         $kegiatanBaru->save();
@@ -284,20 +304,51 @@ class KegiatanController extends Controller
 
     public static function validasiHonorMitra($arrayMitra, $tgl_selesai_kegiatan)
     {
-        $flag = true;
+        $mitraMelebihiHonor = [];
         $id_mitra = "";
+        if ($arrayMitra == null) {
+            return $mitraMelebihiHonor;
+        }
         foreach ($arrayMitra as $mitra) {
             if (gettype($mitra) == 'string') {
                 $id_mitra = $mitra;
             } else {
                 $id_mitra = $mitra->id;
             }
-            $honorMitra = MainController::jumlahHonorMitra($id_mitra, Carbon::parse($tgl_selesai_kegiatan)->month, Carbon::parse($tgl_selesai_kegiatan)->year);
+            $honorMitra = self::jumlahHonorMitra($id_mitra, Carbon::parse($tgl_selesai_kegiatan)->month, Carbon::parse($tgl_selesai_kegiatan)->year);
+            if ($honorMitra == null) {
+                continue;
+            }
             if (intval($honorMitra->total_estimasi_honor) > 3600000) {
-                $flag = false;
-                break;
+                array_push($mitraMelebihiHonor, $honorMitra->nama);
             }
         }
-        return $flag;
+        return $mitraMelebihiHonor;
+    }
+
+    public static function jumlahHonorMitra($id_mitra, $bulan, $tahun, $idKegiatanPengecualian = null)
+    {
+        // $request->validate([
+        //     'id_mitra' => 'required',
+        //     'bulan' => 'required',
+        //     'tahun' => 'required',
+        // ]);
+
+        $honorMitra = DB::table('mitras')
+            ->select('mitras.id as mitra_id', 'mitras.nama as nama', 'mitras.kec_asal as kec_asal', DB::raw("COUNT('kegiatan_mitras.kegiatan_id') as total_kegiatan"), DB::raw("SUM(estimasi_honor) as total_estimasi_honor"), DB::raw("SUM(honor) as total_honor"))
+            ->where('mitras.id', $id_mitra)
+            ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
+            ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
+            ->whereRaw('MONTH(kegiatans.tgl_selesai) = ' . $bulan)
+            ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
+            ->when($idKegiatanPengecualian, function ($query) use ($idKegiatanPengecualian) {
+                if ($idKegiatanPengecualian !== null) {
+                    return $query->where('kegiatans.id', '<>', $idKegiatanPengecualian);
+                }
+            })
+            ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
+            ->orderBy('mitras.nama', 'asc')
+            ->first();
+        return $honorMitra;
     }
 }

@@ -153,8 +153,8 @@
 
 @section('script')
 <script>
+  var urlDashboard = "{{route('dashboard')}}";
   $(document).ready(function() {
-
     $('#filter-bulan').change(function() {
       var bulan = $(this).val();
       var tahun = $('#filter-tahun').val();
@@ -192,6 +192,21 @@
           data.forEach(function(item) {
             $('#basic-datatables tbody').append(`
               <tr>
+                <td>
+                  <div class="form-button-action">
+                    <form action="${urlDashboard}/estimasi-honor/${item.id_mitra ? item.id_mitra : item.mitra_id}">
+                      <button
+                        type="submit"
+                        data-bs-toggle="tooltip"
+                        title="Detil Kegiatan Mitra"
+                        class="btn btn-link btn-primary px-2"
+                        data-original-title="Detil Kegiatan Mitra"
+                      >
+                        <i class="fa fa-eye"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
                 <th scope="row">${item.nama}</th>
                 <td>${item.kec_asal}</td>
                 <td>${item.total_kegiatan}</td>

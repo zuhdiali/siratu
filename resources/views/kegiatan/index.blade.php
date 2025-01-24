@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
+{{-- {{dd(Auth::user())}} --}}
 <div class="container">
   <div class="page-inner">
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
@@ -81,7 +81,7 @@
                 <tbody>
                   @foreach($kegiatans as $kegiatan)
                     <!-- Modal -->
-                    @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $kegiatan->tim == Auth::user()->tim))
+                    @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
                     <div class="modal fade" id="{{'exampleModal'.$kegiatan->id}}" tabindex="-1" aria-labelledby="{{'exampleModalLabel'.$kegiatan->id}}" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
@@ -124,7 +124,6 @@
                     @endif
                     <tr>
                       <td>
-                        @if((Auth::user()->role == 'Admin')||($kegiatan->id_pjk  == Auth::user()->id))
                         <div class="form-button-action">
                           <form action="{{url('kegiatan/show', $kegiatan->id)}}">
                             <button
@@ -136,6 +135,8 @@
                             >
                             <i class="fa fa-eye"></i>
                           </form>
+                        @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
+                          
 
                           <form action="{{url('kegiatan/edit', $kegiatan->id)}}">
                             <button
@@ -171,11 +172,11 @@
                           >
                             <i class="fa fa-times"></i>
                           </button>
+                          @endif
                         </div>
-                        @endif
                       </td>
                       <th scope="row">{{(strlen($kegiatan->nama)>90 ? substr($kegiatan->nama, 0, 90) . '...' : $kegiatan->nama)}}</th>
-                      <td>{{$kegiatan->tim}}</td>
+                      <td>{{$kegiatan->namaTim}}</td>
                       <td>{{$kegiatan->pjk->nama}}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d M Y') }}</td>

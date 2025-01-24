@@ -18,6 +18,28 @@ class MainController extends Controller
 {
     public function index()
     {
+        // $id_mitra =  227791;
+        // //  id fitra = 229707
+        // // id rahmad hidayat = 227791
+        // $bulan = 1;
+        // $tahun = 2025;
+        // $idKegiatanPengecualian = 152;
+        // $honorMitra = DB::table('mitras')
+        //     ->select('mitras.id as mitra_id', 'mitras.nama as nama', 'mitras.kec_asal as kec_asal', DB::raw("COUNT('kegiatan_mitras.kegiatan_id') as total_kegiatan"), DB::raw("SUM(estimasi_honor) as total_estimasi_honor"), DB::raw("SUM(honor) as total_honor"))
+        //     ->where('mitras.id', $id_mitra)
+        //     ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
+        //     ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
+        //     ->whereRaw('MONTH(kegiatans.tgl_selesai) = ' . $bulan)
+        //     ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
+        //     ->when($idKegiatanPengecualian, function ($query) use ($idKegiatanPengecualian) {
+        //         if ($idKegiatanPengecualian !== null) {
+        //             return $query->where('kegiatans.id', '<>', $idKegiatanPengecualian);
+        //         }
+        //     })
+        //     ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
+        //     ->orderBy('mitras.nama', 'asc')
+        //     ->first();
+        // dd($honorMitra);
         return view('index');
     }
 
@@ -141,26 +163,7 @@ class MainController extends Controller
         return response()->json($mitraAdaHonor);
     }
 
-    public static function jumlahHonorMitra($id_mitra, $bulan, $tahun)
-    {
-        // $request->validate([
-        //     'id_mitra' => 'required',
-        //     'bulan' => 'required',
-        //     'tahun' => 'required',
-        // ]);
 
-        $honorMitra = DB::table('mitras')
-            ->select('mitras.id as mitra_id', 'mitras.nama as nama', 'mitras.kec_asal as kec_asal', DB::raw("COUNT('kegiatan_mitras.kegiatan_id') as total_kegiatan"), DB::raw("SUM(estimasi_honor) as total_estimasi_honor"), DB::raw("SUM(honor) as total_honor"))
-            ->where('mitras.id', $id_mitra)
-            ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
-            ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
-            ->whereRaw('MONTH(kegiatans.tgl_selesai) = ' . $bulan)
-            ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
-            ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
-            ->orderBy('mitras.nama', 'asc')
-            ->first();
-        return $honorMitra;
-    }
 
     public function mitraKegiatanBelumDibayar($id_kegiatan)
     {

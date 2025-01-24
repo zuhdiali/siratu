@@ -40,6 +40,7 @@ class PembayaranController extends Controller
 
     public function store(Request $request, $jenis)
     {
+        dd($request->all());
         if (!in_array($jenis, ['mitra', 'organik'])) {
             return redirect()->route('pembayaran.index')
                 ->with('error', 'Jenis pembayaran tidak valid. Harus pilih antara Organik atau Mitra.');
@@ -66,7 +67,16 @@ class PembayaranController extends Controller
         if ($jenis == 'mitra') {
             $pembayaran->tipe_pembayaran = 'Mitra';
             $pembayaran->save();
-            if ($request->has('honor')) {
+            if ($request->has('is_translok')) {
+                foreach ($request->honor as $key => $value) {
+                    if ($value == null || $value == "") {
+                        continue;
+                    }
+                    $kegiatan->mitra()->updateExistingPivot($key, ['translok' => $value]);
+                    $kegiatan->mitra()->updateExistingPivot($key, ['bukti_pembayaran_id' => $pembayaran->id]);
+                    $kegiatan->save();
+                }
+            } else {
                 foreach ($request->honor as $key => $value) {
                     if ($value == null || $value == "") {
                         continue;

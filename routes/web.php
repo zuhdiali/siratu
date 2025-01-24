@@ -28,8 +28,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [MainController::class, 'index'])->name('index');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::post('/dashboard-bulanan', [MainController::class, 'dashboardBulanan'])->name('dashboard-bulanan');
-    Route::get('/dashboard/estimasi-honor/{id}', [MitraController::class, 'estimasiHonor']);
-    Route::post('/dashboard/estimasi-honor-bulanan', [MitraController::class, 'estimasiHonorBulanan'])->name('estimasi-honor-bulanan');
+    Route::get('/dashboard/estimasi-honor/{id}', [MitraController::class, 'estimasiHonor'])->name('dashboard-estimasi-honor-mitra');
+    Route::post('/dashboard/estimasi-honor-bulanan', [MitraController::class, 'estimasiHonorBulanan'])->name('dashboard-estimasi-honor-bulanan');
 
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/', [PegawaiController::class, 'user'])->name('index');
@@ -88,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/update-terlibat/{id}', [KegiatanController::class, 'updateTerlibat'])->name('update.terlibat');
         Route::get('/destroy/{id}', [KegiatanController::class, 'destroy'])->name('destroy');
 
-        Route::get('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonor']);
+        Route::get('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonor'])->name('estimasi-honor');
         Route::post('/estimasi-honor/{id}', [KegiatanController::class, 'estimasiHonorPost']);
         Route::get('/duplicate/{id}', [KegiatanController::class, 'duplicate'])->name('duplicate');
 
