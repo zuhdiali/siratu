@@ -98,6 +98,7 @@
               >
                 <thead>
                   <tr>
+                    <th>Rincian Kegiatan</th>
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
@@ -107,6 +108,7 @@
                 </thead>
                 <tfoot>
                   <tr>
+                    <th>Rincian Kegiatan</th>
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
@@ -117,6 +119,20 @@
                 <tbody>
                   @foreach($mitraAdaHonor as $mitra)
                     <tr>
+                      <td>
+                        <div class="form-button-action">
+                          <form action="{{url('dashboard/estimasi-honor', property_exists($mitra, "id_mitra") ? $mitra->id_mitra : $mitra->mitra_id)}}">
+                            <button
+                              type="submit"
+                              data-bs-toggle="tooltip"
+                              title="Detil Kegiatan Mitra"
+                              class="btn btn-link btn-primary px-2"
+                              data-original-title="Detil Kegiatan Mitra"
+                            >
+                            <i class="fa fa-eye"></i>
+                          </form>
+                        </div>
+                      </td>
                       <th scope="row">{{$mitra->nama}}</th>
                       <td>{{$mitra->kec_asal}}</td>
                       <td>{{$mitra->total_kegiatan}}</td>

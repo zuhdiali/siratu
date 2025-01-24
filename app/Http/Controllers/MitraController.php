@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kegiatan;
+use App\Models\KegiatanMitra;
 use Illuminate\Http\Request;
 use App\Models\Mitra;
+use Illuminate\Support\Carbon;
 
 class MitraController extends Controller
 {
@@ -87,6 +90,37 @@ class MitraController extends Controller
         $mitra->flag = "Dihapus";
         $mitra->save();
         return redirect()->route('mitra.index')->with('success', 'Mitra berhasil ditandai sebagai tidak aktif.');
+    }
+
+    public function estimasiHonor($id)
+    {
+        $mitra = Mitra::find($id);
+        $kegiatan_mitra = KegiatanMitra::where('mitra_id', $id)->get();
+        foreach ($kegiatan_mitra as $km) {
+            $kegiatan = Kegiatan::find($km->kegiatan_id);
+            $km->kegiatan = $kegiatan;
+        }
+        // dd($kegiatan_mitra[0]->kegiatan->nama);
+        return view('mitra.estimasi-honor', ['mitra' => $mitra, 'kegiatan_mitra' => $kegiatan_mitra]);
+    }
+
+    public function estimasiHonorBulanan(Request $request)
+    {
+        $bulan = $request->bulan ?? date('m');
+        $tahun = $request->tahun ?? date('Y');
+        $id = $request->id_mitra;
+
+        $kegiatan_mitra = KegiatanMitra::where('mitra_id', $id)->get();
+        foreach ($kegiatan_mitra as $km) {
+            $kegiatan = Kegiatan::find($km->kegiatan_id);
+            if (Carbon::parse($kegiatan->tgl_selesai)->month == $bulan && Carbon::parse($kegiatan->tgl_selesai)->year == $tahun) {
+                $km->kegiatan = $kegiatan;
+            } else {
+                $kegiatan_mitra = $kegiatan_mitra->except($km->id);
+            }
+        }
+
+        return response()->json($kegiatan_mitra);
     }
 
     private function konversiKodeKec($id)

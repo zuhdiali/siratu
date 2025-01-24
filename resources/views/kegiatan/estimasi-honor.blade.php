@@ -55,6 +55,7 @@
                                             <thead>
                                                 <tr>
                                                 <th>Nama Mitra</th>
+                                                <th>Apakah PML</th>
                                                 <th>Jumlah Pendataan/Pengolahan</th>
                                                 <th>Estimasi Honor</th>
                                                 </tr>
@@ -64,8 +65,11 @@
                                                 @foreach($kegiatan->mitra as $mitra)
                                                 <tr>
                                                     <td>{{$mitra->nama}}<input type="hidden" name="id_mitra[{{$mitra->id}}]" value="{{$mitra->id}}" /> </td>
+                                                    <td>
+                                                        <input type="checkbox" name="is_pml[{{$mitra->id}}]" value="1" @if($mitra->pivot->is_pml == 1) checked @endif>
+                                                    </td>
                                                     <td><input type="number" name="jumlah[{{$mitra->id}}]" class="form-control" value="{{$mitra->pivot->jumlah}}"/></td>
-                                                    <td id="estimasi_honor"> @if($mitra->pivot->jumlah)  Rp {{number_format($mitra->pivot->jumlah * $kegiatan->honor_pencacahan,0,",",".")}} @else Rp 0 @endif</td>
+                                                    <td id="estimasi_honor"> @if($mitra->pivot->jumlah)  Rp {{number_format($mitra->pivot->estimasi_honor,0,",",".")}} @else Rp 0 @endif</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -90,12 +94,18 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
 <script>
+
     $(document).ready(function() {
-        $('input[name^="jumlah"]').on('input', function() {
-            var jumlah = $(this).val();
-            var honor = {{$kegiatan->honor_pencacahan}};
+
+        function updateEstimasiHonor(row) {
+            var jumlah = row.find('input[name^="jumlah"]').val();
+            var honor = row.find('input[name^="is_pml"]').is(':checked') ? {{$kegiatan->honor_pengawasan}} : {{$kegiatan->honor_pencacahan}};
             var estimasi = jumlah * honor;
-            $(this).closest('tr').find('#estimasi_honor').text('Rp ' + estimasi.toLocaleString('id-ID'));
+            row.find('#estimasi_honor').text('Rp ' + estimasi.toLocaleString('id-ID'));
+        }
+
+        $('input[name^="jumlah"], input[name^="is_pml"]').on('input change', function() {
+            updateEstimasiHonor($(this).closest('tr'));
         });
 
         var pageLength;

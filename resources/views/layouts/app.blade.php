@@ -78,16 +78,16 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
 
-                {{-- <li class="nav-item {{ Request::path() ==  '/' ? 'active' : ''  }}">
+                <li class="nav-item {{ Request::path() ==  '/' ? 'active' : ''  }}">
                     <a href="{{route('index')}}">
                         <i class="fas fa-home"></i>
                         <p>Beranda</p>
                     </a>
-                </li> --}}
+                </li>
 
                 <li class="nav-item {{ str_contains(Request::path(), 'dashboard') ? 'active' : ''  }}">
                   <a href="{{route('dashboard')}}">
-                      <i class="fas fa-home"></i>
+                      <i class="fas fa-tachometer-alt"></i>
                       <p>Dashboard Mitra</p>
                   </a>
               </li>

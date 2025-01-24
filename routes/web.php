@@ -28,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [MainController::class, 'index'])->name('index');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::post('/dashboard-bulanan', [MainController::class, 'dashboardBulanan'])->name('dashboard-bulanan');
+    Route::get('/dashboard/estimasi-honor/{id}', [MitraController::class, 'estimasiHonor']);
+    Route::post('/dashboard/estimasi-honor-bulanan', [MitraController::class, 'estimasiHonorBulanan'])->name('estimasi-honor-bulanan');
 
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/', [PegawaiController::class, 'user'])->name('index');
@@ -94,6 +96,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pegawai-belum-dibayar/{id}', [MainController::class, 'pegawaiKegiatanBelumDibayar']);
 
         Route::post('/get-kegiatan-api', [SuratController::class, 'getKegiatanApi'])->name('get-kegiatan-api');
+        // Route::post('/honor-mitra', [MainController::class, 'jumlahHonorMitra'])->name('jumlah-honor-mitra');
     });
 
     Route::prefix('surat')->name('surat.')->group(function () {

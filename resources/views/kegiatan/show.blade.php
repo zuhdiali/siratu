@@ -151,7 +151,7 @@
                       </div>
                     </div> --}}
                     <tr>
-                        <th scope="row">{{$mitra->nama}}</th>
+                        <th scope="row">{{$mitra->pivot->is_pml == 1 ? "PML" : "PPL"}} - {{$mitra->nama}}</th>
                         <td>{{$mitra->pivot->jumlah}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>

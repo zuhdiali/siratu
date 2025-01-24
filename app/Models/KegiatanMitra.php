@@ -16,6 +16,7 @@ class KegiatanMitra extends Model
         'kegiatan_id',
         'jumlah',
         'honor',
+        'translok',
         'estimasi_honor',
         'bukti_pembayaran_id',
     ];
