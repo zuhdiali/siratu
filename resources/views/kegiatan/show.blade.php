@@ -69,12 +69,20 @@
 							</tr>
 							<tr>
 								<td>
-									<p>Honor <strong>Pencacahan</strong></p>
+									<p>Honor <strong>Pencacahan / Pengolahan</strong></p>
 								</td>
 								<td>
 									<p>: Rp {{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} per  {{$kegiatan->satuan_honor_pencacahan}}</p>
 								</td>
 							</tr>
+              <tr>
+                <td>
+                  <p>Progress</p>
+                </td>
+                <td>
+                  <p>: {{$kegiatan->progress}} %</p>
+                </td>
+              </tr>
 						</tbody>
 					</table>
 				</div>

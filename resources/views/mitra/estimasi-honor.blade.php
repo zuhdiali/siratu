@@ -89,6 +89,7 @@
         <div class="card">
           <div class="card-header">
             <h4 class="card-title">Daftar Kegiatan {{$mitra->nama}}</h4>
+            <small class="text-danger" id="helper-text">Daftar di bawah masih menampilkan kegiatan dalam satu tahun. Untuk filter bulanan, silakan pilih filter di atas.</small>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -140,8 +141,8 @@
                       <th scope="row">{{$kegiatan->kegiatan->nama}}</th>
                       <td>{{Carbon\Carbon::parse($kegiatan->kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}</td>
                       <td>{{Carbon\Carbon::parse($kegiatan->kegiatan->tgl_selesai)->locale('id')->translatedFormat('d M Y') }}</td>
-                      <td>{{number_format($kegiatan->estimasi_honor, 0, ",", ".")}} </td>
-                      <td>{{number_format($kegiatan->honor, 0, ",", ".")}}</td>
+                      <td data-order="{{$kegiatan->estimasi_honor}}">Rp {{number_format($kegiatan->estimasi_honor, 0, ",", ".")}} </td>
+                      <td data-order="{{$kegiatan->honor}}">Rp {{number_format($kegiatan->honor, 0, ",", ".")}}</td>
                       {{-- <td>
                         @if($kegiatan->flag == null)
                         <span class="badge bg-success">Aktif</span>
@@ -164,24 +165,16 @@
 
 @section('script')
 <script>
-      $(document).ready(function() {
-
-$('#filter-bulan').change(function() {
-  var bulan = $(this).val();
-  var tahun = $('#filter-tahun').val();
-  if (bulan && tahun) {
-    ajax(bulan, tahun);
-  }
-  
-});
-
-$('#filter-tahun').change(function() {
-  var tahun = $(this).val();
-  var bulan = $('#filter-bulan').val();
-  if (bulan && tahun) {
-    ajax(bulan, tahun);
-  }
-});
+  var urlKegiatan = "{{route('kegiatan.index')}}";
+$(document).ready(function() {
+  $('#filter-bulan, #filter-tahun').change(function() {
+    var bulan = $('#filter-bulan').val();
+    var tahun = $('#filter-tahun').val();
+    if (bulan && tahun) {
+      ajax(bulan, tahun);
+    }
+    $('#helper-text').text('');
+  });
 });
 
 function ajax(bulan, tahun) {
@@ -190,7 +183,7 @@ $.ajax({
   headers: {
     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
   },
-  url: "{{route('estimasi-honor-bulanan')}}",
+  url: "{{route('dashboard-estimasi-honor-bulanan')}}",
   type: "POST",
   data: {
     bulan: bulan,
@@ -198,24 +191,40 @@ $.ajax({
     id_mitra: {{$mitra->id}}
   },
   success: function(data) {
-  console.log(data)
+
     $('#basic-datatables').DataTable().destroy();
     $('#basic-datatables tbody').empty();
       data.forEach(function(item) {
         $('#basic-datatables tbody').append(`
           <tr>
-             <td>${item.kegiatan.id}
-              </td>
+            <td>
+              <div class="form-button-action">
+                <form action="${urlKegiatan}/show/${item.kegiatan.id}">
+                  <button
+                    type="submit"
+                    data-bs-toggle="tooltip"
+                    title="Detil Kegiatan"
+                    class="btn btn-link btn-primary px-2"
+                    data-original-title="Detil Kegiatan"
+                  >
+                  <i class="fa fa-eye"></i>
+                </form>
+              </div>
             <th scope="row">${item.kegiatan.nama}</th>
-            <td>${item.kegiatan.tgl_mulai}</td>
-            <td>${item.kegiatan.tgl_selesai}</td>
+            <td>${new Date(item.kegiatan.tgl_mulai).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+            <td>${new Date(item.kegiatan.tgl_selesai).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
             <td data-order="${(item.estimasi_honor)}">Rp ${new Intl.NumberFormat('id-ID').format((item.estimasi_honor))}</td>
-            <td data-order="${(item.honor)}">Rp ${new Intl.NumberFormat('id-ID').format((item.total_estimasi_honor))}</td>
+            <td data-order="${(item.honor)}">Rp ${new Intl.NumberFormat('id-ID').format((item.honor))}</td>
           </tr>
         `);
       });
 
-    $("#basic-datatables").DataTable({});
+    $("#basic-datatables").DataTable({
+      columnDefs: [
+        { targets: 4, type: 'num-fmt' },
+        { targets: 5, type: 'num-fmt' }
+      ]
+    });
   },
   error: function(err) {
     console.error(err);

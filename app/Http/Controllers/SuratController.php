@@ -119,6 +119,11 @@ class SuratController extends Controller
                     'id_kegiatan' => 'required',
                 ]);
                 $kegiatan = Kegiatan::find($request->id_kegiatan);
+                $mitraMelebihiHonor = KegiatanController::validasiHonorMitra($kegiatan->mitra, $kegiatan->tgl_selesai);
+                if (count($mitraMelebihiHonor) > 0) {
+                    return redirect()->back()->with('error', 'Mitra (' . implode(",", $mitraMelebihiHonor) . ') melebihi batas honor yang diperbolehkan.');
+                }
+
                 if ($kegiatan->honor_pengawasan == null || $kegiatan->honor_pencacahan == null) {
                     return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki honor pengawasan atau pencacahan.');
                 } else {

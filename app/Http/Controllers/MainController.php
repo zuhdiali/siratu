@@ -40,7 +40,14 @@ class MainController extends Controller
         //     ->orderBy('mitras.nama', 'asc')
         //     ->first();
         // dd($honorMitra);
-        return view('index');
+
+        $kegiatanBulanIni = Kegiatan::where(function ($query) {
+            $query->whereMonth('tgl_selesai', date('m'))
+                ->whereYear('tgl_selesai', date('Y'))
+                ->orWhereMonth('tgl_mulai', date('m'))
+                ->whereYear('tgl_mulai', date('Y'));
+        })->orderBy('progress', 'desc')->get();
+        return view('index', compact('kegiatanBulanIni'));
     }
 
     public function login()

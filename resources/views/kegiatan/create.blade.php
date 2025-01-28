@@ -212,6 +212,27 @@
                                         </small>
                                         @endif
                                     </div> 
+
+                                    <div class="form-group">
+                                        <label for="progress">Progress (Kemajuan) Kegiatan</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="progress"
+                                            name="progress"
+                                            placeholder="Masukkan progress kegiatan"
+                                            min="0"
+                                            max="100"
+                                            value="{{ old('progress') ? old('progress') : 0 }}"
+                                        />
+                                        @if ($errors->has('progress'))
+                                        <small class="form-text text-muted">{{ $errors->first('progress') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                            Isikan dalam rentang 0-100
+                                        </small>
+                                        @endif
+                                    </div>
                                 </div>
 
                             </div>

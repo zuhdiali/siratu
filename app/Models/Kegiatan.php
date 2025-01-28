@@ -20,6 +20,7 @@ class Kegiatan extends Model
         'honor_pencacahan',
         'flag_pembayaran',
         'id_pjk',
+        'progress',
         'tim',
     ];
 

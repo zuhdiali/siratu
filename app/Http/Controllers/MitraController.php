@@ -118,6 +118,9 @@ class MitraController extends Controller
             } else {
                 $kegiatan_mitra = $kegiatan_mitra->except($km->id);
             }
+            if ($km->honor == null) {
+                $km->honor = 0;
+            }
         }
 
         return response()->json($kegiatan_mitra);

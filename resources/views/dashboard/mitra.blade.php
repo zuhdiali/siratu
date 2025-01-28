@@ -102,8 +102,8 @@
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
-                    <th>Honor Diterima</th>
                     <th>Estimasi Honor Diterima</th>
+                    <th>Honor Diterima</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -112,8 +112,8 @@
                     <th>Nama</th>
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
-                    <th>Honor Diterima</th>
                     <th>Estimasi Honor Diterima</th>
+                    <th>Honor Diterima</th>
                   </tr>
                 </tfoot>
                 <tbody>
@@ -127,7 +127,7 @@
                               data-bs-toggle="tooltip"
                               title="Detil Kegiatan Mitra"
                               class="btn btn-link btn-primary px-2"
-                              data-original-title="Detil Kegiatan Mitra"
+                              {{-- data-original-title="Detil Kegiatan Mitra" --}}
                             >
                             <i class="fa fa-eye"></i>
                           </form>
@@ -136,8 +136,8 @@
                       <th scope="row">{{$mitra->nama}}</th>
                       <td>{{$mitra->kec_asal}}</td>
                       <td>{{$mitra->total_kegiatan}}</td>
-                        <td data-order="{{$mitra->total_honor}}">Rp {{number_format($mitra->total_honor, 0, ",", ".")}}</td>
-                        <td data-order="{{$mitra->total_estimasi_honor}}">Rp {{number_format($mitra->total_estimasi_honor, 0, ",", ".")}}</td>
+                      <td data-order="{{$mitra->total_estimasi_honor}}">Rp {{number_format($mitra->total_estimasi_honor, 0, ",", ".")}}</td>
+                      <td data-order="{{$mitra->total_honor}}">Rp {{number_format($mitra->total_honor, 0, ",", ".")}}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -210,8 +210,8 @@
                 <th scope="row">${item.nama}</th>
                 <td>${item.kec_asal}</td>
                 <td>${item.total_kegiatan}</td>
-                <td data-order="${item.total_honor}">Rp ${new Intl.NumberFormat('id-ID').format(item.total_honor)}</td>
                 <td data-order="${item.total_estimasi_honor}">Rp ${new Intl.NumberFormat('id-ID').format(item.total_estimasi_honor)}</td>
+                <td data-order="${item.total_honor}">Rp ${new Intl.NumberFormat('id-ID').format(item.total_honor)}</td>
               </tr>
             `);
           });

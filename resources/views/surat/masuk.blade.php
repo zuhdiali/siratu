@@ -59,7 +59,7 @@
                     <th>Perihal</th>
                     <th>Tanggal Diterima</th>
                     <th>Dinas Pemberi Surat</th>
-                    <th>Rincian Surat</th>
+                    {{-- <th>Rincian Surat</th> --}}
                   </tr>
                 </thead>
                 <tfoot>
@@ -69,7 +69,7 @@
                     <th>Perihal</th>
                     <th>Tanggal Dibuat</th>
                     <th>Dinas Pemberi Surat</th>
-                    <th>Rincian Surat</th>
+                    {{-- <th>Rincian Surat</th> --}}
                   </tr>
                 </tfoot>
                 <tbody>
@@ -98,8 +98,11 @@
                     @endif
                     <tr>
                       <td>
-                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                         <div class="form-button-action">
+                            <a href="{{url('surat/detail/'.$surat->jenis_surat."/".$surat->id)}}" target="_blank" class="btn btn-link btn-primary px-2" data-bs-toggle="tooltip" title="Lihat Surat" data-original-title="Lihat Surat">
+                            <i class="fa fa-eye"></i>
+                            </a>
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
                               type="submit"
@@ -122,16 +125,16 @@
                           >
                             <i class="fa fa-times"></i>
                           </button>
+                          @endif
                         </div>
-                        @endif
                       </td>
                       <th scope="row">{{$surat->no_surat_masuk}}</th>
                       <td>{{$surat->perihal}}</td>
                       <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
                       <td>{{$surat->dinas_surat_masuk}}</td>
-                      <td>
+                      {{-- <td>
                         <a href="{{url('surat/detail/'.$surat->jenis_surat."/".$surat->id)}}" class="btn btn-link btn-primary" target="_blank">Lihat Surat</a>
-                      </td>
+                      </td> --}}
                       {{-- <td>
                         @if($surat->flag == null)
                         <span class="badge bg-success">Aktif</span>

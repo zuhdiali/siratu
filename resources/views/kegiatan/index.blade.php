@@ -63,6 +63,7 @@
                     <th>Jumlah Mitra</th>
                     <th>Honor (Pengawasan)</th>
                     <th>Honor (Pencacahan)</th>
+                    <th>Progress</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -76,6 +77,7 @@
                     <th>Jumlah Mitra</th>
                     <th>Honor (Pengawasan)</th>
                     <th>Honor (Pencacahan)</th>
+                    <th>Progress</th>
                   </tr>
                 </tfoot>
                 <tbody>
@@ -136,8 +138,6 @@
                             <i class="fa fa-eye"></i>
                           </form>
                         @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
-                          
-
                           <form action="{{url('kegiatan/edit', $kegiatan->id)}}">
                             <button
                               type="submit"
@@ -183,6 +183,7 @@
                       <td>{{$kegiatan->mitra->count()}}</td>
                       <td>{{number_format($kegiatan->honor_pengawasan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pengawasan}}</td>
                       <td>{{number_format($kegiatan->honor_pencacahan, 0, ",", ".")}} / {{$kegiatan->satuan_honor_pencacahan}}</td>
+                      <td>{{$kegiatan->progress}} %</td>
                       {{-- <td>
                         @if($kegiatan->flag == null)
                         <span class="badge bg-success">Aktif</span>
