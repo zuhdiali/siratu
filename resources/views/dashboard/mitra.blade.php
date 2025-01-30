@@ -47,7 +47,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Filter Pembayaran</h4>
+            <h4 class="card-title">Filter Bulan dan Tahun</h4>
           </div>
           <div class="card-body">
             <div class="form-group">
@@ -89,6 +89,7 @@
         <div class="card">
           <div class="card-header">
             <h4 class="card-title">Daftar Mitra</h4>
+            <small class="text-danger" id="helper-text">Estimasi honor di bawah masih menampilkan rekap dalam satu tahun. Untuk filter bulanan, silakan pilih filter di atas.</small>
           </div>
           <div class="card-body">
             <div class="table-responsive">
