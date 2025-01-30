@@ -110,8 +110,10 @@ class KegiatanController extends Controller
             $kegiatan->nama = $request->nama;
             $kegiatan->tgl_mulai = $request->tgl_mulai;
             $kegiatan->tgl_selesai = $request->tgl_selesai;
+            $honor_pengawasan_sebelumnya = $kegiatan->honor_pengawasan;
             $kegiatan->satuan_honor_pengawasan = $request->satuan_honor_pengawasan;
             $kegiatan->honor_pengawasan = $request->honor_pengawasan;
+            $honor_pencacahan_sebelumnya = $kegiatan->honor_pencacahan;
             $kegiatan->satuan_honor_pencacahan = $request->satuan_honor_pencacahan;
             $kegiatan->honor_pencacahan = $request->honor_pencacahan;
             $kegiatan->id_pjk = $request->id_pjk;
@@ -120,6 +122,19 @@ class KegiatanController extends Controller
             $kegiatan->pegawai()->sync($request->pegawai);
             $kegiatan->mitra()->sync($request->mitra);
             $kegiatan->save();
+            if ($honor_pencacahan_sebelumnya != $request->honor_pencacahan || $honor_pengawasan_sebelumnya != $request->honor_pengawasan) {
+                foreach ($kegiatan->mitra as $mitra) {
+                    $estimasi_honor = 0;
+                    $is_pml = 0;
+                    if ($mitra->pivot->is_pml == 1) {
+                        $estimasi_honor = $request->honor_pengawasan * $mitra->pivot->jumlah;
+                        $is_pml = 1;
+                    } else {
+                        $estimasi_honor = $request->honor_pencacahan * $mitra->pivot->jumlah;
+                    }
+                    $kegiatan->mitra()->updateExistingPivot($mitra->id, ['estimasi_honor' => $estimasi_honor, 'is_pml' => $is_pml]);
+                }
+            }
         } catch (\Throwable $th) {
             return redirect()->route('kegiatan.edit', ['id' => $id])->with('error', 'Gagal.');
         }
