@@ -238,11 +238,14 @@ class KegiatanController extends Controller
             // hitung honor mitra jika dengan kegiatan ini
             $honorMitraDenganKegiatanIni = self::jumlahHonorMitra($key, Carbon::parse($kegiatan->tgl_selesai)->month, Carbon::parse($kegiatan->tgl_selesai)->year);
 
-            // hitung honor mitra setelah perubahan
-            $honorMitraSetelahPerubahan = $honorMitraBulanIni->total_estimasi_honor + $estimasi_honor;
+
 
             // cek apakah melebihi batas honor
             if ($honorMitraBulanIni != null) {
+
+                // hitung honor mitra setelah perubahan
+                $honorMitraSetelahPerubahan = $honorMitraBulanIni->total_estimasi_honor + $estimasi_honor;
+
                 // if ($honorMitraBulanIni->total_estimasi_honor + $estimasi_honor > 3600000) {
                 //     return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $value . '.');
                 // }
