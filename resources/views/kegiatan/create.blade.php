@@ -18,6 +18,63 @@
                             <div class="card-title">Tambah Kegiatan</div>
                         </div>
                         <div class="card-body">
+                            <div class="row ">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <h5> SBKS (Standard Biaya Kegiatan Statistik) </h5>
+                                        {{-- <label for="filter-sbks">Pilih kegiatan:</label> --}}
+                                        <select name="filter-sbks" id="filter-sbks" class="form-select"   data-placeholder="Pilih kegiatan">
+                                            {{-- <option value="">-- Pilih Kegiatan ---</option> --}}
+                                            <option value=""></option>
+                                            @foreach($sbks as $item)
+                                                <option value="{{$item->nama_kegiatan}}">{{$item->nama_kegiatan_dan_singkatan}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jenis Kegiatan</label><br />
+                                        <div class="d-flex">
+                                            <div class="form-check">
+                                                <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                name="jenis_kegiatan"
+                                                id="pendataan"
+                                                value="pendataan"
+                                                checked
+                                                />
+                                                <label
+                                                class="form-check-label"
+                                                for="pendataan"
+                                                >
+                                                Pendataan
+                                                </label>
+                                            </div><div class="form-check">
+                                                <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                name="jenis_kegiatan"
+                                                id="pengolahan"
+                                                value="pengolahan"
+                                                />
+                                                <label
+                                                class="form-check-label"
+                                                for="pengolahan"
+                                                >
+                                                Pengolahan
+                                                </label>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <hr />
                             <div class="row">
                                 <div class="col-md-6">
 
@@ -136,8 +193,13 @@
                                             <option value="SLS" {{old('satuan_honor_pengawasan') == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{old('satuan_honor_pengawasan') == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{old('satuan_honor_pengawasan') == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
-                                            <option value="OB" {{old('satuan_honor_pengawasan') == 'OB' ? 'selected' : ''}}>Orang Badan (OB)</option>
+                                            <option value="OK" {{old('satuan_honor_pengawasan') == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
+                                            <option value="OH" {{old('satuan_honor_pengawasan') == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
+                                            <option value="OB" {{old('satuan_honor_pengawasan') == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
                                             <option value="Segmen" {{old('satuan_honor_pengawasan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
+                                            <option value="EA" {{old('satuan_honor_pengawasan') == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
+                                            <option value="Responden" {{old('satuan_honor_pengawasan') == 'Responden' ? 'selected' : ''}}>Responden</option>
+                                            <option value="Pasar" {{old('satuan_honor_pengawasan') == 'Pasar' ? 'selected' : ''}}>Pasar</option>
                                           
                                         </select>
                                         @if ($errors->has('satuan_honor_pengawasan'))
@@ -181,9 +243,13 @@
                                             <option value="SLS" {{old('satuan_honor_pencacahan') == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{old('satuan_honor_pencacahan') == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{old('satuan_honor_pencacahan') == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
-                                            <option value="OB" {{old('satuan_honor_pencacahan') == 'OB' ? 'selected' : ''}}>Orang Badan (OB)</option>
+                                            <option value="OK" {{old('satuan_honor_pencacahan') == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
+                                            <option value="OH" {{old('satuan_honor_pencacahan') == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
+                                            <option value="OB" {{old('satuan_honor_pencacahan') == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
                                             <option value="Segmen" {{old('satuan_honor_pencacahan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
-                                          
+                                            <option value="EA" {{old('satuan_honor_pencacahan') == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
+                                            <option value="Responden" {{old('satuan_honor_pencacahan') == 'Responden' ? 'selected' : ''}}>Responden</option>
+                                            <option value="Pasar" {{old('satuan_honor_pencacahan') == 'Pasar' ? 'selected' : ''}}>Pasar</option>
                                         </select>
                                         @if ($errors->has('satuan_honor_pencacahan'))
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pencacahan') }}</small>
@@ -294,18 +360,66 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
 <script>
-    $( '#pegawai' ).select2({
-        theme: "bootstrap-5",
-        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-        placeholder: $( this ).data( 'placeholder' ),
-        closeOnSelect: false,
-    }  );
+    $(document).ready(function() {
+        $('#pegawai').select2({
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            closeOnSelect: false,
+        });
 
-    $( '#mitra' ).select2( {
-        theme: "bootstrap-5",
-        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-        placeholder: $( this ).data( 'placeholder' ),
-        closeOnSelect: false,
-    } );
+        $('#mitra').select2({
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            closeOnSelect: false,
+        });
+
+        $('#filter-sbks').select2({
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            closeOnSelect: false,
+        });
+
+        $('#filter-sbks, input[name="jenis_kegiatan"]').on('change', function() {
+            var jenis_kegiatan = $('input[name="jenis_kegiatan"]:checked').val();
+            var nama_kegiatan = $('#filter-sbks').val();
+            // console.log(jenis_kegiatan, nama_kegiatan);
+            $.ajax({
+                headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route('sbks.get-honor') }}',
+                type: 'POST',
+                data: {
+                    jenis_kegiatan: jenis_kegiatan,
+                    nama_kegiatan: nama_kegiatan
+                },
+                success: function(data) {
+                    // console.log(data);
+                    $('#nama').val(data.nama_kegiatan);
+                    $('#id_pjk').val(data.id_pjk);
+                    $('#tim').val(data.tim);
+                    $('#satuan_honor_pengawasan').val(data.satuan_honor_pengawasan);
+                    $('#honor_pengawasan').val(data.honor_pengawasan);
+                    $('#satuan_honor_pencacahan').val(data.satuan_honor_pendataan_atau_pengolahan);
+                    $('#honor_pencacahan').val(data.honor_pendataan_atau_pengolahan);
+                },
+                error: function(err) {
+                    // console.log(err);
+                    $('#nama').val("");
+                    $('#id_pjk').val("");
+                    $('#tim').val("");
+                    $('#satuan_honor_pengawasan').val("");
+                    $('#honor_pengawasan').val(0);
+                    $('#satuan_honor_pencacahan').val("");
+                    $('#honor_pencacahan').val(0);
+                }
+            });
+        });
+    });
+</script>
+
 </script>
 @endsection

@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div class="card">
           <div class="card-header">
             <div class="card-title">Daftar Kegiatan Bulan Ini</div>
@@ -28,6 +28,8 @@
                 <thead>
                   <tr>
                     <th>Nama</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
                     <th>Progress</th>
                   </tr>
                 </thead>
@@ -35,6 +37,8 @@
                   @foreach($kegiatanBulanIni as $item)
                     <tr>
                       <td>{{ $item->nama }}</td>
+                      <td>{{ Carbon\Carbon::parse($item->tgl_mulai)->locale('id')->translatedFormat('d F Y')  }}</td>
+                      <td>{{ Carbon\Carbon::parse($item->tgl_selesai)->locale('id')->translatedFormat('d F Y')  }}</td>
                       <td>{{ $item->progress }}%</td>
                     </tr>
                   @endforeach
@@ -45,7 +49,6 @@
     </div>
     {{-- <div class="row"> --}}
 
-    </div>
   </div>
 </div>
 @endsection
@@ -54,7 +57,7 @@
 <script>
   var barChart = document.getElementById("barChart").getContext("2d")
   var myBarChart = new Chart(barChart, {
-    type: "bar",
+    type: "horizontalBar",
     data: {
       labels: [
         @foreach($kegiatanBulanIni as $item)

@@ -10,6 +10,7 @@ use App\Models\KegiatanPegawai;
 use App\Models\Pembayaran;
 use App\Models\Mitra;
 use App\Models\Pegawai;
+use App\Models\SBKS;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,29 @@ class MainController extends Controller
 {
     public function index()
     {
+        // $kegiatanMitra = KegiatanMitra::get();
+        // foreach ($kegiatanMitra as $km) {
+        //     $kegiatan = Kegiatan::find($km->kegiatan_id);
+        //     $km->tgl_realisasi = $kegiatan->tgl_selesai;
+        //     $km->save();
+        // }
+
+        // UPDATE KEGIATAN YANG BELUM ADA SINGKATAN RESMI
+        // $nama_kegiatan = SBKS::select('nama_kegiatan')->groupBy('nama_kegiatan')->get();
+        // // dd($sbks);
+        // foreach ($nama_kegiatan as $item) {
+        //     $semuaKegiatan = SBKS::where('nama_kegiatan', $item->nama_kegiatan)->get();
+        //     $singkatanResmi = SBKS::where('nama_kegiatan', $item->nama_kegiatan)->where('singkatan_resmi', '<>', null)->first();
+        //     if ($singkatanResmi) {
+        //         foreach ($semuaKegiatan as $kegiatan) {
+        //             if ($kegiatan->singkatan_resmi == null) {
+        //                 $kegiatan->singkatan_resmi = $singkatanResmi->singkatan_resmi;
+        //                 $kegiatan->save();
+        //             }
+        //         }
+        //     }
+        // }
+
         // $id_mitra =  227791;
         // //  id fitra = 229707
         // // id rahmad hidayat = 227791
@@ -41,10 +65,13 @@ class MainController extends Controller
         //     ->first();
         // dd($honorMitra);
 
+        // $query->whereMonth('tgl_selesai', date('m'))
+        //         ->whereYear('tgl_selesai', date('Y'))
+        //         ->orWhereMonth('tgl_mulai', date('m'))
+        //         ->whereYear('tgl_mulai', date('Y'));
+
         $kegiatanBulanIni = Kegiatan::where(function ($query) {
-            $query->whereMonth('tgl_selesai', date('m'))
-                ->whereYear('tgl_selesai', date('Y'))
-                ->orWhereMonth('tgl_mulai', date('m'))
+            $query->whereMonth('tgl_mulai', date('m'))->orWhereMonth('tgl_selesai', date('m'))
                 ->whereYear('tgl_mulai', date('Y'));
         })->orderBy('progress', 'desc')->get();
         return view('index', compact('kegiatanBulanIni'));
@@ -72,7 +99,7 @@ class MainController extends Controller
         return back()->withErrors([
             'username' => 'Username atau kata sandi salah.',
             'password' => 'Username atau kata sandi salah.',
-        ]);
+        ])->withInput();
     }
 
     public function logout()
@@ -83,7 +110,6 @@ class MainController extends Controller
 
     public function dashboard()
     {
-        // $bulan = $request->bulan ?? date('m');
         $tahun = date('Y');
 
         $mitraAdaHonor = DB::table('mitras')

@@ -113,13 +113,15 @@
                                           id="tim"
                                           name="tim"
                                         >
-                                          <option value="">(Pilih salah satu)</option>
-                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : ($kegiatan->tim == "11011" ? 'selected' : '')}}>Umum</option>
-                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : ($kegiatan->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
-                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : ($kegiatan->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
-                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : ($kegiatan->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
-                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : ($kegiatan->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : ($kegiatan->tim == "11016" ? 'selected' : '')}}>IPDS</option>
+                                            <option value="">(Pilih salah satu)</option>
+                                            <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : ($kegiatan->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                            <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : ($kegiatan->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                            <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : ($kegiatan->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                            <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : ($kegiatan->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                            <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : ($kegiatan->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                            <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : ($kegiatan->tim == "11016" ? 'selected' : '')}}>TI dan Pengolahan</option>
+                                            <option value="11017" {{ old('tim') ? (old('tim') == "11017" ? 'selected' : '') : ($kegiatan->tim == "11017" ? 'selected' : '')}}>Diseminasi, Publisitas, dan Humas</option>
+                                            <option value="11018" {{ old('tim') ? (old('tim') == "11018" ? 'selected' : '') : ($kegiatan->tim == "11018" ? 'selected' : '')}}>Pembinaan Statistik Sektoral</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
@@ -142,6 +144,13 @@
                                             <option value="SLS" {{$kegiatan->satuan_honor_pengawasan == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{$kegiatan->satuan_honor_pengawasan == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{$kegiatan->satuan_honor_pengawasan == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
+                                            <option value="OK" {{$kegiatan->satuan_honor_pengawasan == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
+                                            <option value="OH" {{$kegiatan->satuan_honor_pengawasan == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
+                                            <option value="OB" {{$kegiatan->satuan_honor_pengawasan == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="Segmen" {{$kegiatan->satuan_honor_pengawasan == 'Segmen' ? 'selected' : ''}}>Segmen</option>
+                                            <option value="EA" {{$kegiatan->satuan_honor_pengawasan == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
+                                            <option value="Responden" {{$kegiatan->satuan_honor_pengawasan == 'Responden' ? 'selected' : ''}}>Responden</option>
+                                            <option value="Pasar" {{$kegiatan->satuan_honor_pengawasan == 'Pasar' ? 'selected' : ''}}>Pasar</option>
                                           
                                         </select>
                                         @if ($errors->has('satuan_honor_pengawasan'))
@@ -185,7 +194,13 @@
                                             <option value="SLS" {{$kegiatan->satuan_honor_pencacahan == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
                                             <option value="BS" {{$kegiatan->satuan_honor_pencacahan == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
                                             <option value="Ruta" {{$kegiatan->satuan_honor_pencacahan == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
-                                          
+                                            <option value="OK" {{$kegiatan->satuan_honor_pencacahan == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
+                                            <option value="OH" {{$kegiatan->satuan_honor_pencacahan == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
+                                            <option value="OB" {{$kegiatan->satuan_honor_pencacahan == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="Segmen" {{$kegiatan->satuan_honor_pencacahan == 'Segmen' ? 'selected' : ''}}>Segmen</option>
+                                            <option value="EA" {{$kegiatan->satuan_honor_pencacahan == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
+                                            <option value="Responden" {{$kegiatan->satuan_honor_pencacahan == 'Responden' ? 'selected' : ''}}>Responden</option>
+                                            <option value="Pasar" {{$kegiatan->satuan_honor_pencacahan == 'Pasar' ? 'selected' : ''}}>Pasar</option>
                                         </select>
                                         @if ($errors->has('satuan_honor_pencacahan'))
                                         <small class="form-text text-muted">{{ $errors->first('satuan_honor_pencacahan') }}</small>

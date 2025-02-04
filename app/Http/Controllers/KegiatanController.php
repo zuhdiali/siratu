@@ -7,6 +7,7 @@ use App\Models\Kegiatan;
 use App\Models\Pegawai;
 use App\Models\Mitra;
 use App\Models\Surat;
+use App\Models\SBKS;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -33,8 +34,17 @@ class KegiatanController extends Controller
     {
         $mitras = Mitra::where('flag', null)->orderBy('nama', 'asc')->get();
         $pegawais = Pegawai::where('flag', null)->orderBy('nama', 'asc')->get();
+        $sbks = SBKS::select(['nama_kegiatan', 'singkatan_resmi'])->where('ada_di_simeulue', 1)->distinct('nama_kegiatan')->orderBy('nama_kegiatan', 'asc')->get();
+        foreach ($sbks as $item) {
+            if ($item->singkatan_resmi) {
+                $item->nama_kegiatan_dan_singkatan = $item->nama_kegiatan . ' (' . $item->singkatan_resmi . ')';
+            } else {
+                $item->nama_kegiatan_dan_singkatan = $item->nama_kegiatan;
+            }
+        }
+        // dd($sbks);
         // return view('kegiatan.create', ['kegiatans' => $kegiatans, 'mitras' => $mitras]);
-        return view('kegiatan.create', ['pegawais' => $pegawais, 'mitras' => $mitras]);
+        return view('kegiatan.create', ['pegawais' => $pegawais, 'mitras' => $mitras, 'sbks' => $sbks]);
     }
 
     public function store(Request $request)
@@ -122,8 +132,20 @@ class KegiatanController extends Controller
             $kegiatan->pegawai()->sync($request->pegawai);
             $kegiatan->mitra()->sync($request->mitra);
             $kegiatan->save();
+
+            // Flag apakah ada perubahan honor
+            $flag = false;
             if ($honor_pencacahan_sebelumnya != $request->honor_pencacahan || $honor_pengawasan_sebelumnya != $request->honor_pengawasan) {
-                foreach ($kegiatan->mitra as $mitra) {
+                $flag = true;
+            }
+            foreach ($kegiatan->mitra as $mitra) {
+                // Isi default tanggal realisasi jika belum diisi
+                // if ($mitra->pivot->tgl_realisasi == null) {
+                //     $kegiatan->mitra()->updateExistingPivot($mitra->id, ['tgl_realisasi' => $kegiatan->tgl_selesai]);
+                // }
+
+                // Hitung estimasi honor
+                if ($flag) {
                     $estimasi_honor = 0;
                     $is_pml = 0;
                     if ($mitra->pivot->is_pml == 1) {
@@ -211,12 +233,18 @@ class KegiatanController extends Controller
         return view('kegiatan.edit-terlibat', ['kegiatan' => $kegiatan, 'pegawais' => $pegawais, 'mitras' => $mitras]);
     }
 
+    // INI TIDAK DIPAKAI
     public function updateTerlibat(Request $request, $id)
     {
         // dd($request->all());
         $kegiatan = Kegiatan::find($id);
         $kegiatan->pegawai()->sync($request->pegawai);
         $kegiatan->mitra()->sync($request->mitra);
+        // foreach ($kegiatan->mitra as $mitra) {
+        //     if ($mitra->pivot->tgl_realisasi == null) {
+        //         $kegiatan->mitra()->updateExistingPivot($mitra->id, ['tgl_realisasi' => $kegiatan->tgl_selesai]);
+        //     }
+        // }
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan terlibat berhasil diubah.');
     }
 
@@ -228,6 +256,7 @@ class KegiatanController extends Controller
 
     public function estimasiHonorPost(Request $request, $id)
     {
+        // dd($request->all());
         $kegiatan = Kegiatan::find($id);
         // jika tidak ada pml
         if (!$request->has('is_pml')) {
@@ -284,6 +313,12 @@ class KegiatanController extends Controller
             // update is_pml
             $kegiatan->mitra()->updateExistingPivot($key, ['is_pml' => $is_pml]);
         }
+
+        // update tgl_realisasi
+        // foreach ($request->tgl_realisasi as $key => $value) {
+        //     $kegiatan->mitra()->updateExistingPivot($key, ['tgl_realisasi' => $value]);
+        // }
+
         if (count($mitraYangPerluWarning) > 0) {
             return redirect()->route('kegiatan.show', ['id' => $id])->with('warning', 'Pembaruan estimasi honor berhasil, namun mitra (' . implode(", ", $mitraYangPerluWarning) . ')  masih melebihi batas honor. Sebaiknya segera kurangi honor yang diterimanya.');
         }

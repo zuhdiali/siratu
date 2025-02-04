@@ -99,14 +99,36 @@
                     </a>
                 </li>
 
-                @if(Auth::user()->role == 'Admin')
-                <li class="nav-item {{ str_contains(Request::path(), 'pembayaran') ? 'active' : ''  }}">
-                    <a href="{{route('pembayaran.index')}}">
+                {{-- @if(Auth::user()->role == 'Admin') --}}
+                <li class="nav-item">
+                  <a data-bs-toggle="collapse" href="#submenupembayaran">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <p>Pembayaran</p>
+                    <span class="caret"></span>
+                  </a>
+                  <div class="collapse {{ str_contains(Request::path(), 'pembayaran') ? 'show' : ''  }}" id="submenupembayaran">
+                    <ul class="nav nav-collapse">
+                      <li class="{{ str_contains(Request::path(), 'honor') ? 'active' : ''  }}">
+                        <a href="{{route('pembayaran.honor')}}">
+                          <span class="sub-item">Honor</span>
+                        </a>
+                      </li>
+                      {{-- <li class="{{ str_contains(Request::path(), 'translok') ? 'active' : ''  }}">
+                        <a href="{{route('pembayaran.translok')}}">
+                          <span class="sub-item">Translok</span>
+                        </a>
+                      </li> --}}
+                    </ul>
+                  </div>
+                </li>
+
+                {{-- <li class="nav-item {{ str_contains(Request::path(), 'pembayaran') ? 'active' : ''  }}">
+                    <a href="{{route('pembayaran.honor')}}">
                         <i class="fas fa-money-bill-wave"></i>
                         <p>Pembayaran</p>
                     </a>
-                </li>
-                @endif
+                </li> --}}
+                {{-- @endif --}}
 
                 <li class="nav-item">
                   <a data-bs-toggle="collapse" href="#submenu">
@@ -163,6 +185,13 @@
                       @endif
                     </ul>
                   </div>
+                </li>
+
+                <li class="nav-item {{ Request::path() ==  'sbks' ? 'active' : ''  }}">
+                  <a href="{{route('sbks.index')}}">
+                      <i class="fas fa-info-circle"></i>
+                      <p>SBKS</p>
+                  </a>
                 </li>
 
                 {{-- <li class="nav-item {{ Request::path() ==  'rekap' ? 'active' : ''  }}">
@@ -480,6 +509,19 @@
                 buttons: {
                   confirm: {
                     className: "btn btn-danger",
+                  },
+                },
+              });
+            @endif
+
+            @if(session('warning'))
+              swal({
+                title: "Peringatan!",
+                text: "{{ session('warning') }}",
+                type: "warning",
+                buttons: {
+                  confirm: {
+                    className: "btn btn-warning",
                   },
                 },
               });

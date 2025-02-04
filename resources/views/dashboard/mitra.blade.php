@@ -162,7 +162,7 @@
       if (bulan && tahun) {
         ajax(bulan, tahun);
       }
-      
+      $('#helper-text').text('');
     });
 
     $('#filter-tahun').change(function() {
@@ -171,6 +171,7 @@
       if (bulan && tahun) {
         ajax(bulan, tahun);
       }
+      $('#helper-text').text('');
     });
   });
 
