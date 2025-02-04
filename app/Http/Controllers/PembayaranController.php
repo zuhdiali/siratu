@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PembayaranController extends Controller
 {
-    public function index()
+    public function honor()
     {
         $pembayaran_mitras = KegiatanMitra::where('honor', '!=', null)->get();
         $pembayaran_pegawais = KegiatanPegawai::where('translok', '!=', null)->get();
@@ -40,9 +40,8 @@ class PembayaranController extends Controller
 
     public function store(Request $request, $jenis)
     {
-        dd($request->all());
         if (!in_array($jenis, ['mitra', 'organik'])) {
-            return redirect()->route('pembayaran.index')
+            return redirect()->route('pembayaran.honor')
                 ->with('error', 'Jenis pembayaran tidak valid. Harus pilih antara Organik atau Mitra.');
         }
         $validator = Validator::make($request->all(), [
@@ -101,7 +100,7 @@ class PembayaranController extends Controller
             }
         }
 
-        return redirect()->route('pembayaran.index')
+        return redirect()->route('pembayaran.honor')
             ->with('success', 'Pembayaran created successfully.');
     }
 
@@ -218,7 +217,7 @@ class PembayaranController extends Controller
         // $kegiatan->mitra()->updateExistingPivot($request->id_mitra, ['honor' => $request->nominal]);
         // $pembayaran_mitra->save();
 
-        return redirect()->route('pembayaran.index')
+        return redirect()->route('pembayaran.honor')
             ->with('success', 'Pembayaran berhasil diperbarui.');
     }
 
@@ -236,7 +235,7 @@ class PembayaranController extends Controller
             $pembayaran->save();
         }
 
-        return redirect()->route('pembayaran.index')
+        return redirect()->route('pembayaran.honor')
             ->with('success', 'Pembayaran berhasil dihapus.');
     }
 

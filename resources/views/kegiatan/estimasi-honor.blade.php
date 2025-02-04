@@ -56,6 +56,7 @@
                                                 <tr>
                                                 <th>Nama Mitra</th>
                                                 <th>Apakah PML</th>
+                                                {{-- <th>Tanggal Realisasi</th> --}}
                                                 <th>Jumlah Pendataan/Pengolahan</th>
                                                 <th>Estimasi Honor</th>
                                                 </tr>
@@ -68,8 +69,10 @@
                                                     <td>
                                                         <input type="checkbox" name="is_pml[{{$mitra->id}}]" value="1" @if($mitra->pivot->is_pml == 1) checked @endif>
                                                     </td>
+                                                    {{-- <td><input type="date" name="tgl_realisasi[{{$mitra->id}}]" class="form-control" value="{{$mitra->pivot->tgl_realisasi ? $mitra->pivot->tgl_realisasi : $kegiatan->tgl_selesai}}"/></td> --}}
                                                     <td><input type="number" name="jumlah[{{$mitra->id}}]" class="form-control" value="{{$mitra->pivot->jumlah}}"/></td>
                                                     <td id="estimasi_honor"> @if($mitra->pivot->jumlah)  Rp {{number_format($mitra->pivot->estimasi_honor,0,",",".")}} @else Rp 0 @endif</td>
+                                                    
                                                 </tr>
                                                 @endforeach
                                             </tbody>

@@ -15,7 +15,7 @@
                     <form action="{{url('pembayaran/store/'. $jenis)}}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
-                            <div class="card-title">Tambah Pembayaran</div>
+                            <div class="card-title">Tambah Pembayaran Honor</div>
                         </div>
                         <div class="card-body">
                             <div class="row">

@@ -134,6 +134,7 @@
                       <th>Nama Mitra</th>
                       <th>Jumlah Pendataan/Pengolahan</th>
                       <th>Estimasi Honor Dari Kegiatan Ini</th>
+                      {{-- <th>Tanggal Realisasi</th> --}}
                       <th>Estimasi Total Honor Yang Didapat Setelah Kegiatan Ini</th>
                     {{-- <th style="width: 10%">Aksi</th> --}}
                   </tr>
@@ -165,6 +166,7 @@
                         <th scope="row">{{$mitra->pivot->is_pml == 1 ? "PML" : "PPL"}} - {{$mitra->nama}}</th>
                         <td>{{$mitra->pivot->jumlah}}</td>
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
+                        {{-- <td> {{Carbon\Carbon::parse($mitra->pivot->tgl_realisasi)->locale('id')->translatedFormat('d M Y') }} </td> --}}
                         <td>Rp {{number_format($mitra->pivot->estimasi_honor, 0, ",", ".")}}</td>
                         {{--<td>
                              <div class="form-button-action">

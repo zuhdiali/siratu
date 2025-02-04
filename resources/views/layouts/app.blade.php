@@ -245,7 +245,7 @@
                   </li>
                   
                   @if (Auth::user()->role == 'Admin')
-                  <li class="nav-item {{ str_contains(Request::path(), 'mitra') ? 'active' : ''  }}">
+                  <li class="nav-item {{ str_contains(Request::path(), 'mitra') && !str_contains(Request::path(), 'pembayaran') ? 'active' : ''  }}">
                     <a href="{{route('mitra.index')}}">
                       <i class="fas fa-users"></i>
                         <p>Manajemen Mitra</p>

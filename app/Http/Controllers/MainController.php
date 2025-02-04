@@ -73,7 +73,7 @@ class MainController extends Controller
         $kegiatanBulanIni = Kegiatan::where(function ($query) {
             $query->whereMonth('tgl_mulai', date('m'))->orWhereMonth('tgl_selesai', date('m'))
                 ->whereYear('tgl_mulai', date('Y'));
-        })->orderBy('progress', 'desc')->get();
+        })->where('tim', '<>', '11011')->orderBy('progress', 'desc')->get();
         return view('index', compact('kegiatanBulanIni'));
     }
 

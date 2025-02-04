@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\KegiatanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SBKSController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\SuratController;
@@ -59,13 +60,22 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
-        Route::get('/', [PembayaranController::class, 'index'])->name('index');
-        Route::get('/create/{jenis}', [PembayaranController::class, 'create'])->name('create');
-        Route::post('/store/{jenis}', [PembayaranController::class, 'store'])->name('store');
+        Route::get('/honor', [PembayaranController::class, 'honor'])->name('honor');
+        Route::get('/create/{objek}', [PembayaranController::class, 'create'])->name('create');
+        Route::post('/store/{objek}', [PembayaranController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [PembayaranController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [PembayaranController::class, 'update'])->name('update');
-        Route::get('/destroy/{jenis}/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
+        Route::get('/destroy/{objek}/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
         Route::get('/lihat-bukti/{id}', [PembayaranController::class, 'lihatBukti'])->name('lihat-bukti');
+
+        Route::prefix('translok')->name('translok.')->group(function () {
+            Route::get('/', [PembayaranController::class, 'translok'])->name('index');
+            Route::get('/create', [PembayaranController::class, 'createTranslok'])->name('create');
+            Route::post('/store', [PembayaranController::class, 'storeTranslok'])->name('store');
+            Route::get('/edit/{id}', [PembayaranController::class, 'editTranslok'])->name('edit');
+            Route::post('/update/{id}', [PembayaranController::class, 'updateTranslok'])->name('update');
+            Route::get('/destroy/{id}', [PembayaranController::class, 'destroyTranslok'])->name('destroy');
+        });
     });
 
     Route::prefix('mitra')->name('mitra.')->group(function () {
@@ -117,5 +127,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit-terlibat/{id}', [SuratController::class, 'editTerlibat'])->name('edit.terlibat');
         Route::post('/update-terlibat/{id}', [SuratController::class, 'updateTerlibat'])->name('update.terlibat');
         Route::get('/destroy/{id}', [SuratController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('sbks')->name('sbks.')->group(function () {
+        Route::get('/', [SBKSController::class, 'index'])->name('index');
+        Route::get('/create', [SBKSController::class, 'create'])->name('create');
+        Route::post('/store', [SBKSController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [SBKSController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [SBKSController::class, 'update'])->name('update');
+        Route::get('/destroy/{id}', [SBKSController::class, 'destroy'])->name('destroy');
+
+        Route::post('/get-honor', [SBKSController::class, 'getHonor'])->name('get-honor');
     });
 });
