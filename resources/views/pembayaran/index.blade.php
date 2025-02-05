@@ -11,7 +11,9 @@
       </div>
       <div class="ms-md-auto py-2 py-md-0">
         {{-- <a href="{{url('pembayaran/create/organik')}}" class="btn btn-primary btn-round">Tambah Pembayaran Organik</a> --}}
+        @if(Auth::user()->role == 'Admin')
         <a href="{{url('pembayaran/create/mitra')}}" class="btn btn-primary btn-round">Tambah Pembayaran Honor</a>
+        @endif
       </div>
     </div>
     <div class="row">

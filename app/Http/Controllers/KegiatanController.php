@@ -89,7 +89,7 @@ class KegiatanController extends Controller
             return redirect()->route('kegiatan.create')->with('error', 'Gagal.');
         }
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan.');
+        return redirect()->route('kegiatan.show', ['id' => $kegiatan->id])->with('success', 'Kegiatan berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -272,7 +272,7 @@ class KegiatanController extends Controller
             $is_pml == 1 ? $estimasi_honor = $value * $kegiatan->honor_pengawasan : $estimasi_honor = $value * $kegiatan->honor_pencacahan;
 
             // cek apakah melebihi batas honor
-            if ($estimasi_honor > 3600000) {
+            if ($estimasi_honor > 3600100) {
                 return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Ada mitra yang melebihi batas honor.');
             }
 
@@ -290,12 +290,12 @@ class KegiatanController extends Controller
                 // hitung honor mitra setelah perubahan
                 $honorMitraSetelahPerubahan = $honorMitraBulanIni->total_estimasi_honor + $estimasi_honor;
 
-                // if ($honorMitraBulanIni->total_estimasi_honor + $estimasi_honor > 3600000) {
+                // if ($honorMitraBulanIni->total_estimasi_honor + $estimasi_honor > 3600100) {
                 //     return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $value . '.');
                 // }
 
                 //cek apakah sedang berusaha mengurangi jumlah honor
-                if ($honorMitraSetelahPerubahan > 3600000) {
+                if ($honorMitraSetelahPerubahan > 3600100) {
                     if ($honorMitraDenganKegiatanIni->total_estimasi_honor > $honorMitraSetelahPerubahan) {
                         $mitraYangPerluWarning[] = $honorMitraBulanIni->nama;
                     } else {
@@ -393,7 +393,7 @@ class KegiatanController extends Controller
             if ($honorMitra == null) {
                 continue;
             }
-            if (intval($honorMitra->total_estimasi_honor) > 3600000) {
+            if (intval($honorMitra->total_estimasi_honor) > 3600100) {
                 array_push($mitraMelebihiHonor, $honorMitra->nama);
             }
         }

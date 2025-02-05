@@ -104,7 +104,7 @@
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
                     <th>Estimasi Honor Diterima</th>
-                    <th>Honor Diterima</th>
+                    <th>Honor Dibayarkan</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -114,7 +114,7 @@
                     <th>Kec. Asal</th>
                     <th>Jumlah Kegiatan</th>
                     <th>Estimasi Honor Diterima</th>
-                    <th>Honor Diterima</th>
+                    <th>Honor Dibayarkan</th>
                   </tr>
                 </tfoot>
                 <tbody>
