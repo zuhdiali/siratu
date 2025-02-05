@@ -42,6 +42,21 @@
                                                 class="form-check-input"
                                                 type="radio"
                                                 name="jenis_kegiatan"
+                                                id="updating"
+                                                value="updating"
+                                                />
+                                                <label
+                                                class="form-check-label"
+                                                for="updating"
+                                                >
+                                                Updating
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                name="jenis_kegiatan"
                                                 id="pendataan"
                                                 value="pendataan"
                                                 checked
@@ -52,7 +67,8 @@
                                                 >
                                                 Pendataan
                                                 </label>
-                                            </div><div class="form-check">
+                                            </div>
+                                            <div class="form-check">
                                                 <input
                                                 class="form-check-input"
                                                 type="radio"

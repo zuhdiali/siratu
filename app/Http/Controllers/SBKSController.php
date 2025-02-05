@@ -80,19 +80,29 @@ class SBKSController extends Controller
 
     public function getHonor(Request $request)
     {
-        $is_pendataan = false;
-        $request->jenis_kegiatan == 'pendataan' ? $is_pendataan = true : $is_pendataan = false;
+        $tipe_kegiatan = $request->jenis_kegiatan;
         $kegiatan_pendataan_atau_pengolahan = null;
         $kegiatan_pengawasan = null;
-        if ($is_pendataan) {
+        $prefix_nama_kegiatan = "";
+        if ($tipe_kegiatan == 'pendataan') {
             $kegiatan_pendataan_atau_pengolahan = SBKS::where('tugas', 'PPL')->where('nama_kegiatan', 'like', '%' . $request->nama_kegiatan . '%')->first();
             $kegiatan_pengawasan = SBKS::where('tugas', 'PML')->where('nama_kegiatan', 'like', '%' . $request->nama_kegiatan . '%')->first();
-        } else {
+            $prefix_nama_kegiatan = "Pendataan Lapangan ";
+        } else if ($tipe_kegiatan == 'pengolahan') {
             $kegiatan_pendataan_atau_pengolahan = SBKS::where('tugas', 'Pengolahan')->where('nama_kegiatan', $request->nama_kegiatan)->first();
+            $prefix_nama_kegiatan = "Pengolahan ";
+        } else if ($tipe_kegiatan == 'updating') {
+            $kegiatan_pendataan_atau_pengolahan = SBKS::where('tugas', 'PPL')->where('nama_kegiatan', 'Updating Listing Enumeration Area (EA)')->first();
+            $kegiatan_pengawasan = SBKS::where('tugas', 'PML')->where('nama_kegiatan', 'Updating Listing Enumeration Area (EA)')->first();
+            $kegiatan_pendataan_atau_pengolahan->satuan = 'BS';
+            $kegiatan_pengawasan->satuan = 'BS';
+            $prefix_nama_kegiatan = "Updating ";
+        } else {
+            return response()->json(['message' => 'Tipe kegiatan tidak ditemukan']);
         }
         // return response()->json($kegiatan_pendataan_atau_pengolahan);
         $response = new \stdClass();
-        $response->nama_kegiatan = $request->nama_kegiatan . " " . Carbon::now()->locale('id')->translatedFormat('F') . " " . date('Y');
+        $response->nama_kegiatan = $prefix_nama_kegiatan . $request->nama_kegiatan . " " . Carbon::now()->locale('id')->translatedFormat('F') . " " . date('Y');
 
         $response->honor_pendataan_atau_pengolahan = $kegiatan_pendataan_atau_pengolahan->honor_per_satuan;
         $response->satuan_honor_pendataan_atau_pengolahan = $kegiatan_pendataan_atau_pengolahan->satuan;
