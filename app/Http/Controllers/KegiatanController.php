@@ -56,6 +56,8 @@ class KegiatanController extends Controller
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
             'honor_pengawasan' => 'nullable|numeric',
             'honor_pencacahan' => 'nullable|numeric',
+            'satuan_honor_pengawasan' => 'required',
+            'satuan_honor_pencacahan' => 'required',
             'id_pjk' => 'required',
             'tim' => 'required',
         ]);
@@ -108,9 +110,10 @@ class KegiatanController extends Controller
             'nama' => 'required|max:254',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date',
-            // 'satuan_honor' => 'required',
             'honor_pengawasan' => 'nullable|numeric',
             'honor_pencacahan' => 'nullable|numeric',
+            'satuan_honor_pengawasan' => 'required',
+            'satuan_honor_pencacahan' => 'required',
             'id_pjk' => 'required',
             'tim' => 'required',
         ]);

@@ -7,10 +7,10 @@
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
       <div>
         <h3 class="fw-bold mb-3">SPK</h3>
-        <h6 class="op-7 mb-2">Daftar spk </h6>
+        <h6 class="op-7 mb-2">Daftar surat perjanjian kerja mitra BPS Kabupaten Simeulue </h6>
       </div>
       <div class="ms-md-auto py-2 py-md-0">
-        <a href="{{url('surat/create/spk')}}" class="btn btn-primary btn-round">Tambah surat</a>
+        <a href="{{url('surat/create/spk')}}" class="btn btn-primary btn-round">Tambah SPK</a>
       </div>
     </div>
     <div class="row">
@@ -44,7 +44,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Daftar Riwayat Nomor SPK</h4>
+            <h4 class="card-title">Daftar Riwayat SPK</h4>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -56,20 +56,16 @@
                   <tr>
                     <th style="width: 10%">Aksi</th>
                     <th>Nomor SPK</th>
-                    <th>Tanggal Dibuat</th>
-                    <th>Pembuat Surat</th>
-                    <th>Kegiatan</th>
-                    <th>Perihal</th>
+                    <th>Nama Mitra</th>
+                    <th>Bulan SPK</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
                     <th>Aksi</th>
                     <th>Nomor SPK</th>
-                    <th>Tanggal Dibuat</th>
-                    <th>Pembuat Surat</th>
-                    <th>Kegiatan</th>
-                    <th>Perihal</th>
+                    <th>Nama Mitra</th>
+                    <th>Bulan SPK</th>
                   </tr>
                 </tfoot>
                 <tbody>
@@ -98,6 +94,18 @@
                       <td>
                         @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                         <div class="form-button-action">
+                          <form action="{{url('surat/download-spk/'.$surat->id)}}">
+                            <button
+                              type="submit"
+                              data-bs-toggle="tooltip"
+                              title="Unduh SPK"
+                              class="btn btn-link btn-primary px-2"
+                              data-original-title="Unduh SPK"
+                            >
+                            <i class="fas fa-download"></i>
+                            </button>
+                          </form>
+
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
                               type="submit"
@@ -107,8 +115,8 @@
                               data-original-title="Edit Surat"
                             >
                             <i class="fa fa-edit"></i>
-                          </button>
-                        </form>
+                            </button>
+                          </form>
 
                           <button
                             type="button"
@@ -123,11 +131,10 @@
                         </div>
                         @endif
                       </td>
-                      <th scope="row">{{$surat->nomor_surat}}</th>
-                      <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
-                      <td>{{$surat->pembuat_surat->nama}}</td>
-                      <td>{{$surat->kegiatan->nama}}</td>
-                      <td>{{$surat->perihal}}</td>
+                      <th scope="row">{{$surat->no_terakhir}}</th>
+                      <td>{{$surat->mitra->nama}}</td>
+                      <td>{{$surat->bulan}} 2025</td>
+                      {{-- <td>{{$surat->perihal}}</td> --}}
                       {{-- <td>
                         @if($surat->flag == null)
                         <span class="badge bg-success">Aktif</span>

@@ -24,5 +24,8 @@ class Surat extends Model
         'id_pembuat_surat',
         'id_kegiatan',
         'file',
+        'pegawai_yang_bertugas',
+        'mitra_spk',
+        'flag',
     ];
 }

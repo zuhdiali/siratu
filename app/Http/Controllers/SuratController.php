@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Mitra;
 use App\Models\Surat;
 use App\Models\KamusSurat;
 use App\Models\Pegawai;
-use App\Models\User;
 use App\Models\Kegiatan;
+use App\Models\KegiatanMitra;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FotoSuratMasuk;
 use App\Models\KegiatanPegawai;
+use PhpOffice\PhpWord;
+use Carbon\Carbon;
 
 class SuratController extends Controller
 {
@@ -83,6 +86,10 @@ class SuratController extends Controller
     {
         $surats = Surat::where('jenis_surat', 'spk')->where('flag', null)->orderBy('created_at', 'desc')->get();
         $surats = $this->tambahInformasiSurat($surats);
+        foreach ($surats as $surat) {
+            $surat->mitra = Mitra::find($surat->mitra_spk);
+            $surat->bulan = $this->convertDigitBulan($surat->bulan_spk);
+        }
         return view('surat.spk', ['surats' => $surats]);
     }
 
@@ -99,44 +106,57 @@ class SuratController extends Controller
             }
         }
         $noTerakhir = $this->getNoSuratTerakhir($jenis);
-        $pegawais = Pegawai::where('flag', null)->get();
         $opsiSuratAwal = KamusSurat::where('tim', '11012')->get();
         $kamusSuratUmum = KamusSurat::where('tim', '11011')->get();
         $kamusSuratTeknis = KamusSurat::where('tim', '11012')->orderBy('kode_surat_gabungan', 'desc')->get();
-        return view('surat.create', compact('jenis', 'noTerakhir', 'kamusSuratUmum', 'kamusSuratTeknis', 'kegiatans', 'opsiSuratAwal', 'pegawais'));
+        if ($jenis != 'spk') {
+            $pegawais = Pegawai::where('flag', null)->get();
+            return view('surat.create', compact('jenis', 'noTerakhir', 'kamusSuratUmum', 'kamusSuratTeknis', 'kegiatans', 'opsiSuratAwal', 'pegawais'));
+        } else {
+            $mitras = Mitra::where('flag', null)->where('nama', 'not like', '%bayangan%')->get();
+            return view('surat.create', compact('jenis', 'noTerakhir', 'kamusSuratUmum', 'kamusSuratTeknis', 'kegiatans', 'opsiSuratAwal', 'mitras'));
+        }
     }
 
     public function store(Request $request, $jenis)
     {
         if ($jenis != 'masuk') {
-            $request->validate([
-                'tim' => 'required',
-                'kode' => 'required',
-                'perihal' => 'required',
-            ]);
-            if ($jenis != 'keluar') {
+            if ($jenis != 'spk') {
                 $request->validate([
-                    'id_kegiatan' => 'required',
+                    'tim' => 'required',
+                    'kode' => 'required',
+                    'perihal' => 'required',
                 ]);
-                $kegiatan = Kegiatan::find($request->id_kegiatan);
-                $mitraMelebihiHonor = KegiatanController::validasiHonorMitra($kegiatan->mitra, $kegiatan->tgl_selesai);
-                if (count($mitraMelebihiHonor) > 0) {
-                    return redirect()->back()->with('error', 'Mitra (' . implode(",", $mitraMelebihiHonor) . ') melebihi batas honor yang diperbolehkan.');
-                }
+                if ($jenis != 'keluar') {
+                    $request->validate([
+                        'id_kegiatan' => 'required',
+                    ]);
+                    $kegiatan = Kegiatan::find($request->id_kegiatan);
+                    $mitraMelebihiHonor = KegiatanController::validasiHonorMitra($kegiatan->mitra, $kegiatan->tgl_selesai);
+                    if (count($mitraMelebihiHonor) > 0) {
+                        return redirect()->back()->with('error', 'Mitra (' . implode(",", $mitraMelebihiHonor) . ') melebihi batas honor yang diperbolehkan.');
+                    }
 
-                if ($kegiatan->honor_pengawasan == null || $kegiatan->honor_pencacahan == null) {
-                    return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki honor pengawasan atau pencacahan.');
-                } else {
-                    if ($kegiatan->mitra->count() == 0) {
-                        return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki mitra.');
+                    if ($kegiatan->honor_pengawasan == null || $kegiatan->honor_pencacahan == null) {
+                        return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki honor pengawasan atau pencacahan.');
                     } else {
-                        foreach ($kegiatan->mitra as $mitra) {
-                            if ($mitra->pivot->jumlah == null) {
-                                return redirect()->back()->with('error', 'Ada mitra yang belum memiliki estimasi honor dari kegiatan yang dipilih.');
+                        if ($kegiatan->mitra->count() == 0) {
+                            return redirect()->back()->with('error', 'Kegiatan yang dipilih belum memiliki mitra.');
+                        } else {
+                            foreach ($kegiatan->mitra as $mitra) {
+                                if ($mitra->pivot->jumlah == null) {
+                                    return redirect()->back()->with('error', 'Ada mitra yang belum memiliki estimasi honor dari kegiatan yang dipilih.');
+                                }
                             }
                         }
                     }
                 }
+            } else {  //jika mau generate SPK
+                $request->validate([
+                    'mitra_spk' => 'required',
+                    'bulan_spk' => 'required',
+                    'tahun_spk' => 'required',
+                ]);
             }
         } else {  //jika jenis surat masuk
             $request->validate([
@@ -175,15 +195,28 @@ class SuratController extends Controller
         $surat->id_pembuat_surat = Auth::user()->id;
 
         if ($jenis != 'masuk') {
-            $noTerakhir = $this->getNoSuratTerakhir($jenis);
-            $surat->no_terakhir = $noTerakhir + 1;
-            if ($jenis != 'keluar') {
-                $surat->nomor_surat = $this->generateNomorSurat($request->tim, $request->kode, $jenis, $noTerakhir);
-                $surat->id_kegiatan = $request->id_kegiatan;
-            } else {
-                $surat->nomor_surat = $this->generateNomorSurat("11010", $request->kode, $jenis, $noTerakhir);
+            if ($jenis != 'spk') {
+                $noTerakhir = $this->getNoSuratTerakhir($jenis);
+                $surat->no_terakhir = $noTerakhir + 1;
+                if ($jenis != 'keluar') {
+                    $surat->nomor_surat = $this->generateNomorSurat($request->tim, $request->kode, $jenis, $noTerakhir);
+                    $surat->id_kegiatan = $request->id_kegiatan;
+                } else {
+                    $surat->nomor_surat = $this->generateNomorSurat("11010", $request->kode, $jenis, $noTerakhir);
+                }
+                $surat->tim = $request->tim;
+            } else {  //jika jenis surat spk
+                $noSPK_terakhir = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->first();
+                if ($noSPK_terakhir == null) {
+                    $noTerakhir = 0;
+                } else {
+                    $noTerakhir = $noSPK_terakhir->no_terakhir;
+                }
+                $surat->no_terakhir = $noTerakhir + 1;
+                $surat->mitra_spk = $request->mitra_spk;
+                $surat->bulan_spk = $request->bulan_spk;
+                $surat->file = $this->generateSPK($request->mitra_spk, $request->bulan_spk, $request->tahun_spk);
             }
-            $surat->tim = $request->tim;
             $surat->save();
         } else { //jika jenis surat masuk
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
@@ -390,5 +423,190 @@ class SuratController extends Controller
             $noSurat = "B-" . str_pad($noTerakhir + 1, 4, "0", STR_PAD_LEFT) . "/" . $tim . "/" . $kode . "/" . date("Y");
         }
         return $noSurat;
+    }
+
+    public function downloadSPK($id)
+    {
+        $surat = Surat::find($id);
+        $filePath = $surat->file;
+        return response()->download($filePath);
+    }
+
+    public  function generateSPK($id_mitra, $bulan, $tahun)
+    {
+        $mitra = Mitra::find($id_mitra);
+        $kegiatan_mitra = KegiatanMitra::where('mitra_id', $id_mitra)->get();
+
+        $namaBulan = $this->convertDigitBulan($bulan);
+        $tglAwal = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth();
+        $tglAkhir = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth();
+        $namaHariAwal = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->locale('id')->translatedFormat('l');
+
+        $suratTerakhir = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->first();
+        if ($suratTerakhir == null) {
+            $noTerakhir = 0;
+        } else {
+            $noTerakhir = $suratTerakhir->no_terakhir;
+        }
+
+        $phpWord = new PhpWord\TemplateProcessor("SPK.docx");
+        $phpWord->setValue('nomor', $noTerakhir + 1);
+        $phpWord->setValue('hari', $namaHariAwal);
+        $phpWord->setValue('tanggal', 1);
+        $phpWord->setValue('bulan', strtolower($namaBulan));
+        $phpWord->setValue('Bulan', $namaBulan);
+        $phpWord->setValue('BULAN', strtoupper($namaBulan));
+        $phpWord->setValue('nama_mitra', $mitra->nama);
+        $phpWord->setValue('kec_asal', $this->konversiKodeKec($mitra->kec_asal));
+        $phpWord->setValue('tgl_awal', $tglAwal->locale('id')->translatedFormat('d F'));
+        $phpWord->setValue('tgl_akhir', $tglAkhir->locale('id')->translatedFormat('d F'));
+        $jumlah_honor = 0;
+        $count = 1;
+        $values = [];
+        foreach ($kegiatan_mitra as $km) {
+            $kegiatan = Kegiatan::find($km->kegiatan_id);
+            $satuan_honor = ($km->is_pml == 1 ? $kegiatan->honor_pengawasan : $kegiatan->honor_pencacahan);
+            if ($satuan_honor < 10 || Carbon::parse($kegiatan->tgl_mulai)->format('m') != $bulan || $satuan_honor == null || $km->jumlah == null) {
+                continue;
+            }
+            $jkw = '';
+            if (Carbon::parse($kegiatan->tgl_mulai)->format('m') == Carbon::parse($kegiatan->tgl_selesai)->format('m')) {
+                $jkw = Carbon::parse($kegiatan->tgl_mulai)->format('d') . ' s.d. ' . Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d F Y');
+            } else {
+                $jkw = Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d F') . ' s.d. ' . Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d F');
+            }
+            $jumlah_honor += $km->estimasi_honor;
+            array_push($values, [
+                'no_keg' => $count,
+                'nama_keg' => $kegiatan->nama,
+                'jkw' => $jkw,
+                'vol_keg' => $km->jumlah,
+                'sat_keg' => ($km->is_pml == 1 ? $kegiatan->satuan_honor_pengawasan : $kegiatan->satuan_honor_pencacahan),
+                'harga_sat' => $satuan_honor,
+                'honor' => $km->estimasi_honor,
+            ]);
+            $count++;
+        }
+        // $values = [
+        //     ['no_keg' => 1, 'nama_keg' => 'SUSENAS Maret 2025', 'jkw' => '01 s.d. 28 Februari 2025', 'vol_keg' => 20, 'sat_keg' => 'Dokumen', 'harga_sat' => '37.000', 'honor' => '740.000'],
+        //     ['no_keg' => 2, 'nama_keg' => 'SUSENAS April 2025', 'jkw' => '01 s.d. 30 April 2025', 'vol_keg' => 20, 'sat_keg' => 'Dokumen', 'harga_sat' => '37.000', 'honor' => '740.000'],
+        // ];
+        $honorTerbilang = $this->terbilang($jumlah_honor);
+        $phpWord->cloneRowAndSetValues('no_keg', $values);
+        $phpWord->setValue('total_honor', $jumlah_honor);
+        $phpWord->setValue('total_honor_terbilang',  $honorTerbilang . " Rupiah");
+        $phpWord->setValue('total_honor_terbilang_kecil',  strtolower($honorTerbilang) . " rupiah");
+
+        $filePath = 'SPK/' . $mitra->nama . '_' . $bulan . '_' . date('Y') . '.docx';
+        $phpWord->saveAs($filePath);
+        return $filePath;
+        // return response()->download($filePath);
+    }
+
+    public function convertDigitBulan($digit)
+    {
+        $bulan = "";
+        switch ($digit) {
+            case 1:
+                $bulan = "Januari";
+                break;
+            case 2:
+                $bulan = "Februari";
+                break;
+            case 3:
+                $bulan = "Maret";
+                break;
+            case 4:
+                $bulan = "April";
+                break;
+            case 5:
+                $bulan = "Mei";
+                break;
+            case 6:
+                $bulan = "Juni";
+                break;
+            case 7:
+                $bulan = "Juli";
+                break;
+            case 8:
+                $bulan = "Agustus";
+                break;
+            case 9:
+                $bulan = "September";
+                break;
+            case 10:
+                $bulan = "Oktober";
+                break;
+            case 11:
+                $bulan = "November";
+                break;
+            case 12:
+                $bulan = "Desember";
+                break;
+        }
+        return $bulan;
+    }
+
+    private function konversiKodeKec($id)
+    {
+        $kec = "";
+        switch ($id) {
+            case '010':
+                $kec = "Teupah Selatan";
+                break;
+            case '020':
+                $kec = "Simeulue Timur";
+                break;
+            case '021':
+                $kec = "Teupah Barat";
+                break;
+            case '022':
+                $kec = "Teupah Tengah";
+                break;
+            case '030':
+                $kec = "Simeulue Tengah";
+                break;
+            case '031':
+                $kec = "Teluk Dalam";
+                break;
+            case '032':
+                $kec = "Simeulue Cut";
+                break;
+            case '040':
+                $kec = "Salang";
+                break;
+            case '050':
+                $kec = "Simeulue Barat";
+                break;
+            case '051':
+                $kec = "Alafan";
+                break;
+            default:
+                $kec = "";
+                break;
+        }
+        return $kec;
+    }
+
+    private function terbilang($x)
+    {
+        $angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+
+        if ($x < 12)
+            return " " . $angka[$x];
+        elseif ($x < 20)
+            return $this->terbilang($x - 10) . " Belas";
+        elseif ($x < 100)
+            return $this->terbilang($x / 10) . " Puluh" . $this->terbilang($x % 10);
+        elseif ($x < 200)
+            return " Seratus" . $this->terbilang($x - 100);
+        elseif ($x < 1000)
+            return $this->terbilang($x / 100) . " Ratus" . $this->terbilang($x % 100);
+        elseif ($x < 2000)
+            return " Seribu" . $this->terbilang($x - 1000);
+        elseif ($x < 1000000)
+            return $this->terbilang($x / 1000) . " Ribu" . $this->terbilang($x % 1000);
+        elseif ($x < 1000000000)
+            return $this->terbilang($x / 1000000) . " Juta" . $this->terbilang($x % 1000000);
     }
 }

@@ -27,7 +27,7 @@
                                             {{-- <option value="">-- Pilih Kegiatan ---</option> --}}
                                             <option value=""></option>
                                             @foreach($sbks as $item)
-                                                <option value="{{$item->nama_kegiatan}}">{{$item->nama_kegiatan_dan_singkatan}}</option>
+                                                <option value="{{$item->nama_kegiatan}}" {{(old("filter-sbks")==$item->nama_kegiatan ? 'selected' : '')}}>{{$item->nama_kegiatan_dan_singkatan}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -44,6 +44,7 @@
                                                 name="jenis_kegiatan"
                                                 id="updating"
                                                 value="updating"
+                                                {{ old('jenis_kegiatan') == 'updating' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -59,7 +60,7 @@
                                                 name="jenis_kegiatan"
                                                 id="pendataan"
                                                 value="pendataan"
-                                                checked
+                                                {{ old('jenis_kegiatan') == 'pendataan' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -75,6 +76,7 @@
                                                 name="jenis_kegiatan"
                                                 id="pengolahan"
                                                 value="pengolahan"
+                                                {{ old('jenis_kegiatan') == 'pengolahan' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -83,7 +85,6 @@
                                                 Pengolahan
                                                 </label>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                 </div>

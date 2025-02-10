@@ -19,113 +19,182 @@
                         </div>
                         <div class="card-body">
                             @if($jenis != 'masuk')
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group  {{$errors->has('tim') ? 'has-error has-feedback' : ''}}">
-                                        <label for="tim"
-                                          >Tim</label
-                                        >
-                                        <select
-                                          class="form-select"
-                                          id="tim"
-                                          name="tim"
-                                        >
-                                          <option value="">(Pilih salah satu)</option>
-                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : (Auth::user()->tim == "11011" ? 'selected' : '')}}>Umum</option>
-                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : (Auth::user()->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
-                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : (Auth::user()->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
-                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : (Auth::user()->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
-                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : (Auth::user()->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : (Auth::user()->tim == "11016" ? 'selected' : '')}}>TI dan Pengolahan</option>
-                                          <option value="11017" {{ old('tim') ? (old('tim') == "11017" ? 'selected' : '') : (Auth::user()->tim == "11017" ? 'selected' : '')}}>Diseminasi, Publisitas, dan Humas</option>
-                                          <option value="11018" {{ old('tim') ? (old('tim') == "11018" ? 'selected' : '') : (Auth::user()->tim == "11018" ? 'selected' : '')}}>Pembinaan Statistik Sektoral</option>
-                                        </select>
-                                        @if ($errors->has('tim'))
-                                        <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
-                                        @endif
+                                @if($jenis == 'spk')
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group {{$errors->has('mitra_spk') ? 'has-error has-feedback' : ''}}">
+                                                <label for="mitra_spk">Mitra</label>
+                                                <select
+                                                    class="form-select"
+                                                    id="single-select-field"
+                                                    name="mitra_spk"
+                                                    value="{{ old('mitra_spk') }}"
+                                                    data-placeholder="Pilih salah satu mitra"
+                                                >
+                                                <option value=""></option>
+                                                @foreach($mitras as $m)
+                                                    <option value="{{$m->id}}" {{old('mitra_spk') == $m->id ? 'selected' : ''}}>{{$m->nama}}</option>
+                                                @endforeach
+                                                </select>
+                                                @if ($errors->has('mitra_spk'))
+                                                <small class="form-text text-muted">{{ $errors->first('mitra_spk') }}</small>
+                                                @else
+                                                <small  class="form-text text-muted">
+                                                </small>
+                                                @endif
+                                            </div>
+                                            <div class="form-group  {{$errors->has('bulan_spk') ? 'has-error has-feedback' : ''}}">
+                                                <label for="bulan_spk">Bulan SPK</label>
+                                                <select
+                                                class="form-select"
+                                                id="bulan_spk"
+                                                name="bulan_spk"
+                                                >
+                                                <option value="">---- Pilih Salah Satu ----</option>
+                                                <option value="01">Januari</option>
+                                                <option value="02">Februari</option>
+                                                <option value="03">Maret</option>
+                                                <option value="04">April</option>
+                                                <option value="05">Mei</option>
+                                                <option value="06">Juni</option>
+                                                <option value="07">Juli</option>
+                                                <option value="08">Agustus</option>
+                                                <option value="09">September</option>
+                                                <option value="10">Oktober</option>
+                                                <option value="11">November</option>
+                                                <option value="12">Desember</option>
+                                                </select>
+                                                @if ($errors->has('bulan_spk'))
+                                                <small class="form-text text-muted">{{ $errors->first('bulan_spk') }}</small>
+                                                @endif
+                                            </div>
+
+                                            <div class="form-group  {{$errors->has('tahun_spk') ? 'has-error has-feedback' : ''}}">
+                                                <label for="tahun_spk">Tahun SPK</label>
+                                                <select
+                                                class="form-select"
+                                                id="tahun_spk"
+                                                name="tahun_spk"
+                                                >
+                                                <option value="">---- Pilih Salah Satu ----</option>
+                                                @for($i = date('Y'); $i >= 2024; $i--)
+                                                    <option value="{{$i}}" {{ old('tahun_spk', date('Y')) == $i ? 'selected' : '' }}>{{$i}}</option>
+                                                @endfor
+                                                </select>
+                                                @if ($errors->has('tahun_spk'))
+                                                <small class="form-text text-muted">{{ $errors->first('tahun_spk') }}</small>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
-                                    {{-- <div class="form-group  {{$errors->has('tipe') ? 'has-error has-feedback' : ''}}">
-                                        <label for="tipe"
-                                          >Tipe</label
-                                        >
-                                        <select
-                                          class="form-select"
-                                          id="tipe"
-                                          name="tipe"
-                                        >
-                                          <option value="">(Pilih salah satu)</option>
-                                          <option value="SS" {{ old('tipe') == 'SS' ? 'selected' : ''}}>Sensus</option>
-                                          <option value="VS" {{old('tipe') == 'VS' ? 'selected' : ''}}>Survei</option>
-                                        </select>
-                                        @if ($errors->has('tipe'))
-                                        <small class="form-text text-muted">{{ $errors->first('tipe') }}</small>
+                                @else  {{-- jenis surat bukan SPK --}}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group  {{$errors->has('tim') ? 'has-error has-feedback' : ''}}">
+                                            <label for="tim"
+                                            >Tim</label
+                                            >
+                                            <select
+                                            class="form-select"
+                                            id="tim"
+                                            name="tim"
+                                            >
+                                            <option value="">(Pilih salah satu)</option>
+                                            <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : (Auth::user()->tim == "11011" ? 'selected' : '')}}>Umum</option>
+                                            <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : (Auth::user()->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
+                                            <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : (Auth::user()->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
+                                            <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : (Auth::user()->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
+                                            <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : (Auth::user()->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
+                                            <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : (Auth::user()->tim == "11016" ? 'selected' : '')}}>TI dan Pengolahan</option>
+                                            <option value="11017" {{ old('tim') ? (old('tim') == "11017" ? 'selected' : '') : (Auth::user()->tim == "11017" ? 'selected' : '')}}>Diseminasi, Publisitas, dan Humas</option>
+                                            <option value="11018" {{ old('tim') ? (old('tim') == "11018" ? 'selected' : '') : (Auth::user()->tim == "11018" ? 'selected' : '')}}>Pembinaan Statistik Sektoral</option>
+                                            </select>
+                                            @if ($errors->has('tim'))
+                                            <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
+                                            @endif
+                                        </div>
+                                        {{-- <div class="form-group  {{$errors->has('tipe') ? 'has-error has-feedback' : ''}}">
+                                            <label for="tipe"
+                                            >Tipe</label
+                                            >
+                                            <select
+                                            class="form-select"
+                                            id="tipe"
+                                            name="tipe"
+                                            >
+                                            <option value="">(Pilih salah satu)</option>
+                                            <option value="SS" {{ old('tipe') == 'SS' ? 'selected' : ''}}>Sensus</option>
+                                            <option value="VS" {{old('tipe') == 'VS' ? 'selected' : ''}}>Survei</option>
+                                            </select>
+                                            @if ($errors->has('tipe'))
+                                            <small class="form-text text-muted">{{ $errors->first('tipe') }}</small>
+                                            @endif
+                                        </div> --}}
+                                        <div class="form-group  {{$errors->has('kode') ? 'has-error has-feedback' : ''}}">
+                                            <label for="kode"
+                                            >Kode Surat</label
+                                            >
+                                            <select
+                                            class="form-select"
+                                            id="kode"
+                                            name="kode"
+                                            >
+                                            
+                                            </select>
+                                            @if ($errors->has('kode'))
+                                            <small class="form-text text-muted">{{ $errors->first('kode') }}</small>
+                                            @else
+                                            <small  class="form-text text-muted">
+                                                Jika pilihan kode surat tidak muncul, pilih tim terlebih dahulu.
+                                            </small>
+                                            @endif
+                                        </div>
+                                    </div>
+    
+                                    <div class="col-md-6">
+                                        @if($jenis != 'keluar')
+                                        <div class="form-group  {{$errors->has('id_kegiatan') ? 'has-error has-feedback' : ''}}">
+                                            <label for="id_kegiatan"
+                                            >Kegiatan</label
+                                            >
+                                            <select
+                                            class="form-select"
+                                            id="single-select-field"
+                                            name="id_kegiatan"
+                                            data-placeholder="Pilih salah satu"
+                                            >
+                                            <option value="">(Pilih salah satu)</option>
+                                            @foreach($kegiatans as $k)
+                                                <option value="{{$k->id}}" {{old('id_kegiatan') == $k->id ? 'selected' : ''}}>{{$k->nama}}</option>
+                                            @endforeach
+                                            </select>
+                                            @if ($errors->has('id_kegiatan'))
+                                            <small class="form-text text-muted">{{ $errors->first('id_kegiatan') }}</small>
+                                            @endif
+                                        </div>
                                         @endif
-                                    </div> --}}
-                                    <div class="form-group  {{$errors->has('kode') ? 'has-error has-feedback' : ''}}">
-                                        <label for="kode"
-                                          >Kode Surat</label
-                                        >
-                                        <select
-                                          class="form-select"
-                                          id="kode"
-                                          name="kode"
-                                        >
-                                          
-                                        </select>
-                                        @if ($errors->has('kode'))
-                                        <small class="form-text text-muted">{{ $errors->first('kode') }}</small>
-                                        @else
-                                        <small  class="form-text text-muted">
-                                            Jika pilihan kode surat tidak muncul, pilih tim terlebih dahulu.
-                                        </small>
-                                        @endif
+    
+                                        <div class="form-group {{$errors->has('perihal') ? 'has-error has-feedback' : ''}}">
+                                            <label for="perihal">Perihal</label>
+                                            <input
+                                            type="text"
+                                            class="form-control"
+                                            id="perihal"
+                                            name="perihal"
+                                            placeholder="Perihal surat wajib diisi"
+                                            value="{{ old('perihal') }}"
+                                            />
+                                            @if ($errors->has('perihal'))
+                                            <small class="form-text text-muted">{{ $errors->first('perihal') }}</small>
+                                            @else
+                                            <small  class="form-text text-muted">
+                                                Misal: Pengawasan SERUTI Triwulan I 2024, Pelatihan Instruktur SAKERNAS, dll.
+                                            </small>
+                                            @endif
+                                        </div> 
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
-                                    @if($jenis != 'keluar')
-                                    <div class="form-group  {{$errors->has('id_kegiatan') ? 'has-error has-feedback' : ''}}">
-                                        <label for="id_kegiatan"
-                                          >Kegiatan</label
-                                        >
-                                        <select
-                                          class="form-select"
-                                          id="single-select-field"
-                                          name="id_kegiatan"
-                                          data-placeholder="Pilih salah satu"
-                                        >
-                                          <option value="">(Pilih salah satu)</option>
-                                         @foreach($kegiatans as $k)
-                                            <option value="{{$k->id}}" {{old('id_kegiatan') == $k->id ? 'selected' : ''}}>{{$k->nama}}</option>
-                                        @endforeach
-                                        </select>
-                                        @if ($errors->has('id_kegiatan'))
-                                        <small class="form-text text-muted">{{ $errors->first('id_kegiatan') }}</small>
-                                        @endif
-                                    </div>
-                                    @endif
-
-                                    <div class="form-group {{$errors->has('perihal') ? 'has-error has-feedback' : ''}}">
-                                        <label for="perihal">Perihal</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="perihal"
-                                          name="perihal"
-                                          placeholder="Perihal surat wajib diisi"
-                                          value="{{ old('perihal') }}"
-                                        />
-                                        @if ($errors->has('perihal'))
-                                        <small class="form-text text-muted">{{ $errors->first('perihal') }}</small>
-                                        @else
-                                        <small  class="form-text text-muted">
-                                            Misal: Pengawasan SERUTI Triwulan I 2024, Pelatihan Instruktur SAKERNAS, dll.
-                                        </small>
-                                        @endif
-                                    </div> 
-                                </div>
-
-                            </div>
+                                @endif
                             @else {{-- jenis == masuk --}}
                             <div class="row">
                                 <div class="col-md-6">
@@ -210,6 +279,7 @@
 
                             </div>
                             @endif
+
                             @if ($jenis == 'spd')
                             <div class="row">
                                 <div class="col-md-6">
@@ -275,7 +345,7 @@
                             </div>
                             @endif
 
-                            @if($jenis != 'masuk')
+                            @if($jenis != 'masuk' && $jenis != 'spk')
                             <div class="row">
                                 <div class="col">
                                     <hr />
@@ -293,12 +363,12 @@
                             @endif
                         </div>
                         <div class="card-action">
-                            <button type="submit" class="btn btn-success">Buat Nomor Surat</button>
+                            <button type="submit" class="btn btn-success">Buat Surat</button>
                         </div>
                     </form>
                 </div>
 
-                @if($jenis != 'masuk')
+                @if($jenis != 'masuk' && $jenis != 'spk')
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Kamus Nomor Surat</div>
@@ -433,26 +503,28 @@
                 });
         }
 
-        $(document).ready(function() {            
-            gantiTimDanKegiatan();
-            $('#tim').change(function() {
-                var tim = $(this).val();
+        $(document).ready(function() {  
+            if (jenis != 'spk'){
                 gantiTimDanKegiatan();
-
-                
-            });
-
-            // $('#tipe').change(function() {
-                // var tipe = $(this).val();
-                // $('#tipe-surat').text(tipe);
-                // $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-            // });
-
-            $('#kode').change(function() {
-                var kode = $(this).val();
-                $('#kode-surat').text(kode);
-                $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-            });
+                $('#tim').change(function() {
+                    var tim = $(this).val();
+                    gantiTimDanKegiatan();
+    
+                    
+                });
+    
+                // $('#tipe').change(function() {
+                    // var tipe = $(this).val();
+                    // $('#tipe-surat').text(tipe);
+                    // $('#nomor_surat').val($('.kemungkinan_no_surat').text());
+                // });
+    
+                $('#kode').change(function() {
+                    var kode = $(this).val();
+                    $('#kode-surat').text(kode);
+                    $('#nomor_surat').val($('.kemungkinan_no_surat').text());
+                });
+            }
 
             $( '#single-select-field' ).select2( {
                 theme: "bootstrap-5",
