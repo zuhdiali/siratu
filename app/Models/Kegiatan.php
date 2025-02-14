@@ -22,6 +22,7 @@ class Kegiatan extends Model
         'id_pjk',
         'progress',
         'tim',
+        'beban_anggaran'
     ];
 
     public function mitra(): BelongsToMany

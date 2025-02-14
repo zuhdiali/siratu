@@ -12,8 +12,9 @@ use App\Models\KegiatanMitra;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FotoSuratMasuk;
 use App\Models\KegiatanPegawai;
-use PhpOffice\PhpWord;
+// use PhpOffice\PhpWord\Phpword;
 use Carbon\Carbon;
+// use PhpOffice\PhpWord\TemplateProcessor;
 
 class SuratController extends Controller
 {
@@ -449,7 +450,7 @@ class SuratController extends Controller
             $noTerakhir = $suratTerakhir->no_terakhir;
         }
 
-        $phpWord = new PhpWord\TemplateProcessor("SPK.docx");
+        $phpWord = new \PhpOffice\PhpWord\TemplateProcessor("SPK.docx");
         $phpWord->setValue('nomor', $noTerakhir + 1);
         $phpWord->setValue('hari', $namaHariAwal);
         $phpWord->setValue('tanggal', 1);
@@ -464,6 +465,7 @@ class SuratController extends Controller
         $count = 1;
         $values = [];
         foreach ($kegiatan_mitra as $km) {
+            $beban_anggaran = "{#beban_anggaran#}";
             $kegiatan = Kegiatan::find($km->kegiatan_id);
             $satuan_honor = ($km->is_pml == 1 ? $kegiatan->honor_pengawasan : $kegiatan->honor_pencacahan);
             if ($satuan_honor < 10 || Carbon::parse($kegiatan->tgl_mulai)->format('m') != $bulan || $satuan_honor == null || $km->jumlah == null) {
@@ -475,6 +477,9 @@ class SuratController extends Controller
             } else {
                 $jkw = Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d F') . ' s.d. ' . Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d F');
             }
+            if ($kegiatan->beban_anggaran) {
+                $beban_anggaran = $kegiatan->beban_anggaran;
+            }
             $jumlah_honor += $km->estimasi_honor;
             array_push($values, [
                 'no_keg' => $count,
@@ -484,6 +489,7 @@ class SuratController extends Controller
                 'sat_keg' => ($km->is_pml == 1 ? $kegiatan->satuan_honor_pengawasan : $kegiatan->satuan_honor_pencacahan),
                 'harga_sat' => $satuan_honor,
                 'honor' => $km->estimasi_honor,
+                'beban_ang' => $beban_anggaran,
             ]);
             $count++;
         }

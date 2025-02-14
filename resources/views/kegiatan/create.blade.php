@@ -22,12 +22,12 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <h5> SBKS (Standard Biaya Kegiatan Statistik) </h5>
-                                        {{-- <label for="filter-sbks">Pilih kegiatan:</label> --}}
-                                        <select name="filter-sbks" id="filter-sbks" class="form-select"   data-placeholder="Pilih kegiatan">
+                                        {{-- <label for="filter_sbks">Pilih kegiatan:</label> --}}
+                                        <select name="filter_sbks" id="filter_sbks" class="form-select"   data-placeholder="Pilih kegiatan">
                                             {{-- <option value="">-- Pilih Kegiatan ---</option> --}}
                                             <option value=""></option>
                                             @foreach($sbks as $item)
-                                                <option value="{{$item->nama_kegiatan}}" {{(old("filter-sbks")==$item->nama_kegiatan ? 'selected' : '')}}>{{$item->nama_kegiatan_dan_singkatan}}</option>
+                                                <option value="{{$item->nama_kegiatan}}" {{(old("filter_sbks")==$item->nama_kegiatan ? 'selected' : '')}}>{{$item->nama_kegiatan_dan_singkatan}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -392,16 +392,16 @@
             closeOnSelect: false,
         });
 
-        $('#filter-sbks').select2({
+        $('#filter_sbks').select2({
             theme: "bootstrap-5",
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
             closeOnSelect: false,
         });
 
-        $('#filter-sbks, input[name="jenis_kegiatan"]').on('change', function() {
+        $('#filter_sbks, input[name="jenis_kegiatan"]').on('change', function() {
             var jenis_kegiatan = $('input[name="jenis_kegiatan"]:checked').val();
-            var nama_kegiatan = $('#filter-sbks').val();
+            var nama_kegiatan = $('#filter_sbks').val();
             // console.log(jenis_kegiatan, nama_kegiatan);
             $.ajax({
                 headers: {

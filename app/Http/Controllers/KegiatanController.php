@@ -49,6 +49,7 @@ class KegiatanController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         // Validate the request...
         $request->validate([
             'nama' => 'required|max:254',
@@ -78,6 +79,10 @@ class KegiatanController extends Controller
         $kegiatan->id_pjk = $request->id_pjk;
         $kegiatan->tim = $request->tim;
         $kegiatan->progress = $request->progress;
+        if ($request->filter_sbks) {
+            $sbks = SBKS::where('nama_kegiatan', $request->filter_sbks)->first();
+            $kegiatan->beban_anggaran = $sbks->beban_anggaran;
+        }
         $kegiatan->save();
         if ($request->pegawai != null) {
             $kegiatan->pegawai()->attach($request->pegawai);

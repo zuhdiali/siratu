@@ -19,6 +19,7 @@ class SBKS extends Model
         'tim',
         'ada_di_simeulue',
         'pjk',
-        'singkatan_resmi'
+        'singkatan_resmi',
+        'beban_anggaran'
     ];
 }
