@@ -80,8 +80,10 @@ class KegiatanController extends Controller
         $kegiatan->tim = $request->tim;
         $kegiatan->progress = $request->progress;
         if ($request->filter_sbks) {
-            $sbks = SBKS::where('nama_kegiatan', $request->filter_sbks)->first();
-            $kegiatan->beban_anggaran = $sbks->beban_anggaran;
+            $sbks = SBKS::where('nama_kegiatan', $request->filter_sbks)->where('beban_anggaran', '!=', null)->first();
+            if ($sbks) {
+                $kegiatan->beban_anggaran = $sbks->beban_anggaran;
+            }
         }
         $kegiatan->save();
         if ($request->pegawai != null) {
