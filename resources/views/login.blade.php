@@ -17,7 +17,7 @@
             <div class="col-md-6">
                 <div class="card mt-5">
                     <div class="card-header text-center">
-                        <h4>Login</h4>
+                        <h4>Login ke Website SIRAGI</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{route('login.post')}}" method="POST">
