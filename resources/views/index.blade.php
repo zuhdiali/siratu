@@ -55,46 +55,103 @@
 
 @section('script')
 <script>
-  var barChart = document.getElementById("barChart").getContext("2d")
-  var myBarChart = new Chart(barChart, {
-    type: "horizontalBar",
-    data: {
-      labels: [
-        @foreach($kegiatanBulanIni as $item)
-          "{{ $item->nama }}",
-        @endforeach
-      ],
-      datasets: [
-        {
-          label: "Progress",
-          backgroundColor: "rgb(23, 125, 255)",
-          borderColor: "rgb(23, 125, 255)",
-          data: [
-            @foreach($kegiatanBulanIni as $item)
-              {{ $item->progress }},
-            @endforeach
-          ],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        xAxes: [
-          {
-            display: false,
+  var barChart = document.getElementById("barChart").getContext("2d");
+    var myBarChart = new Chart(barChart, {
+          type: "horizontalBar",
+          data: {
+            labels: [ 
+              @foreach($kegiatanBulanIni as $item)
+                "{{ $item->nama }}",
+              @endforeach
+            ],
+            datasets: [
+              {
+                label: "Progress",
+                backgroundColor: "rgb(23, 125, 255)",
+                borderColor: "rgb(23, 125, 255)",
+                data: [
+                  @foreach($kegiatanBulanIni as $item)
+                    {{ $item->progress }},
+                  @endforeach
+                ],
+              },
+            ],
           },
-        ],
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              xAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+              yAxes: [
+                {
+                  barThickness: 20, // Set the bar thickness here
+                },
+              ],
             },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += tooltipItem.xLabel + '%';
+                  return label;
+                }
+              }
+            }
           },
-        ],
-      },
-    },
-  });
+        });
+
+    // Adjust canvas height based on the number of items
+    // var canvasHeight = {{ count($kegiatanBulanIni) }} * 30; // 30px per item
+    // document.getElementById("barChart").height = canvasHeight;
+
+  // var myBarChart = new Chart(barChart, {
+  //   type: "z",
+  //   data: {
+  //     labels: [
+  //       @foreach($kegiatanBulanIni as $item)
+  //         "{{ $item->nama }}",
+  //       @endforeach
+  //     ],
+  //     datasets: [
+  //       {
+  //         label: "Progress",
+  //         backgroundColor: "rgb(23, 125, 255)",
+  //         borderColor: "rgb(23, 125, 255)",
+  //         data: [
+  //           @foreach($kegiatanBulanIni as $item)
+  //             {{ $item->progress }},
+  //           @endforeach
+  //         ],
+  //       },
+  //     ],
+  //   },
+  //   options: {
+  //     responsive: true,
+  //     maintainAspectRatio: false,
+  //     scales: {
+  //       xAxes: [
+  //         {
+  //           display: false,
+  //         },
+  //       ],
+  //       yAxes: [
+  //         {
+  //           ticks: {
+  //             beginAtZero: true,
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  // });
 </script>
 @endsection
