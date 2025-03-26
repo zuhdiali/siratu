@@ -56,58 +56,102 @@
 @section('script')
 <script>
   var barChart = document.getElementById("barChart").getContext("2d");
-    var myBarChart = new Chart(barChart, {
-          type: "horizontalBar",
-          data: {
-            labels: [ 
+  var myBarChart = new Chart(barChart, {
+        type: "bar",
+        data: {
+          labels: [ 
               @foreach($kegiatanBulanIni as $item)
                 "{{ $item->nama }}",
               @endforeach
             ],
-            datasets: [
-              {
-                label: "Progress",
-                backgroundColor: "rgb(23, 125, 255)",
-                borderColor: "rgb(23, 125, 255)",
-                data: [
+          datasets: [
+            {
+              label: "Sales",
+              backgroundColor: "rgb(23, 125, 255)",
+              borderColor: "rgb(23, 125, 255)",
+              data: [
                   @foreach($kegiatanBulanIni as $item)
                     {{ $item->progress }},
                   @endforeach
                 ],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            xAxes: [
+              {
+                display: false,
               },
             ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              xAxes: [
-                {
-                  ticks: {
-                    beginAtZero: true,
-                  },
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
                 },
-              ],
-              yAxes: [
-                {
-                  barThickness: 20, // Set the bar thickness here
-                },
-              ],
-            },
-            tooltips: {
-              callbacks: {
-                label: function(tooltipItem, data) {
-                  var label = data.datasets[tooltipItem.datasetIndex].label || '';
-                  if (label) {
-                    label += ': ';
-                  }
-                  label += tooltipItem.xLabel + '%';
-                  return label;
-                }
-              }
-            }
-          },
-        });
+              },
+            ],
+          },          
+        },
+      });
+
+  // INI WORK
+    // var myBarChart = new Chart(barChart, {
+    //       type: "horizontalBar",
+    //       data: {
+    //         labels: [ 
+    //           @foreach($kegiatanBulanIni as $item)
+    //             "{{ $item->nama }}",
+    //           @endforeach
+    //         ],
+    //         datasets: [
+    //           {
+    //             label: "Progress",
+    //             backgroundColor: "rgb(23, 125, 255)",
+    //             borderColor: "rgb(23, 125, 255)",
+    //             data: [
+    //               @foreach($kegiatanBulanIni as $item)
+    //                 {{ $item->progress }},
+    //               @endforeach
+    //             ],
+    //           },
+    //         ],
+    //       },
+    //       options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false,
+    //         scales: {
+    //           xAxes: [
+    //             {
+    //               ticks: {
+    //                 beginAtZero: true,
+    //               },
+    //             },
+    //           ],
+    //           yAxes: [
+    //             {
+    //               barThickness: 20, // Set the bar thickness here
+    //             },
+    //           ],
+    //         },
+    //         tooltips: {
+    //           callbacks: {
+    //             label: function(tooltipItem, data) {
+    //               var label = data.datasets[tooltipItem.datasetIndex].label || '';
+    //               if (label) {
+    //                 label += ': ';
+    //               }
+    //               label += tooltipItem.xLabel + '%';
+    //               return label;
+    //             }
+    //           }
+    //         }
+    //       },
+    //     });
+// YANG DI ATAS WORK
+
 
     // Adjust canvas height based on the number of items
     // var canvasHeight = {{ count($kegiatanBulanIni) }} * 30; // 30px per item
