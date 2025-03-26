@@ -23,11 +23,13 @@ class SBKSController extends Controller
 
     public function create()
     {
-        return view('sbks.create');
+        $pegawais = Pegawai::where('flag', null)->get();
+        return view('sbks.create', compact('pegawais'));
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'nama_kegiatan' => 'required',
             'tugas' => 'required',
@@ -36,7 +38,8 @@ class SBKSController extends Controller
             'tim' => 'required',
             'ada_di_simeulue' => 'required',
             'pjk' => 'required',
-            'singkatan_resmi' => 'required',
+            // 'singkatan_resmi' => 'required',
+            'beban_anggaran' => 'required',
         ]);
 
         SBKS::create($request->all());
@@ -48,11 +51,13 @@ class SBKSController extends Controller
     public function edit($id)
     {
         $sbks = SBKS::find($id);
-        return view('sbks.edit', compact('sbks'));
+        $pegawais = Pegawai::where('flag', null)->get();
+        return view('sbks.edit', compact('sbks', 'pegawais'));
     }
 
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
             'nama_kegiatan' => 'required',
             'tugas' => 'required',
@@ -62,6 +67,7 @@ class SBKSController extends Controller
             'ada_di_simeulue' => 'required',
             'pjk' => 'required',
             'singkatan_resmi' => 'required',
+            'beban_anggaran' => 'required',
         ]);
 
         $sbks = SBKS::find($id);

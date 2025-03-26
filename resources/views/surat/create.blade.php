@@ -15,7 +15,7 @@
                     <form action="{{url('surat/store', $jenis)}}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
-                            <div class="card-title">Tambah Surat</div>
+                            <div class="card-title">Tambah Surat {{$jenis}}</div>
                         </div>
                         <div class="card-body">
                             @if($jenis != 'masuk')
@@ -149,6 +149,25 @@
                                             </small>
                                             @endif
                                         </div>
+
+                                        @if($jenis == 'tugas')
+                                            <div class="form-group {{$errors->has('tgl_surat') ? 'has-error has-feedback' : ''}}">
+                                                <label for="tgl_surat">Tanggal Surat Tugas</label>
+                                                <input
+                                                  type="date"
+                                                  class="form-control"
+                                                  id="tgl_surat"
+                                                  name="tgl_surat"
+                                                  value="{{ old('tgl_surat') ? old('tgl_surat') : date('Y-m-d') }}"
+                                                />
+                                                @if ($errors->has('tgl_surat'))
+                                                <small class="form-text text-muted">{{ $errors->first('tgl_surat') }}</small>
+                                                @else
+                                                <small  class="form-text text-muted">
+                                                </small>
+                                                @endif
+                                            </div> 
+                                        @endif
                                     </div>
     
                                     <div class="col-md-6">
@@ -240,8 +259,27 @@
                                 </div>
 
                                 <div class="col-md-6">
+                                    <div class="form-group {{$errors->has('tgl_surat') ? 'has-error has-feedback' : ''}}">
+                                        <label for="tgl_surat">Tanggal Surat</label>
+                                        <input
+                                          type="date"
+                                          class="form-control"
+                                          id="tgl_surat"
+                                          name="tgl_surat"
+                                          value="{{ old('tgl_surat') ? old('tgl_surat') : date('Y-m-d') }}"
+                                        />
+                                        @if ($errors->has('tgl_surat'))
+                                        <small class="form-text text-muted">{{ $errors->first('tgl_surat') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                        </small>
+                                        @endif
+                                    </div> 
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="form-group {{$errors->has('file') ? 'has-error has-feedback' : ''}}">
-                                        <label for="file">Foto Surat Masuk</label>
+                                        <label for="file">File PDF Surat Masuk</label>
                                         <br>
                                         <input
                                             type="file"

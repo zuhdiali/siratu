@@ -121,8 +121,8 @@ class SuratController extends Controller
 
     public function store(Request $request, $jenis)
     {
-        if ($jenis != 'masuk') {
-            if ($jenis != 'spk') {
+        if ($jenis != 'masuk') { //jika jenis surat selain masuk
+            if ($jenis != 'spk') { //jika bukan mau generate SPK
                 $request->validate([
                     'tim' => 'required',
                     'kode' => 'required',
@@ -152,6 +152,11 @@ class SuratController extends Controller
                         }
                     }
                 }
+                if ($jenis == 'tugas') {
+                    $request->validate([
+                        'tgl_surat' => 'required',
+                    ]);
+                }
             } else {  //jika mau generate SPK
                 $request->validate([
                     'mitra_spk' => 'required',
@@ -165,6 +170,7 @@ class SuratController extends Controller
                 'no_surat_masuk' => 'required',
                 'file' => 'required|mimes:pdf',
                 'perihal' => 'required',
+                'tgl_surat' => 'required',
             ]);
             // $totalFoto = count($request->file('files'));
             // for ($i = 0; $i < $totalFoto; $i++) {
@@ -206,6 +212,9 @@ class SuratController extends Controller
                     $surat->nomor_surat = $this->generateNomorSurat("11010", $request->kode, $jenis, $noTerakhir);
                 }
                 $surat->tim = $request->tim;
+                if ($jenis == 'tugas') {
+                    $surat->tgl_surat = $request->tgl_surat;
+                }
             } else {  //jika jenis surat spk
                 $noSPK_terakhir = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->first();
                 if ($noSPK_terakhir == null) {
@@ -222,6 +231,7 @@ class SuratController extends Controller
         } else { //jika jenis surat masuk
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
             $surat->no_surat_masuk = $request->no_surat_masuk;
+            $surat->tgl_surat = $request->tgl_surat;
             $surat->save();
             // if ($request->has('files')) {
             //     $i = 0;
@@ -310,8 +320,10 @@ class SuratController extends Controller
                 'no_surat_masuk' => 'required',
                 'file' => 'nullable|mimes:pdf',
                 'perihal' => 'required',
+                'tgl_surat' => 'required',
             ]);
             $surat->dinas_surat_masuk = $request->dinas_surat_masuk;
+            $surat->tgl_surat = $request->tgl_surat;
             $surat->no_surat_masuk = $request->no_surat_masuk;
             if ($request->has('file')) {
 
@@ -347,8 +359,15 @@ class SuratController extends Controller
                     $kegiatan = Kegiatan::find($surat->id_kegiatan);
                     $surat->nomor_surat = $this->generateNomorSurat($kegiatan->tim, $request->kode, $jenis, $noTerakhir - 1);
                 }
-            } else {
+            } else { //jika bukan surat keluar
                 $surat->nomor_surat = $this->generateNomorSurat("11010", $request->kode, $jenis, $noTerakhir - 1);
+            }
+
+            if ($jenis == 'tugas') {
+                $request->validate([
+                    'tgl_surat' => 'required',
+                ]);
+                $surat->tgl_surat = $request->tgl_surat;
             }
         }
         $surat->perihal = $request->perihal;
@@ -366,8 +385,14 @@ class SuratController extends Controller
                 return redirect()->back()->with('error', 'Silakan hubungi pegawai TU untuk menghapus nomor surat.');
             }
         }
-        $surat->flag = 'Dihapus';
-        $surat->save();
+        if ($surat->jenis_surat == 'spk') {
+            $filePath = $surat->file;
+            unlink($filePath);
+            $surat->delete();
+        } else {
+            $surat->flag = 'Dihapus';
+            $surat->save();
+        }
         return redirect()->back()->with('success', 'Surat berhasil dihapus.');
     }
 

@@ -139,6 +139,7 @@ class KegiatanController extends Controller
             $kegiatan->id_pjk = $request->id_pjk;
             $kegiatan->tim = $request->tim;
             $kegiatan->progress = $request->progress;
+            $kegiatan->beban_anggaran = $request->beban_anggaran;
             $kegiatan->pegawai()->sync($request->pegawai);
             $kegiatan->mitra()->sync($request->mitra);
             $kegiatan->save();
@@ -171,7 +172,7 @@ class KegiatanController extends Controller
             return redirect()->route('kegiatan.edit', ['id' => $id])->with('error', 'Gagal.');
         }
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diubah.');
+        return redirect()->route('kegiatan.show', ['id' => $kegiatan->id])->with('success', 'Kegiatan berhasil diubah.');
     }
 
     public function show($id)

@@ -56,7 +56,7 @@
                   <tr>
                     <th style="width: 10%">Aksi</th>
                     <th>Nomor Surat Tugas</th>
-                    <th>Tanggal Dibuat</th>
+                    <th>Tanggal Surat Tugas</th>
                     <th>Pembuat Surat</th>
                     <th>Kegiatan</th>
                     <th>Perihal</th>
@@ -66,7 +66,7 @@
                   <tr>
                     <th>Aksi</th>
                     <th>Nomor Surat Tugas</th>
-                    <th>Tanggal Dibuat</th>
+                    <th>Tanggal Surat Tugas</th>
                     <th>Pembuat Surat</th>
                     <th>Kegiatan</th>
                     <th>Perihal</th>
@@ -126,7 +126,7 @@
                         @endif
                       </td>
                       <th scope="row">{{$surat->nomor_surat}}</th>
-                      <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
+                      <td>{{\Carbon\Carbon::parse($surat->tgl_surat)->translatedFormat('d F Y')}}</td>
                       <td>{{$surat->pembuat_surat->nama}}</td>
                       <td>{{$surat->kegiatan->nama}}</td>
                       <td>{{$surat->perihal}}</td>

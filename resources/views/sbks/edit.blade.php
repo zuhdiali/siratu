@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <form action="{{route('sbks.store')}}" method="POST">
+                    <form action="{{url('sbks/update', $sbks->id)}}" method="POST">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
                             <div class="card-title">Tambah SBKS</div>
@@ -30,7 +30,7 @@
                                           id="nama_kegiatan"
                                           name="nama_kegiatan"
                                           placeholder="Masukkan nama kegiatan"
-                                          value="{{ old('nama_kegiatan') }}"
+                                          value="{{ $sbks->nama_kegiatan }}"
                                         />
                                         @if ($errors->has('nama_kegiatan'))
                                         <small class="form-text text-muted">{{ $errors->first('nama_kegiatan') }}</small>
@@ -48,17 +48,17 @@
                                             name="satuan"
                                         >
                                             <option value="">(Pilih salah satu)</option>
-                                            <option value="Dokumen" {{ old('satuan') == 'Dokumen' ? 'selected' : ''}}>Dokumen</option>
-                                            <option value="SLS" {{old('satuan') == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
-                                            <option value="BS" {{old('satuan') == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
-                                            <option value="Ruta" {{old('satuan') == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
-                                            <option value="OK" {{old('satuan') == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
-                                            <option value="OH" {{old('satuan') == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
-                                            <option value="OB" {{old('satuan') == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
-                                            <option value="Segmen" {{old('satuan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
-                                            <option value="EA" {{old('satuan') == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
-                                            <option value="Responden" {{old('satuan') == 'Responden' ? 'selected' : ''}}>Responden</option>
-                                            <option value="Pasar" {{old('satuan') == 'Pasar' ? 'selected' : ''}}>Pasar</option>
+                                            <option value="Dokumen" {{ $sbks->satuan == 'Dokumen' ? 'selected' : ''}}>Dokumen</option>
+                                            <option value="SLS" {{ $sbks->satuan == 'SLS' ? 'selected' : ''}}>SLS (Satuan Lingkungan Setempat)</option>
+                                            <option value="BS" {{ $sbks->satuan == 'BS' ? 'selected' : ''}}>BS (Blok Sensus)</option>
+                                            <option value="Ruta" {{ $sbks->satuan == 'Ruta' ? 'selected' : ''}}>Rumah Tangga</option>
+                                            <option value="OK" {{ $sbks->satuan == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
+                                            <option value="OH" {{ $sbks->satuan == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
+                                            <option value="OB" {{ $sbks->satuan == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="Segmen" {{ $sbks->satuan == 'Segmen' ? 'selected' : ''}}>Segmen</option>
+                                            <option value="EA" {{ $sbks->satuan == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
+                                            <option value="Responden" {{ $sbks->satuan == 'Responden' ? 'selected' : ''}}>Responden</option>
+                                            <option value="Pasar" {{ $sbks->satuan == 'Pasar' ? 'selected' : ''}}>Pasar</option>
                                           
                                         </select>
                                         @if ($errors->has('satuan'))
@@ -78,7 +78,7 @@
                                           id="honor_per_satuan"
                                           name="honor_per_satuan"
                                           placeholder="Masukkan honor per satuan"
-                                          value="{{ old('honor_per_satuan') }}"
+                                          value="{{ $sbks->honor_per_satuan }}"
                                         />
                                         @if ($errors->has('honor_per_satuan'))
                                         <small class="form-text text-muted">{{ $errors->first('honor_per_satuan') }}</small>
@@ -99,7 +99,7 @@
                                         >
                                             <option value="">(Pilih salah satu)</option>
                                             @foreach ($pegawais as $item)
-                                                <option value="{{$item->id}}" {{ old('pjk') ? (old('pjk') == $item->id ? 'selected' : '') : (Auth::user()->id == $item->id ? 'selected' : '')}}>{{$item->nama}}</option>
+                                                <option value="{{$item->id}}" {{ $sbks->pjk == $item->id ? 'selected' : ''}}>{{$item->nama}}</option>
                                             @endforeach
                                           
                                         </select>
@@ -121,14 +121,14 @@
                                           name="tim"
                                         >
                                           <option value="">(Pilih salah satu)</option>
-                                          <option value="11011" {{ old('tim') ? (old('tim') == "11011" ? 'selected' : '') : (Auth::user()->tim == "11011" ? 'selected' : '')}}>Umum</option>
-                                          <option value="11012" {{ old('tim') ? (old('tim') == "11012" ? 'selected' : '') : (Auth::user()->tim == "11012" ? 'selected' : '')}}>Statistik Sosial</option>
-                                          <option value="11013" {{ old('tim') ? (old('tim') == "11013" ? 'selected' : '') : (Auth::user()->tim == "11013" ? 'selected' : '')}}>Statistik Ekonomi Produksi</option>
-                                          <option value="11015" {{ old('tim') ? (old('tim') == "11015" ? 'selected' : '') : (Auth::user()->tim == "11015" ? 'selected' : '')}}>Neraca dan Analisis Statistik</option>
-                                          <option value="11014" {{ old('tim') ? (old('tim') == "11014" ? 'selected' : '') : (Auth::user()->tim == "11014" ? 'selected' : '')}}>Statistik Ekonomi Distribusi</option>
-                                          <option value="11016" {{ old('tim') ? (old('tim') == "11016" ? 'selected' : '') : (Auth::user()->tim == "11016" ? 'selected' : '')}}>TI dan Pengolahan</option>
-                                          <option value="11017" {{ old('tim') ? (old('tim') == "11017" ? 'selected' : '') : (Auth::user()->tim == "11017" ? 'selected' : '')}}>Diseminasi, Publisitas, dan Humas</option>
-                                          <option value="11018" {{ old('tim') ? (old('tim') == "11018" ? 'selected' : '') : (Auth::user()->tim == "11018" ? 'selected' : '')}}>Pembinaan Statistik Sektoral</option>
+                                          <option value="11011" {{ $sbks->tim == "11011" ? 'selected' : ''}}>Umum</option>
+                                          <option value="11012" {{ $sbks->tim == "11012" ? 'selected' : ''}}>Statistik Sosial</option>
+                                          <option value="11013" {{ $sbks->tim == "11013" ? 'selected' : ''}}>Statistik Ekonomi Produksi</option>
+                                          <option value="11015" {{ $sbks->tim == "11015" ? 'selected' : ''}}>Neraca dan Analisis Statistik</option>
+                                          <option value="11014" {{ $sbks->tim == "11014" ? 'selected' : ''}}>Statistik Ekonomi Distribusi</option>
+                                          <option value="11016" {{ $sbks->tim == "11016" ? 'selected' : ''}}>TI dan Pengolahan</option>
+                                          <option value="11017" {{ $sbks->tim == "11017" ? 'selected' : ''}}>Diseminasi, Publisitas, dan Humas</option>
+                                          <option value="11018" {{ $sbks->tim == "11018" ? 'selected' : ''}}>Pembinaan Statistik Sektoral</option>
                                         </select>
                                         @if ($errors->has('tim'))
                                         <small class="form-text text-muted">{{ $errors->first('tim') }}</small>
@@ -138,7 +138,7 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    
+
                                     <div class="form-group {{$errors->has('singkatan_resmi') ? 'has-error has-feedback' : ''}}">
                                         <label for="singkatan_resmi">Singkatan Resmi</label>
                                         <input
@@ -147,7 +147,7 @@
                                           id="singkatan_resmi"
                                           name="singkatan_resmi"
                                           placeholder="Singkatan resmi dari kegiatan"
-                                          value="{{ old('singkatan_resmi') }}"
+                                          value="{{ old('singkatan_resmi') ? old('singkatan_resmi') : $sbks->singkatan_resmi }}"
                                         />
                                         @if ($errors->has('singkatan_resmi'))
                                         <small class="form-text text-muted">{{ $errors->first('singkatan_resmi') }}</small>
@@ -157,7 +157,7 @@
                                         </small>
                                         @endif
                                     </div> 
-
+                                    
                                     <div class="form-group">
                                         <label>Tugas dalam kegiatan</label><br />
                                         <div class="d-flex">
@@ -168,7 +168,7 @@
                                                 name="tugas"
                                                 id="PPL"
                                                 value="PPL"
-                                                {{ old('tugas') == 'PPL' ? 'checked' : '' }}
+                                                {{ $sbks->tugas == 'PPL' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -184,7 +184,7 @@
                                                 name="tugas"
                                                 id="PML"
                                                 value="PML"
-                                                {{ old('tugas') == 'PML' ? 'checked' : '' }}
+                                                {{ $sbks->tugas == 'PML' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -200,7 +200,7 @@
                                                 name="tugas"
                                                 id="Pengolahan"
                                                 value="Pengolahan"
-                                                {{ old('tugas') == 'Pengolahan' ? 'checked' : '' }}
+                                                {{ $sbks->tugas == 'Pengolahan' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -222,7 +222,7 @@
                                                 name="ada_di_simeulue"
                                                 id="Ada"
                                                 value="1"
-                                                {{ old('ada_di_simeulue') == '1' ? 'checked' : '' }}
+                                                {{ $sbks->ada_di_simeulue == '1' ? 'checked' : '' }}
                                                 checked
                                                 />
                                                 <label
@@ -239,7 +239,7 @@
                                                 name="ada_di_simeulue"
                                                 id="TidakAda"
                                                 value="0"
-                                                {{ old('ada_di_simeulue') == '0' ? 'checked' : '' }}
+                                                {{ $sbks->ada_di_simeulue == '0' ? 'checked' : '' }}
                                                 />
                                                 <label
                                                 class="form-check-label"
@@ -259,7 +259,7 @@
                                           id="beban_anggaran"
                                           name="beban_anggaran"
                                           placeholder="Misal: 2904.BMA.006.005.521213"
-                                          value="{{old('beban_anggaran')}}"
+                                          value="{{ $sbks->beban_anggaran }}"
                                         />
                                         @if ($errors->has('beban_anggaran'))
                                         <small class="form-text text-muted">{{ $errors->first('beban_anggaran') }}</small>
@@ -276,7 +276,7 @@
 
                         </div>
                         <div class="card-action">
-                            <button type="submit" class="btn btn-success">Tambah SBKS</button>
+                            <button type="submit" class="btn btn-success">Update SBKS</button>
                         </div>
                     </form>
                 </div>

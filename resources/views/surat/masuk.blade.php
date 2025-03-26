@@ -57,8 +57,9 @@
                     <th style="width: 10%">Aksi</th>
                     <th>Nomor Surat Masuk</th>
                     <th>Perihal</th>
-                    <th>Tanggal Diterima</th>
+                    <th>Tanggal Surat</th>
                     <th>Dinas Pemberi Surat</th>
+                    {{-- <th>Tanggal Diterima</th> --}}
                     {{-- <th>Rincian Surat</th> --}}
                   </tr>
                 </thead>
@@ -67,8 +68,9 @@
                     <th>Aksi</th>
                     <th>Nomor Surat Masuk</th>
                     <th>Perihal</th>
-                    <th>Tanggal Dibuat</th>
+                    <th>Tanggal Surat</th>
                     <th>Dinas Pemberi Surat</th>
+                    {{-- <th>Tanggal Diterima</th> --}}
                     {{-- <th>Rincian Surat</th> --}}
                   </tr>
                 </tfoot>
@@ -130,8 +132,9 @@
                       </td>
                       <th scope="row">{{$surat->no_surat_masuk}}</th>
                       <td>{{$surat->perihal}}</td>
-                      <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td>
+                      <td>{{\Carbon\Carbon::parse($surat->tgl_surat)->translatedFormat('d F Y')}}</td>
                       <td>{{$surat->dinas_surat_masuk}}</td>
+                      {{-- <td>{{\Carbon\Carbon::parse($surat->created_at)->translatedFormat('d F Y')}}</td> --}}
                       {{-- <td>
                         <a href="{{url('surat/detail/'.$surat->jenis_surat."/".$surat->id)}}" class="btn btn-link btn-primary" target="_blank">Lihat Surat</a>
                       </td> --}}

@@ -106,7 +106,7 @@
                             </button>
                           </form>
 
-                          <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
+                          {{-- <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button
                               type="submit"
                               data-bs-toggle="tooltip"
@@ -116,7 +116,7 @@
                             >
                             <i class="fa fa-edit"></i>
                             </button>
-                          </form>
+                          </form> --}}
 
                           <button
                             type="button"

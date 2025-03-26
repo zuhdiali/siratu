@@ -18,6 +18,7 @@ class Surat extends Model
         'no_terakhir',
         'tgl_awal_kegiatan',
         'tgl_akhir_kegiatan',
+        'tgl_surat',
         'perihal',
         'no_surat_masuk',
         'dinas_surat_masuk',

@@ -15,7 +15,7 @@
                     <form action="{{url('surat/update/'. $jenis.'/'. $surat->id)}}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- {{ csrf_field() }} -->
                         <div class="card-header">
-                            <div class="card-title">Edit Surat</div>
+                            <div class="card-title">Edit Surat {{$jenis}}</div>
                         </div>
                         <div class="card-body">
                             @if($jenis != 'masuk')
@@ -75,6 +75,25 @@
                                         <small class="form-text text-muted">{{ $errors->first('kode') }}</small>
                                         @endif
                                     </div>
+
+                                    @if($jenis == 'tugas')
+                                        <div class="form-group {{$errors->has('tgl_surat') ? 'has-error has-feedback' : ''}}">
+                                            <label for="tgl_surat">Tanggal Surat Tugas</label>
+                                            <input
+                                                type="date"
+                                                class="form-control"
+                                                id="tgl_surat"
+                                                name="tgl_surat"
+                                                value="{{ old('tgl_surat') ? old('tgl_surat') : $surat->tgl_surat }}"
+                                            />
+                                            @if ($errors->has('tgl_surat'))
+                                            <small class="form-text text-muted">{{ $errors->first('tgl_surat') }}</small>
+                                            @else
+                                            <small  class="form-text text-muted">
+                                            </small>
+                                            @endif
+                                        </div> 
+                                    @endif
                                 </div>
 
                                 <div class="col-md-6">
@@ -86,7 +105,7 @@
                                           id="single-select-field"
                                           name="id_kegiatan"
                                           data-placeholder="Pilih salah satu"
-                                          disabled
+                                          {{-- disabled --}}
                                         >
                                         <option value="">(Pilih salah satu)</option>
                                             {{-- @foreach($kegiatans as $k) --}}
@@ -165,8 +184,27 @@
                                 </div>
 
                                 <div class="col-md-6">
+                                    <div class="form-group {{$errors->has('tgl_surat') ? 'has-error has-feedback' : ''}}">
+                                        <label for="tgl_surat">Tanggal Surat</label>
+                                        <input
+                                          type="date"
+                                          class="form-control"
+                                          id="tgl_surat"
+                                          name="tgl_surat"
+                                          value="{{ old('tgl_surat') ? old('tgl_surat') : $surat->tgl_surat }}"
+                                        />
+                                        @if ($errors->has('tgl_surat'))
+                                        <small class="form-text text-muted">{{ $errors->first('tgl_surat') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                        </small>
+                                        @endif
+                                    </div> 
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="form-group {{$errors->has('file') ? 'has-error has-feedback' : ''}}">
-                                        <label for="file">Foto Surat Masuk</label>
+                                        <label for="file">File PDF Surat Masuk</label>
                                         <br>
                                         <input
                                             type="file"
@@ -286,7 +324,7 @@
                             @endif
                         </div>
                         <div class="card-action">
-                            <button type="submit" class="btn btn-success">Edit Nomor Surat</button>
+                            <button type="submit" class="btn btn-success">Edit  @if($jenis != 'masuk' && $jenis != 'spk') Nomor @endif Surat</button>
                         </div>
                     </form>
                 </div>
@@ -379,33 +417,79 @@
 @section('script')
 <script src="{{asset('select2/js/select2.full.min.js')}}"></script>
     <script>
+        var jenis = '{{$jenis}}';
+        function gantiTimDanKegiatan(){
+            var tim = $('#tim').val();
+            if (jenis != "keluar"){
+                $('#kode-tim').text(tim);
+            }
+            else {
+                $('#kode-tim').text('11010');
+            }
+            $('#nomor_surat').val($('.kemungkinan_no_surat').text());
+            $("#kode").empty();
+            if (tim == '11011') {
+                $("#kode").append(opsiUmum);
+            } else if (tim == '11016') {
+                $("#kode").append(opsiIPDS);
+            }
+            else {
+                $("#kode").append(opsiTeknis);
+            }
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                url: "{{ route('kegiatan.get-kegiatan-api') }}",
+                data: {
+                    tim: tim,
+                    id_pegawai: {{Auth::user()->id}}
+                },
+
+                success: function(msg){
+                    console.log(msg);
+                    $('#single-select-field').empty();
+                    $.each(msg, function(key, value) {
+                        $('#single-select-field').append('<option value="'+value.id+'">'+value.nama+'</option>');
+                    });
+
+                },
+                error: function(msg){
+                    console.log(msg);
+                }
+
+            });
+        }
+
         $(document).ready(function() {            
-            var jenis = '{{$jenis}}';
+            
+            gantiTimDanKegiatan();
+            // @if($surat->tim == '11011')
+            //     $('#kode').append(opsiUmum);
+            // @elseif($surat->tim == '11016')
+            //     $('#kode').append(opsiIPDS);
+            // @else
+            //     $('#kode').append(opsiTeknis);
+            // @endif
 
-            @if($surat->tim == '11011')
-                $('#kode').append(opsiUmum);
-            @elseif($surat->tim == '11016')
-                $('#kode').append(opsiIPDS);
-            @else
-                $('#kode').append(opsiTeknis);
-            @endif
-
-            $('kode').append(opsiTeknis);
-            $('#tim').change(function() {
-                if (jenis != 'keluar') {
-                    var tim = $(this).val();
-                    $('#kode-tim').text(tim);
-                }
-                $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-                $("#kode").empty();
-                if (tim == '11011') {
-                    $("#kode").append(opsiUmum);
-                } else if (tim == '11016') {
-                    $("#kode").append(opsiIPDS);
-                }
-                else {
-                    $("#kode").append(opsiTeknis);
-                }
+            // $('kode').append(opsiTeknis);
+            // $('#tim').change(function() {
+            //     if (jenis != 'keluar') {
+            //         var tim = $(this).val();
+            //         $('#kode-tim').text(tim);
+            //     }
+            //     $('#nomor_surat').val($('.kemungkinan_no_surat').text());
+            //     $("#kode").empty();
+            //     if (tim == '11011') {
+            //         $("#kode").append(opsiUmum);
+            //     } else if (tim == '11016') {
+            //         $("#kode").append(opsiIPDS);
+            //     }
+            //     else {
+            //         $("#kode").append(opsiTeknis);
+            //     }
 
                 // $.ajax({
                 //     headers: {
@@ -437,13 +521,13 @@
                 //     }
 
                 // });
-            });
+            // });
 
-            $('#tipe').change(function() {
+            // $('#tipe').change(function() {
                 // var tipe = $(this).val();
                 // $('#tipe-surat').text(tipe);
                 // $('#nomor_surat').val($('.kemungkinan_no_surat').text());
-            });
+            // });
 
             $('#kode').change(function() {
                 var kode = $(this).val();
