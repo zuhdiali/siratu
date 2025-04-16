@@ -402,7 +402,12 @@ class SuratController extends Controller
             'tim' => 'required',
             'id_pegawai' => 'required',
         ]);
-        $kegiatans = Kegiatan::where('tim', $request->tim)->where('id_pjk', $request->id_pegawai)->get();
+        $kegiatans = null;
+        if (Auth::user()->role == 'Ketua Tim') {
+            $kegiatans = Kegiatan::where('tim', $request->tim)->get();
+        } else {
+            $kegiatans = Kegiatan::where('tim', $request->tim)->where('id_pjk', $request->id_pegawai)->get();
+        }
         $kegiatan_pegawais = KegiatanPegawai::where('pegawai_id', $request->id_pegawai)->get();
         foreach ($kegiatan_pegawais as $kegiatan_pegawai) {
             $kegiatan = Kegiatan::find($kegiatan_pegawai->kegiatan_id);
