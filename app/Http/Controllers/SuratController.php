@@ -351,6 +351,9 @@ class SuratController extends Controller
                 $surat->tgl_akhir_kegiatan = $request->tgl_akhir_kegiatan;
                 $surat->pegawai_yang_bertugas = $request->pegawai_yang_bertugas;
             }
+            if ($request->id_kegiatan != null) {
+                $surat->id_kegiatan = $request->id_kegiatan;
+            }
             $noTerakhir = $surat->no_terakhir;
             if ($jenis != 'keluar') {
                 if ($surat->tim) {
