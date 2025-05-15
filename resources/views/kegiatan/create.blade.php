@@ -213,6 +213,7 @@
                                             <option value="OK" {{old('satuan_honor_pengawasan') == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
                                             <option value="OH" {{old('satuan_honor_pengawasan') == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
                                             <option value="OB" {{old('satuan_honor_pengawasan') == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="OP" {{old('satuan_honor_pencacahan') == 'OP' ? 'selected' : ''}}>Orang Perjalanan (OP)</option>
                                             <option value="Segmen" {{old('satuan_honor_pengawasan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                             <option value="EA" {{old('satuan_honor_pengawasan') == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
                                             <option value="Responden" {{old('satuan_honor_pengawasan') == 'Responden' ? 'selected' : ''}}>Responden</option>
@@ -263,6 +264,7 @@
                                             <option value="OK" {{old('satuan_honor_pencacahan') == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
                                             <option value="OH" {{old('satuan_honor_pencacahan') == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
                                             <option value="OB" {{old('satuan_honor_pencacahan') == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="OP" {{old('satuan_honor_pencacahan') == 'OP' ? 'selected' : ''}}>Orang Perjalanan (OP)</option>
                                             <option value="Segmen" {{old('satuan_honor_pencacahan') == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                             <option value="EA" {{old('satuan_honor_pencacahan') == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
                                             <option value="Responden" {{old('satuan_honor_pencacahan') == 'Responden' ? 'selected' : ''}}>Responden</option>

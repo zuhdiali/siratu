@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container">
   <div class="page-inner">
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
@@ -98,7 +97,7 @@
                     @endif
                     <tr>
                       <td>
-                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id))
+                        @if((Auth::user()->role == 'Admin')||($surat->id_pembuat_surat == Auth::user()->id)||(Auth::user()->role == 'Ketua Tim' && $surat->tim == Auth::user()->tim))
                         <div class="form-button-action">
                           <form action="{{url('surat/edit/'.$surat->jenis_surat."/".$surat->id)}}">
                             <button

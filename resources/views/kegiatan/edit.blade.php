@@ -166,6 +166,7 @@
                                             <option value="OK" {{$kegiatan->satuan_honor_pengawasan == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
                                             <option value="OH" {{$kegiatan->satuan_honor_pengawasan == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
                                             <option value="OB" {{$kegiatan->satuan_honor_pengawasan == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="OP" {{$kegiatan->satuan_honor_pengawasan == 'OP' ? 'selected' : ''}}>Orang Perjalanan (OP)</option>
                                             <option value="Segmen" {{$kegiatan->satuan_honor_pengawasan == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                             <option value="EA" {{$kegiatan->satuan_honor_pengawasan == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
                                             <option value="Responden" {{$kegiatan->satuan_honor_pengawasan == 'Responden' ? 'selected' : ''}}>Responden</option>
@@ -216,6 +217,7 @@
                                             <option value="OK" {{$kegiatan->satuan_honor_pencacahan == 'OK' ? 'selected' : ''}}>Orang Kegiatan (OK)</option>
                                             <option value="OH" {{$kegiatan->satuan_honor_pencacahan == 'OH' ? 'selected' : ''}}>Orang Harian (OH)</option>
                                             <option value="OB" {{$kegiatan->satuan_honor_pencacahan == 'OB' ? 'selected' : ''}}>Orang Bulan (OB)</option>
+                                            <option value="OP" {{$kegiatan->satuan_honor_pengawasan == 'OP' ? 'selected' : ''}}>Orang Perjalanan (OP)</option>
                                             <option value="Segmen" {{$kegiatan->satuan_honor_pencacahan == 'Segmen' ? 'selected' : ''}}>Segmen</option>
                                             <option value="EA" {{$kegiatan->satuan_honor_pencacahan == 'EA' ? 'selected' : ''}}>Enumeration Area (EA)</option>
                                             <option value="Responden" {{$kegiatan->satuan_honor_pencacahan == 'Responden' ? 'selected' : ''}}>Responden</option>

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container">
   <div class="page-inner">
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
@@ -10,7 +9,7 @@
         {{-- <h6 class="op-7 mb-2">Rincian kegiatan </h6> --}}
       </div>
       <div class="ms-md-auto py-2 py-md-0">
-        @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->pjk_id || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
+        @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
 				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round">Edit Kegiatan</a>
         <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round">Perbarui Estimasi Honor</a>
         @endif
