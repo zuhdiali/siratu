@@ -131,9 +131,9 @@
                         </div>
                         @endif
                       </td>
-                      <th scope="row">Nomor {{$surat->no_terakhir}} Tahun 2025</th>
+                      <th scope="row">Nomor {{$surat->no_terakhir}} Tahun {{$surat->tahun_spk}}</th>
                       <td>{{$surat->mitra->nama}}</td>
-                      <td>{{$surat->bulan}} 2025</td>
+                      <td>{{$surat->bulan}} {{$surat->tahun_spk}}</td>
                       {{-- <td>{{$surat->perihal}}</td> --}}
                       {{-- <td>
                         @if($surat->flag == null)

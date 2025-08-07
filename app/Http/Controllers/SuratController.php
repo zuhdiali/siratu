@@ -216,7 +216,16 @@ class SuratController extends Controller
                     $surat->tgl_surat = $request->tgl_surat;
                 }
             } else {  //jika jenis surat spk
-                $noSPK_terakhir = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->first();
+                $cekSurat = Surat::where('jenis_surat', 'spk')
+                    ->where('mitra_spk', $request->mitra_spk)
+                    ->where('bulan_spk', $request->bulan_spk)
+                    ->where('tahun_spk', $request->tahun_spk)
+                    ->first();
+                if ($cekSurat) {
+                    $mitra = Mitra::find($request->mitra_spk);
+                    return redirect()->back()->with('error', 'SPK untuk mitra ' . $mitra->nama . ' pada bulan ' . $request->bulan_spk . ' dan tahun ' . $request->tahun_spk . ' sudah ada.');
+                }
+                $noSPK_terakhir = Surat::where('jenis_surat', 'spk')->where('tahun_spk', $request->tahun_spk)->orderBy('no_terakhir', 'desc')->first();
                 if ($noSPK_terakhir == null) {
                     $noTerakhir = 0;
                 } else {
@@ -225,6 +234,7 @@ class SuratController extends Controller
                 $surat->no_terakhir = $noTerakhir + 1;
                 $surat->mitra_spk = $request->mitra_spk;
                 $surat->bulan_spk = $request->bulan_spk;
+                $surat->tahun_spk = $request->tahun_spk;
                 $surat->file = $this->generateSPK($request->mitra_spk, $request->bulan_spk, $request->tahun_spk);
             }
             $surat->save();
@@ -462,8 +472,9 @@ class SuratController extends Controller
     public function downloadSPK($id)
     {
         $surat = Surat::find($id);
-        $filePath = $surat->file;
-        return response()->download($filePath);
+        $bulan = str_pad($surat->bulan_spk, 2, '0', STR_PAD_LEFT);
+        $surat->file = $this->generateSPK($surat->mitra_spk, $bulan, $surat->tahun_spk);
+        return response()->download($surat->file);
     }
 
     public  function generateSPK($id_mitra, $bulan, $tahun)
@@ -476,7 +487,8 @@ class SuratController extends Controller
         $tglAkhir = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth();
         $namaHariAwal = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->locale('id')->translatedFormat('l');
 
-        $suratTerakhir = Surat::where('jenis_surat', 'spk')->orderBy('no_terakhir', 'desc')->first();
+        $suratTerakhir = Surat::where('jenis_surat', 'spk')->where('tahun_spk', $tahun)->orderBy('no_terakhir', 'desc')->first();
+        // dd($suratTerakhir);
         if ($suratTerakhir == null) {
             $noTerakhir = 0;
         } else {
@@ -500,8 +512,10 @@ class SuratController extends Controller
         foreach ($kegiatan_mitra as $km) {
             $beban_anggaran = "{#beban_anggaran#}";
             $kegiatan = Kegiatan::find($km->kegiatan_id);
+
             $satuan_honor = ($km->is_pml == 1 ? $kegiatan->honor_pengawasan : $kegiatan->honor_pencacahan);
-            if ($satuan_honor < 10 || Carbon::parse($kegiatan->tgl_mulai)->format('m') != $bulan || $satuan_honor == null || $km->jumlah == null) {
+            // Jika satuan honor kurang dari 10 artinya kegiatan dummy
+            if ($satuan_honor < 10 || Carbon::parse($kegiatan->tgl_mulai)->format('m') != $bulan || $satuan_honor == null || $km->jumlah == null || Carbon::parse($kegiatan->tgl_mulai)->format('Y') != $tahun) {
                 continue;
             }
             $jkw = '';
@@ -536,7 +550,7 @@ class SuratController extends Controller
         $phpWord->setValue('total_honor_terbilang',  $honorTerbilang . " Rupiah");
         $phpWord->setValue('total_honor_terbilang_kecil',  strtolower($honorTerbilang) . " rupiah");
 
-        $filePath = 'SPK/' . $mitra->nama . '_' . $bulan . '_' . date('Y') . '.docx';
+        $filePath = 'SPK/' . $mitra->nama . '_' . $bulan . '_' . $tahun . '.docx';
         $phpWord->saveAs($filePath);
         return $filePath;
         // return response()->download($filePath);

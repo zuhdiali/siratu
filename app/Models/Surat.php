@@ -27,6 +27,8 @@ class Surat extends Model
         'file',
         'pegawai_yang_bertugas',
         'mitra_spk',
+        'bulan_spk',
+        'tahun_spk',
         'flag',
     ];
 }

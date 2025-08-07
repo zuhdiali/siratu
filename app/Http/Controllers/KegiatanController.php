@@ -84,6 +84,8 @@ class KegiatanController extends Controller
             if ($sbks) {
                 $kegiatan->beban_anggaran = $sbks->beban_anggaran;
             }
+        } else {
+            $kegiatan->beban_anggaran = $request->beban_anggaran ?? '{#beban_anggaran#}';
         }
         $kegiatan->save();
         if ($request->pegawai != null) {
@@ -310,6 +312,7 @@ class KegiatanController extends Controller
                     if ($honorMitraDenganKegiatanIni->total_estimasi_honor > $honorMitraSetelahPerubahan) {
                         $mitraYangPerluWarning[] = $honorMitraBulanIni->nama;
                     } else {
+                        
                         return redirect()->route('kegiatan.estimasi-honor', ['id' => $id])->with('error', 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $value . '.');
                     }
                 }
@@ -424,8 +427,8 @@ class KegiatanController extends Controller
             ->where('mitras.id', $id_mitra)
             ->leftJoin('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.mitra_id')
             ->leftJoin('kegiatans', 'kegiatan_mitras.kegiatan_id', '=', 'kegiatans.id')
-            ->whereRaw('MONTH(kegiatans.tgl_selesai) = ' . $bulan)
-            ->whereRaw('YEAR(kegiatans.tgl_selesai) = ' . $tahun)
+            ->whereRaw('MONTH(kegiatans.tgl_mulai) = ' . $bulan)
+            ->whereRaw('YEAR(kegiatans.tgl_mulai) = ' . $tahun)
             ->when($idKegiatanPengecualian, function ($query) use ($idKegiatanPengecualian) {
                 if ($idKegiatanPengecualian !== null) {
                     return $query->where('kegiatans.id', '<>', $idKegiatanPengecualian);
@@ -434,6 +437,7 @@ class KegiatanController extends Controller
             ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
             ->orderBy('mitras.nama', 'asc')
             ->first();
+            // dd($honorMitra);
         return $honorMitra;
     }
 }

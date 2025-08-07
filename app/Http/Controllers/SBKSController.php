@@ -115,9 +115,15 @@ class SBKSController extends Controller
         $response->tim = $kegiatan_pendataan_atau_pengolahan->tim ?? '-';
         // $response->tim = $this->konversiTim($kegiatan_pengawasan->tim);
         $response->id_pjk = $kegiatan_pendataan_atau_pengolahan->pjk;
+        
+        $response->beban_anggaran = $kegiatan_pendataan_atau_pengolahan->beban_anggaran;
+
         if ($kegiatan_pengawasan != null) {
             $response->honor_pengawasan = $kegiatan_pengawasan->honor_per_satuan;
             $response->satuan_honor_pengawasan = $kegiatan_pengawasan->satuan;
+            if($response->beban_anggaran == null) {
+                $response->beban_anggaran = $kegiatan_pengawasan->beban_anggaran;
+            }
         } else {
             // jika kegiatan pengoalahan tidak ada pengawasan
             $response->honor_pengawasan = 1;

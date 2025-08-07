@@ -193,6 +193,24 @@
                                         @endif
                                     </div>
 
+                                    <div class="form-group {{$errors->has('beban_anggaran') ? 'has-error has-feedback' : ''}}">
+                                        <label for="beban_anggaran">Beban anggaran BOS</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="beban_anggaran"
+                                          name="beban_anggaran"
+                                          placeholder="Misal: 2904.BMA.006.005.521213"
+                                          value="{{ old('beban_anggaran') }}"
+                                        />
+                                        @if ($errors->has('beban_anggaran'))
+                                        <small class="form-text text-muted">{{ $errors->first('beban_anggaran') }}</small>
+                                        @else
+                                        <small  class="form-text text-muted">
+                                            Misal: 2904.BMA.006.005.521213. (Kosongkan jika tidak ada atau lupa)
+                                        </small>
+                                        @endif
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -424,6 +442,7 @@
                     $('#honor_pengawasan').val(data.honor_pengawasan);
                     $('#satuan_honor_pencacahan').val(data.satuan_honor_pendataan_atau_pengolahan);
                     $('#honor_pencacahan').val(data.honor_pendataan_atau_pengolahan);
+                    $('#beban_anggaran').val(data.beban_anggaran);
                 },
                 error: function(err) {
                     // console.log(err);
