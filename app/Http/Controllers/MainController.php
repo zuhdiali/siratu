@@ -161,8 +161,9 @@ class MainController extends Controller
             ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
             ->orderBy('mitras.nama', 'asc')
             ->get();
-
+        // dd($mitraAdaHonor);
         foreach ($mitraAdaHonor as $m) {
+
             $m->kec_asal = $this->konversiKodeKec($m->kec_asal);
             $m->total_honor = $m->total_honor ?? 0;
             $m->total_estimasi_honor = $m->total_estimasi_honor ?? 0;
@@ -174,6 +175,7 @@ class MainController extends Controller
             }
         }
 
+        // ini menambahkan mitra sisanya
         $mitras = Mitra::where('flag', null)->get();
         foreach ($mitras as $mitra) {
             if (!in_array($mitra->nama, array_column($mitraAdaHonor->toArray(), 'nama')) && !str_contains($mitra->nama, 'bayangan')) {
@@ -185,6 +187,7 @@ class MainController extends Controller
             }
         }
 
+        // ini jika returnya object, bukan array
         if (is_object($mitras)) {
             $dummy = $mitraAdaHonor;
             $mitraAdaHonor = [];

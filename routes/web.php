@@ -78,15 +78,6 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::prefix('mitra')->name('mitra.')->group(function () {
-        Route::get('/', [MitraController::class, 'index'])->name('index');
-        Route::get('/create', [MitraController::class, 'create'])->name('create');
-        Route::post('/store', [MitraController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [MitraController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [MitraController::class, 'update'])->name('update');
-        Route::get('/destroy/{id}', [MitraController::class, 'destroy'])->name('destroy');
-    });
-
     Route::prefix('kegiatan')->name('kegiatan.')->group(function () {
         Route::get('/', [KegiatanController::class, 'index'])->name('index');
         Route::get('/create', [KegiatanController::class, 'create'])->name('create');
@@ -106,6 +97,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pegawai-belum-dibayar/{id}', [MainController::class, 'pegawaiKegiatanBelumDibayar']);
 
         Route::post('/get-kegiatan-api', [SuratController::class, 'getKegiatanApi'])->name('get-kegiatan-api');
+
+        Route::post('/import-mitra-dan-honor/{id}', [KegiatanController::class, 'importMitraDanHonor'])->name('import-mitra-dan-honor');
         // Route::post('/honor-mitra', [MainController::class, 'jumlahHonorMitra'])->name('jumlah-honor-mitra');
     });
 

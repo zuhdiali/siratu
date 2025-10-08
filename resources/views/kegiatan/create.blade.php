@@ -126,6 +126,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('tgl_mulai') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
+                                            Format: bulan/tanggal/tahun
                                         </small>
                                         @endif
                                     </div> 
@@ -143,6 +144,7 @@
                                         <small class="form-text text-muted">{{ $errors->first('tgl_selesai') }}</small>
                                         @else
                                         <small  class="form-text text-muted">
+                                            Format: bulan/tanggal/tahun
                                         </small>
                                         @endif
                                     </div> 

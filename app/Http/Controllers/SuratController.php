@@ -133,7 +133,7 @@ class SuratController extends Controller
                         'id_kegiatan' => 'required',
                     ]);
                     $kegiatan = Kegiatan::find($request->id_kegiatan);
-                    $mitraMelebihiHonor = KegiatanController::validasiHonorMitra($kegiatan->mitra, $kegiatan->tgl_selesai);
+                    $mitraMelebihiHonor = KegiatanController::validasiHonorMitra($kegiatan->mitra, $kegiatan->tgl_mulai);
                     if (count($mitraMelebihiHonor) > 0) {
                         return redirect()->back()->with('error', 'Mitra (' . implode(",", $mitraMelebihiHonor) . ') melebihi batas honor yang diperbolehkan.');
                     }

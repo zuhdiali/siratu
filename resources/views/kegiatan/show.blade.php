@@ -10,8 +10,36 @@
       </div>
       <div class="ms-md-auto py-2 py-md-0">
         @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
-				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round">Edit Kegiatan</a>
-        <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round">Perbarui Estimasi Honor</a>
+        <!-- Button to trigger modal -->
+        <button type="button" class="btn btn-success btn-round mb-3" data-bs-toggle="modal" data-bs-target="#importMitraHonorModal">
+          <i class="fa fa-upload"></i> Import Mitra dan Honor
+        </button>
+
+				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Edit Kegiatan</a>
+        <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Perbarui Estimasi Honor</a>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="importMitraHonorModal" tabindex="-1" aria-labelledby="importMitraHonorModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="importMitraHonorModalLabel">Import Mitra dan Honor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{{route('kegiatan.import-mitra-dan-honor', $kegiatan->id)}}" method="POST" enctype="multipart/form-data">
+                  @csrf
+                  <input type="hidden" name="kegiatan_id" value="{{$kegiatan->id}}">
+                  <div class="form-group mb-3">
+                    <label for="file">Pilih File</label>
+                    <input type="file" class="form-control" name="file" id="file" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Import</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
         @endif
       </div>
 
@@ -123,6 +151,7 @@
             <h4 class="card-title">Daftar Mitra Terlibat</h4>
           </div>
           <div class="card-body">
+            
             <div class="table-responsive">
               <table
                 id="multi-filter-select"
