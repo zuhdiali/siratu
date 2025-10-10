@@ -162,6 +162,7 @@
                                     >
                                       <option value="">(Pilih salah satu)</option>
                                       <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : ''}}>Admin</option>
+                                      <option value="Ketua Tim" {{ old('role') == 'Ketua Tim' ? 'selected' : ''}}>Ketua Tim</option>
                                       <option value="Pegawai" {{old('role') == 'Pegawai' ? 'selected' : ''}}>Pegawai</option>
                                     </select>
                                     @if ($errors->has('role'))

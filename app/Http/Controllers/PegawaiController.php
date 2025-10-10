@@ -57,6 +57,7 @@ class PegawaiController extends Controller
         $pegawai->kec_asal = $request->kec_asal;
         $pegawai->username = $request->username;
         $pegawai->role = $request->role;
+        $pegawai->tim = $request->tim;
         $pegawai->password = Hash::make($request->password);
         $pegawai->save();
 

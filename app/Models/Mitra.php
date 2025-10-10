@@ -14,6 +14,7 @@ class Mitra extends Model
         'id_mitra',
         'no_rek',
         'kec_asal',
+        'nik',
         'flag'
     ];
 

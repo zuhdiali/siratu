@@ -100,6 +100,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/import-mitra-dan-honor/{id}', [KegiatanController::class, 'importMitraDanHonor'])->name('import-mitra-dan-honor');
         // Route::post('/honor-mitra', [MainController::class, 'jumlahHonorMitra'])->name('jumlah-honor-mitra');
+        Route::get('/export-mitra-dan-honor/{id}', [KegiatanController::class, 'exportMitraDanHonor'])->name('export-mitra-dan-honor');
+        Route::post('/export-translok/{id}', [KegiatanController::class, 'exportTranslok'])->name('export-translok');
     });
 
     Route::prefix('surat')->name('surat.')->group(function () {

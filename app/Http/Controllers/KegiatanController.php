@@ -11,6 +11,8 @@ use App\Models\SBKS;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Imports\KegiatanMitraImport;
+use App\Exports\ExportHonorKegiatan;
+use App\Exports\ExportTranslok;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KegiatanController extends Controller
@@ -137,10 +139,10 @@ class KegiatanController extends Controller
             // validasi honor mitra
             $mitraMelebihiHonor = $this->validasiHonorMitra($kegiatan->mitra, $request->tgl_mulai);
             // dd($mitraMelebihiHonor);
-            if($mitraMelebihiHonor){
+            if ($mitraMelebihiHonor) {
                 $kegiatan->tgl_mulai = $tgl_mulai_sebelumnya;
                 $kegiatan->save();
-                return redirect()->route('kegiatan.edit', ['id' => $id])->with('error', 'Mitra '. implode(", ", $mitraMelebihiHonor) .' melebihi batas honor jika kegiatan diubah ke tanggal '.$request->tgl_mulai.'.');
+                return redirect()->route('kegiatan.edit', ['id' => $id])->with('error', 'Mitra ' . implode(", ", $mitraMelebihiHonor) . ' melebihi batas honor jika kegiatan diubah ke tanggal ' . $request->tgl_mulai . '.');
             }
             $kegiatan->nama = $request->nama;
             $kegiatan->tgl_mulai = $request->tgl_mulai;
@@ -298,17 +300,17 @@ class KegiatanController extends Controller
         if ($honorMitraBulanIni != null) {
             $honorMitraSetelahPerubahan = $honorMitraBulanIni->total_estimasi_honor + $estimasi_honor;
             if ($honorMitraSetelahPerubahan > 3600100) {
-            if ($honorMitraDenganKegiatanIni->total_estimasi_honor > $honorMitraSetelahPerubahan) {
-                // Tetap update pivot meskipun warning
-                $kegiatan->mitra()->updateExistingPivot($mitra_id, [
-                'jumlah' => $jumlah,
-                'estimasi_honor' => $estimasi_honor,
-                'is_pml' => $is_pml,
-                ]);
-                return ['warning' => $honorMitraBulanIni->nama];
-            } else {
-                return ['error' => 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $jumlah . '.'];
-            }
+                if ($honorMitraDenganKegiatanIni->total_estimasi_honor > $honorMitraSetelahPerubahan) {
+                    // Tetap update pivot meskipun warning
+                    $kegiatan->mitra()->updateExistingPivot($mitra_id, [
+                        'jumlah' => $jumlah,
+                        'estimasi_honor' => $estimasi_honor,
+                        'is_pml' => $is_pml,
+                    ]);
+                    return ['warning' => $honorMitraBulanIni->nama];
+                } else {
+                    return ['error' => 'Mitra ' . $honorMitraBulanIni->nama . ' akan melebihi batas honor jika mendata sebanyak ' . $jumlah . '.'];
+                }
             }
         }
 
@@ -354,9 +356,11 @@ class KegiatanController extends Controller
         $data = $import->getData();
 
         $mitraYangPerluWarning = [];
+
         foreach ($data as $row) {
             if (isset($row['mitra_id']) && isset($row['jumlah'])) {
                 $kegiatan = Kegiatan::find($id);
+                $kegiatan->mitra()->syncWithoutDetaching($row['mitra_id']);
                 $is_pml = isset($row['is_pml']) ? (int)$row['is_pml'] : 0;
                 $result = $this->updateEstimasiHonorMitra($kegiatan, $row['mitra_id'], $row['jumlah'], $is_pml, $id);
                 if (isset($result['error'])) {
@@ -365,8 +369,7 @@ class KegiatanController extends Controller
                 if (isset($result['warning'])) {
                     $mitraYangPerluWarning[] = $result['warning'];
                 }
-            }
-            else {
+            } else {
                 return redirect()->route('kegiatan.show', ['id' => $id])->with('error', 'Format file yang diunggah tidak sesuai.');
             }
         }
@@ -374,6 +377,32 @@ class KegiatanController extends Controller
             return redirect()->route('kegiatan.show', ['id' => $id])->with('warning', 'Pembaruan estimasi honor berhasil, namun mitra (' . implode(", ", $mitraYangPerluWarning) . ') masih melebihi batas honor. Sebaiknya segera kurangi honor yang diterimanya.');
         }
         return redirect()->route('kegiatan.show', ['id' => $id])->with('success', 'Data mitra dan estimasi honor berhasil diimpor.');
+    }
+
+    public function exportMitraDanHonor($id)
+    {
+        // 1. Cari kegiatan spesifik berdasarkan ID
+        $kegiatan = Kegiatan::findOrFail($id);
+
+        // 2. Buat nama file yang dinamis
+        $fileName = 'honor-' . $kegiatan->nama . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        // 3. Panggil Excel::download dan lemparkan objek $kegiatan
+        //    ke dalam constructor ExportHonorKegiatan
+        return Excel::download(new ExportHonorKegiatan($kegiatan), $fileName);
+    }
+
+    public function exportTranslok(Request $request, $id)
+    {
+
+        $kegiatan = Kegiatan::find($id);
+        $tgl_mulai = $request->tgl_mulai ? Carbon::parse($request->tgl_mulai)->format('Y-m-d') : Carbon::parse($kegiatan->tgl_mulai)->format('Y-m-d');
+        $tgl_selesai = $request->tgl_selesai ? Carbon::parse($request->tgl_selesai)->format('Y-m-d') : Carbon::parse($kegiatan->tgl_selesai)->format('Y-m-d');
+        $tujuan = $request->tujuan ? $request->tujuan : '020';
+
+        $fileName = 'translok-' . $kegiatan->nama . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(new ExportTranslok($kegiatan, $tgl_mulai, $tgl_selesai, $tujuan), $fileName);
     }
 
     public function duplicate($id)
@@ -390,6 +419,7 @@ class KegiatanController extends Controller
         $kegiatanBaru->mitra()->attach($kegiatan->mitra);
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diduplikasi.');
     }
+
 
     private function konversiTim($kodeTim)
     {
@@ -473,7 +503,7 @@ class KegiatanController extends Controller
             ->groupBy('mitras.id', 'mitras.nama', 'mitras.kec_asal')
             ->orderBy('mitras.nama', 'asc')
             ->first();
-            // dd($honorMitra);
+        // dd($honorMitra);
         return $honorMitra;
     }
 }

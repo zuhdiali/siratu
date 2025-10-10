@@ -18,7 +18,7 @@
 				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Edit Kegiatan</a>
         <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Perbarui Estimasi Honor</a>
         
-        <!-- Modal -->
+        <!-- Modal Import Mitra dan Honor -->
         <div class="modal fade" id="importMitraHonorModal" tabindex="-1" aria-labelledby="importMitraHonorModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -31,10 +31,58 @@
                   @csrf
                   <input type="hidden" name="kegiatan_id" value="{{$kegiatan->id}}">
                   <div class="form-group mb-3">
-                    <label for="file">Pilih File</label>
+                    <label for="file">Pilih File (File harus bertipe Excel <strong>xlsx</strong>)</label>
                     <input type="file" class="form-control" name="file" id="file" required>
                   </div>
-                  <button type="submit" class="btn btn-primary">Import</button>
+                  <button type="submit" class="btn btn-primary"> <i class="fa fa-upload"></i> Import</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Export Translok -->
+        <div class="modal fade" id="exportTranslok" tabindex="-1" aria-labelledby="exportTranslokLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exportTranslokLabel">Export Translok</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{{route('kegiatan.export-translok', $kegiatan->id)}}" method="POST" >
+                  @csrf
+                  <input type="hidden" name="kegiatan_id" value="{{$kegiatan->id}}">
+                  <div class="form-group mb-3">
+                                        <div class="row">
+                      <div class="col-6"><label for="tujuan">Tujuan</label></div>
+                      <div class="col-6">
+                        <select name="tujuan" id="tujuan" class="form-control mb-3">
+                          <option value="-- Pilih Tujuan --" selected disabled>-- Pilih Tujuan --</option>
+                            <option value="010">[010] Teupah Selatan</option>
+                            <option value="020">[020] Simeulue Timur</option>
+                            <option value="021">[021] Teupah Barat</option>
+                            <option value="022">[022] Teupah Tengah</option>
+                            <option value="030">[030] Simeulue Tengah</option>
+                            <option value="031">[031] Teluk Dalam</option>
+                            <option value="032">[032] Simeulue Cut</option>
+                            <option value="040">[040] Salang</option>
+                            <option value="050">[050] Simeulue Barat</option>
+                            <option value="051">[051] Alafan</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6"><label for="tgl_mulai">Tanggal Mulai Tranlsok</label></div>
+                      <div class="col-6"><input type="date" class="form-control mb-3" name="tgl_mulai" id="tgl_mulai" required></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6"><label for="tgl_selesai">Tanggal Selesai Translok</label></div>
+                      <div class="col-6"><input type="date" class="form-control mb-3" name="tgl_selesai" id="tgl_selesai" required></div>
+                    </div>
+
+                  </div>
+                  <button type="submit" class="btn btn-primary"> <i class="fa fa-download"></i> Export</button>
                 </form>
               </div>
             </div>
@@ -52,7 +100,7 @@
 					{{-- <div class="card-category">Card Category</div> --}}
 				</div>
 				<div class="card-body">
-					<table class=" table table-hover table-responsive">
+					<table class=" table table-responsive">
 						<tbody>
 							<tr>
 								<td width="40%">
@@ -72,18 +120,10 @@
               </tr>
 							<tr>
 								<td>
-									<p>Tanggal Mulai</p>
+									<p>Tanggal Pelaksanaan</p>
 								</td>
 								<td>
-									<p>: {{Carbon\Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }} </p>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<p>Tanggal Selesai</p>
-								</td>
-								<td>
-									<p>: {{Carbon\Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d M Y') }} </p>
+									<p>: {{Carbon\Carbon::parse($kegiatan->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}   -   {{Carbon\Carbon::parse($kegiatan->tgl_selesai)->locale('id')->translatedFormat('d M Y') }}</p>
 								</td>
 							</tr>
 							<tr>
@@ -108,6 +148,16 @@
                 </td>
                 <td>
                   <p>: {{$kegiatan->progress}} %</p>
+                </td>
+              </tr>
+              <tr >
+                <td colspan="2">
+                    <a href="{{route('kegiatan.export-mitra-dan-honor', $kegiatan->id)}}" class="btn btn-primary btn-sm" rel="noopener noreferrer">
+                    <i class="fa fa-download"></i> Export Honor untuk BOS
+                    </a>
+                    {{-- <button type="button" class="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exportTranslok">
+                      <i class="fa fa-download"></i> Export Translok untuk BOS
+                    </button> --}}
                 </td>
               </tr>
 						</tbody>
