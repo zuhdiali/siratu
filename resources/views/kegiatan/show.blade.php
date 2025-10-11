@@ -155,9 +155,9 @@
                     <a href="{{route('kegiatan.export-mitra-dan-honor', $kegiatan->id)}}" class="btn btn-primary btn-sm" rel="noopener noreferrer">
                     <i class="fa fa-download"></i> Export Honor untuk BOS
                     </a>
-                    {{-- <button type="button" class="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exportTranslok">
+                    <button type="button" class="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exportTranslok">
                       <i class="fa fa-download"></i> Export Translok untuk BOS
-                    </button> --}}
+                    </button>
                 </td>
               </tr>
 						</tbody>
