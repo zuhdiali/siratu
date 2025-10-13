@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Imports\KegiatanMitraImport;
 use App\Exports\ExportHonorKegiatan;
 use App\Exports\ExportTranslok;
+use App\Exports\ExportMitra;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KegiatanController extends Controller
@@ -353,7 +354,7 @@ class KegiatanController extends Controller
         ]);
         $import = new KegiatanMitraImport();
         Excel::import($import, $request->file('file'));
-        $data = $import->getData();
+        $data = $import->getData('Template upload');
 
         $mitraYangPerluWarning = [];
 
@@ -403,6 +404,12 @@ class KegiatanController extends Controller
         $fileName = 'translok-' . $kegiatan->nama . '-' . now()->format('Y-m-d') . '.xlsx';
 
         return Excel::download(new ExportTranslok($kegiatan, $tgl_mulai, $tgl_selesai, $tujuan), $fileName);
+    }
+
+    public function exportMitraId()
+    {
+        $fileName = 'all-mitra-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new ExportMitra(), $fileName);
     }
 
     public function duplicate($id)

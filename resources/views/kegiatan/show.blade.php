@@ -12,10 +12,10 @@
         @if(Auth::user()->role == 'Admin' || Auth::user()->id == $kegiatan->id_pjk || (Auth::user()->role == "Ketua Tim" && Auth::user()->tim == $kegiatan->tim))
         <!-- Button to trigger modal -->
         <button type="button" class="btn btn-success btn-round mb-3" data-bs-toggle="modal" data-bs-target="#importMitraHonorModal">
-          <i class="fa fa-upload"></i> Import Mitra dan Honor
+          <i class="fa fa-upload"></i> Import 
         </button>
 
-				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Edit Kegiatan</a>
+				<a href="{{url('kegiatan/edit', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Edit </a>
         <a href="{{url('kegiatan/estimasi-honor', $kegiatan->id)}}" class="btn btn-primary btn-round mb-3"><i class="fa fa-edit"></i> Perbarui Estimasi Honor</a>
         
         <!-- Modal Import Mitra dan Honor -->
@@ -34,7 +34,10 @@
                     <label for="file">Pilih File (File harus bertipe Excel <strong>xlsx</strong>)</label>
                     <input type="file" class="form-control" name="file" id="file" required>
                   </div>
-                  <button type="submit" class="btn btn-primary"> <i class="fa fa-upload"></i> Import</button>
+                  <button type="submit" class="btn btn-success"> <i class="fa fa-upload"></i> Import</button>
+                  <a href="{{route('kegiatan.export-mitra-id')}}" class="btn btn-primary " rel="noopener noreferrer">
+                    <i class="fa fa-download"></i> Export Template
+                  </a>
                 </form>
               </div>
             </div>

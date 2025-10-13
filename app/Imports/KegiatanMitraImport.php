@@ -2,23 +2,26 @@
 
 namespace App\Imports;
 
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class KegiatanMitraImport implements ToCollection, WithHeadingRow
+class KegiatanMitraImport implements WithMultipleSheets
 {
-    private $data = [];
-    /**
-    * @param Collection $rows
-    */
-    public function collection(Collection $rows)
+    protected $sheetImport;
+
+    public function __construct()
     {
-        $this->data = $rows->toArray();
+        $this->sheetImport = new KegiatanMitraSheetImport();
+    }
+
+    public function sheets(): array
+    {
+        return [
+            0 => $this->sheetImport, // Only process the first sheet (index 0)
+        ];
     }
 
     public function getData()
     {
-        return $this->data;
+        return $this->sheetImport->getData();
     }
 }
